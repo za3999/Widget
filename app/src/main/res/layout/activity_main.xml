@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <widget.cf.com.widgetlibrary.ShadowRoundImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dm_61dp"
+        android:src="@mipmap/ucenter_pic_head"
+        app:firstShadowColor="@color/color_mc3"
+        app:firstShadowWidth="@dimen/dm_1dp"
+        app:secondShadowColor="@android:color/black"
+        app:secondShadowWidth="@dimen/dm_2dp"/>
+</LinearLayout>
