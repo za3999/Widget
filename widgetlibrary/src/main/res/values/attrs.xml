@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AutoImageView">
+        <attr name="yScale" format="float"></attr>
+        <attr name="xScale" format="float"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="AutoLinearLayout">
+        <attr name="y_scale" format="float"></attr>
+        <attr name="x_scale" format="float"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="ShadowRoundImageView">
+        <attr name="firstShadowWidth" format="dimension"></attr>
+        <attr name="secondShadowWidth" format="dimension"></attr>
+        <attr name="firstShadowColor" format="color"></attr>
+        <attr name="secondShadowColor" format="color"></attr>
+    </declare-styleable>
+</resources>
