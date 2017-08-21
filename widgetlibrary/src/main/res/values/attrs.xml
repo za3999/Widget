@@ -16,4 +16,12 @@
         <attr name="firstShadowColor" format="color"></attr>
         <attr name="secondShadowColor" format="color"></attr>
     </declare-styleable>
+
+    <declare-styleable name="AutoLayout">
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+        <attr name="paddingTop" format="dimension"/>
+        <attr name="maxLines" format="integer"/>
+    </declare-styleable>
+
 </resources>
