@@ -18,7 +18,7 @@ import android.widget.ImageView;
  * Created by zhengcf on 2017/7/5.
  */
 
-public class ShadowRoundImageView extends ImageView {
+public class ShadowRoundImageView extends android.support.v7.widget.AppCompatImageView {
 
     private Paint mBitmapPaint = new Paint();
     private int mRadius;

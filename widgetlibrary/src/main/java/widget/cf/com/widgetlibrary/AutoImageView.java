@@ -3,12 +3,11 @@ package widget.cf.com.widgetlibrary;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 /**
  * 宽高按比例自动缩放的ImageView
  */
-public class AutoImageView extends ImageView {
+public class AutoImageView extends android.support.v7.widget.AppCompatImageView {
 
     private float yScale, xScale;
 
