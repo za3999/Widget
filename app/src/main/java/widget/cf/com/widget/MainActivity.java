@@ -2,41 +2,39 @@ package widget.cf.com.widget;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TableLayout;
+import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
-import android.widget.TableRow;
 import android.widget.TextView;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
 
+    LinearLayout llLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        llLayout = findViewById(R.id.ll_layout);
     }
 
     public void onSwipeLayoutClick(View view) {
         startActivity(new Intent(this, SwipeLayoutActivity.class));
     }
 
+    public void onSearchClick(View view){
+        TextView textView = new TextView(this);
+        textView.setText("哈哈");
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT);
+        params.leftMargin = 5;
+        params.gravity =Gravity.CENTER;
+        textView.setLayoutParams(params);
+        textView.setBackgroundResource(R.color.color_01dfa6);
+        llLayout.addView(textView);
+    }
 }

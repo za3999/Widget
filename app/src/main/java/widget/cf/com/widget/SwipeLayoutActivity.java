@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+
 import widget.cf.com.widgetlibrary.SwipeLayout;
 import widget.cf.com.widgetlibrary.SwipeLayoutManager;
 
@@ -33,10 +36,14 @@ public class SwipeLayoutActivity extends Activity {
 
         private Context context;
         private SwipeLayoutManager manager;
+        private ArrayList<String> dataList = new ArrayList<>();
 
         public ListAdapter(Context context, SwipeLayoutManager manager) {
             this.context = context;
             this.manager = manager;
+            for (int i = 0; i < 100; i++) {
+                dataList.add(i + "");
+            }
         }
 
         @Override
@@ -56,7 +63,7 @@ public class SwipeLayoutActivity extends Activity {
 
         @Override
         public int getItemCount() {
-            return 100;
+            return dataList.size();
         }
 
         @Override
@@ -66,11 +73,17 @@ public class SwipeLayoutActivity extends Activity {
             switch (v.getId()) {
                 case R.id.tv_pin:
                     Toast.makeText(v.getContext(), "置顶:" + position, Toast.LENGTH_LONG).show();
+                    String text = dataList.remove(position);
+                    dataList.add(0, text);
+                    notifyItemMoved(position, 0);
                     break;
                 case R.id.tv_delete:
                     Toast.makeText(v.getContext(), "删除:" + position, Toast.LENGTH_LONG).show();
+//                    dataList.remove(position);
+                    notifyDataSetChanged();
                     break;
                 default:
+                    break;
             }
         }
     }
