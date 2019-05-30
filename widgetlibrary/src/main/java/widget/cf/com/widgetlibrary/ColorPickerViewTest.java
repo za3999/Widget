@@ -225,8 +225,8 @@ public class ColorPickerViewTest extends View {
             return Color.argb(a, r, g, b);
         }
 
-        public String getColorStr(){
-          return   "#" + Integer.toHexString(getColor()).substring(2).toUpperCase();
+        public String getColorStr() {
+            return Integer.toHexString(getColor()).substring(2).toUpperCase();
         }
     }
 }
