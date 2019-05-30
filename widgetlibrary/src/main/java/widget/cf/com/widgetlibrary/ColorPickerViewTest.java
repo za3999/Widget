@@ -30,7 +30,6 @@ public class ColorPickerViewTest extends View {
     private OnColorBackListener l;
     float density;
     private int currentColor;
-    private String strColor = "";
 
     private float leftViewArea = 0.8f;
     private int leftViewMargin;
@@ -83,7 +82,6 @@ public class ColorPickerViewTest extends View {
     protected void onDraw(Canvas canvas) {
         canvas.save();
         canvas.translate(centerX, centerY);
-        strColor = "#" + Integer.toHexString(currentColor).substring(2).toUpperCase();
         canvas.drawOval(new RectF(-radius, -radius, radius, radius), paintCircle);
         if (leftPoint != null) {
             canvas.drawCircle(leftPoint.first, leftPoint.second, dp(4), paintPoint);
@@ -98,7 +96,7 @@ public class ColorPickerViewTest extends View {
         }
         canvas.drawRect(new RectF(0, 0, rightRectWidth, getHeight()), paintLightShadow);
         canvas.drawRect(new RectF(1, 1, rightRectWidth - 1, getHeight() - 1), paintGray);
-        canvas.drawRect(new RectF(0, rightPointY - dp(1), rightRectWidth, rightPointY + dp(1)), paintLightShadow);
+        canvas.drawRoundRect(new RectF(dp(-3), rightPointY - dp(3), rightRectWidth + dp(3), rightPointY + dp(3)), 0f, 0f, paintPoint);
         canvas.restore();
         mRedrawHSV = true;
     }
@@ -114,14 +112,12 @@ public class ColorPickerViewTest extends View {
         centerY = radius;
         rightRectWidth = dp(15);
         super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-        int rightAreaWidth = getMeasuredWidth() - leftViewWidth;
-        int rightOffset = (rightAreaWidth - rightRectWidth) / 2;
-        rightViewLeft = getMeasuredWidth() - rightOffset;
+        rightViewLeft = getMeasuredWidth() - rightRectWidth - dp(40);
         rightPointY = getMeasuredHeight() / 2;
     }
 
     public String getStrColor() {
-        return strColor;
+        return "#" + Integer.toHexString(currentColor).substring(2).toUpperCase();
     }
 
     private int dp(float value) {
@@ -169,12 +165,14 @@ public class ColorPickerViewTest extends View {
                     float circleY = y - centerY;
                     float angle = (float) Math.atan2(circleY, circleX);
                     float unit = angle / (2 * PI);
-                    if (unit < 0)
+                    if (unit < 0) {
                         unit += 1;
+                    }
+                    rightPointY = getHeight() / 2;
                     currentColor = interpColor(arrColorCircle, unit);
                     leftPoint = new Pair<>(circleX, circleY);
                     invalidate();
-                } else if (isTouchRightView(x)) {
+                } else if (isTouchRightView(x, y)) {
                     rightPointY = y;
                     int a, r, g, b, c0, c1;
                     float p;
@@ -211,8 +209,8 @@ public class ColorPickerViewTest extends View {
         return touchCircle;
     }
 
-    private boolean isTouchRightView(float x) {
-        return x > rightViewLeft && x < rightViewLeft + rightRectWidth;
+    private boolean isTouchRightView(float x, float y) {
+        return x > rightViewLeft && x < rightViewLeft + rightRectWidth && y > 0 && y < getHeight();
     }
 
     public void setOnColorBackListener(OnColorBackListener l) {

@@ -21,7 +21,7 @@ public class ColorPickerActivity extends AppCompatActivity {
         colorPickerView.setOnColorBackListener(new ColorPickerViewTest.OnColorBackListener() {
             @Override
             public void onColorBack(int a, int r, int g, int b) {
-                tv.setText("R：" + r + "\tG：" + g + "\tB：" + b + "\t" + colorPickerView.getStrColor());
+                tv.setText("R:" + r + "\tG:" + g + "\tB:" + b + "\t" + "\n" + colorPickerView.getStrColor());
                 int color = Color.argb(a, r, g, b);
                 tv.setBackgroundColor(color);
             }
