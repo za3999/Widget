@@ -20,10 +20,9 @@ public class ColorPickerActivity extends AppCompatActivity {
         tv = findViewById(R.id.tv_info);
         colorPickerView.setOnColorBackListener(new ColorPickerViewTest.OnColorBackListener() {
             @Override
-            public void onColorBack(int a, int r, int g, int b) {
-                tv.setText("R:" + r + "\tG:" + g + "\tB:" + b + "\t" + "\n" + colorPickerView.getStrColor());
-                int color = Color.argb(a, r, g, b);
-                tv.setBackgroundColor(color);
+            public void onColorBack(ColorPickerViewTest.ColorProperty colorProperty) {
+                tv.setText("R:" + colorProperty.r + "\tG:" + colorProperty.g + "\tB:" + colorProperty.b + "\t" + "\n" + colorProperty.getColorStr());
+                tv.setBackgroundColor(colorProperty.getColor());
             }
         });
     }

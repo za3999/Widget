@@ -114,10 +114,6 @@ public class ColorPickerViewTest extends View {
         rightPointY = getMeasuredHeight() / 2;
     }
 
-    public String getStrColor() {
-        return "#" + Integer.toHexString(currentColor).substring(2).toUpperCase();
-    }
-
     private int dp(float value) {
         return (int) Math.ceil(density * value);
     }
@@ -196,9 +192,9 @@ public class ColorPickerViewTest extends View {
         colorProperty.r = ave(Color.red(c0), Color.red(c1), p);
         colorProperty.g = ave(Color.green(c0), Color.green(c1), p);
         colorProperty.b = ave(Color.blue(c0), Color.blue(c1), p);
-        currentColor = Color.argb(colorProperty.a, colorProperty.r, colorProperty.g, colorProperty.b);
+        currentColor = colorProperty.getColor();
         if (l != null) {
-            l.onColorBack(colorProperty.a, colorProperty.r, colorProperty.g, colorProperty.b);
+            l.onColorBack(colorProperty);
         }
         invalidate();
         return colorProperty;
@@ -219,10 +215,18 @@ public class ColorPickerViewTest extends View {
     }
 
     public interface OnColorBackListener {
-        void onColorBack(int a, int r, int g, int b);
+        void onColorBack(ColorProperty colorProperty);
     }
 
-    private class ColorProperty {
-        int a, r, g, b;
+    public static class ColorProperty {
+        public int a, r, g, b;
+
+        public int getColor() {
+            return Color.argb(a, r, g, b);
+        }
+
+        public String getColorStr(){
+          return   "#" + Integer.toHexString(getColor()).substring(2).toUpperCase();
+        }
     }
 }
