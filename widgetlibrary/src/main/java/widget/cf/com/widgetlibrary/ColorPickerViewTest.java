@@ -10,7 +10,6 @@ import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +29,7 @@ public class ColorPickerViewTest extends View {
     private OnColorBackListener l;
     float density;
     private int currentColor;
-
+    private int baseColor;
     private float leftViewArea = 0.8f;
     private int leftViewMargin;
     int leftViewWidth;
@@ -59,9 +58,9 @@ public class ColorPickerViewTest extends View {
     }
 
     private void init() {
-        currentColor = Color.parseColor("#FFFFFF");
+        currentColor = baseColor = Color.parseColor("#FFFFFF");
         density = getContext().getResources().getDisplayMetrics().density;
-        arrColorGray = new int[]{0xFFFFFFFF, currentColor, 0xFF000000};
+        arrColorGray = new int[]{0xFFFFFFFF, baseColor, 0xFF000000};
         paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintCircle.setShader(new SweepGradient(0, 0, arrColorCircle, null));
         paintCircle.setStyle(Paint.Style.FILL);
@@ -91,14 +90,13 @@ public class ColorPickerViewTest extends View {
         canvas.save();
         canvas.translate(rightViewLeft, 0);
         if (mRedrawHSV) {
-            arrColorGray[1] = currentColor;
+            arrColorGray[1] = baseColor;
             paintGray.setShader(new LinearGradient(0, 0, rightRectWidth, (float) getHeight(), arrColorGray, null, Shader.TileMode.CLAMP));
         }
         canvas.drawRect(new RectF(0, 0, rightRectWidth, getHeight()), paintLightShadow);
         canvas.drawRect(new RectF(1, 1, rightRectWidth - 1, getHeight() - 1), paintGray);
         canvas.drawRoundRect(new RectF(dp(-3), rightPointY - dp(3), rightRectWidth + dp(3), rightPointY + dp(3)), 0f, 0f, paintPoint);
         canvas.restore();
-        mRedrawHSV = true;
     }
 
     @Override
@@ -147,9 +145,6 @@ public class ColorPickerViewTest extends View {
         int r = ave(Color.red(c0), Color.red(c1), p);
         int g = ave(Color.green(c0), Color.green(c1), p);
         int b = ave(Color.blue(c0), Color.blue(c1), p);
-        if (l != null) {
-            l.onColorBack(a, r, g, b);
-        }
         return Color.argb(a, r, g, b);
     }
 
@@ -161,46 +156,52 @@ public class ColorPickerViewTest extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
                 if (isTouchCircle(x, y)) {
+                    mRedrawHSV = true;
                     float circleX = x - centerX;
                     float circleY = y - centerY;
+                    leftPoint = new Pair<>(circleX, circleY);
                     float angle = (float) Math.atan2(circleY, circleX);
                     float unit = angle / (2 * PI);
                     if (unit < 0) {
                         unit += 1;
                     }
-                    rightPointY = getHeight() / 2;
-                    currentColor = interpColor(arrColorCircle, unit);
-                    leftPoint = new Pair<>(circleX, circleY);
-                    invalidate();
+                    baseColor = interpColor(arrColorCircle, unit);
+                    setCurrentColor();
                 } else if (isTouchRightView(x, y)) {
-                    rightPointY = y;
-                    int a, r, g, b, c0, c1;
-                    float p;
-                    int center = getHeight() / 2;
-                    if (rightPointY < center) {
-                        c0 = arrColorGray[0];
-                        c1 = arrColorGray[1];
-                        p = rightPointY / center;
-                    } else {
-                        c0 = arrColorGray[1];
-                        c1 = arrColorGray[2];
-                        p = (rightPointY - center) / center;
-                    }
-                    a = ave(Color.alpha(c0), Color.alpha(c1), p);
-                    r = ave(Color.red(c0), Color.red(c1), p);
-                    g = ave(Color.green(c0), Color.green(c1), p);
-                    b = ave(Color.blue(c0), Color.blue(c1), p);
-                    currentColor = Color.argb(a, r, g, b);
                     mRedrawHSV = false;
-                    if (l != null) {
-                        l.onColorBack(a, r, g, b);
-                    }
-                    invalidate();
+                    rightPointY = y;
+                    setCurrentColor();
                 }
                 break;
             }
         }
         return true;
+    }
+
+    private ColorProperty setCurrentColor() {
+        int c0, c1;
+        float p;
+        int center = getHeight() / 2;
+        if (rightPointY < center) {
+            c0 = arrColorGray[0];
+            c1 = arrColorGray[1];
+            p = rightPointY / center;
+        } else {
+            c0 = arrColorGray[1];
+            c1 = arrColorGray[2];
+            p = (rightPointY - center) / center;
+        }
+        ColorProperty colorProperty = new ColorProperty();
+        colorProperty.a = ave(Color.alpha(c0), Color.alpha(c1), p);
+        colorProperty.r = ave(Color.red(c0), Color.red(c1), p);
+        colorProperty.g = ave(Color.green(c0), Color.green(c1), p);
+        colorProperty.b = ave(Color.blue(c0), Color.blue(c1), p);
+        currentColor = Color.argb(colorProperty.a, colorProperty.r, colorProperty.g, colorProperty.b);
+        if (l != null) {
+            l.onColorBack(colorProperty.a, colorProperty.r, colorProperty.g, colorProperty.b);
+        }
+        invalidate();
+        return colorProperty;
     }
 
     private boolean isTouchCircle(float x, float y) {
@@ -219,5 +220,9 @@ public class ColorPickerViewTest extends View {
 
     public interface OnColorBackListener {
         void onColorBack(int a, int r, int g, int b);
+    }
+
+    private class ColorProperty {
+        int a, r, g, b;
     }
 }
