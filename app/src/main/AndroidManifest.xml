@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SwipeLayoutActivity"></activity>
+        <activity android:name=".ColorPickerActivity"></activity>
     </application>
 
 </manifest>

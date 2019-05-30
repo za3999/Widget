@@ -37,4 +37,10 @@
             android:text="搜索"
             android:onClick="onSearchClick"/>
     </RelativeLayout>
+
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="颜色"
+        android:onClick="onColorPickerClick"/>
 </LinearLayout>

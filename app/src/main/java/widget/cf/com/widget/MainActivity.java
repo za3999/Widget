@@ -23,18 +23,23 @@ public class MainActivity extends Activity {
         llLayout = findViewById(R.id.ll_layout);
     }
 
-    public void onSwipeLayoutClick(View view) {
-        startActivity(new Intent(this, SwipeLayoutActivity.class));
-    }
-
-    public void onSearchClick(View view){
+    public void onSearchClick(View view) {
         TextView textView = new TextView(this);
         textView.setText("哈哈");
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT);
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.leftMargin = 5;
-        params.gravity =Gravity.CENTER;
+        params.gravity = Gravity.CENTER;
         textView.setLayoutParams(params);
         textView.setBackgroundResource(R.color.color_01dfa6);
         llLayout.addView(textView);
     }
+
+    public void onSwipeLayoutClick(View view) {
+        startActivity(new Intent(this, SwipeLayoutActivity.class));
+    }
+
+    public void onColorPickerClick(View view) {
+        startActivity(new Intent(this, ColorPickerActivity.class));
+    }
+
 }
