@@ -5,12 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +23,7 @@ public class ColorPickerViewTest extends View {
     private static final float PI = (float) Math.PI;
 
     private Paint paintCircle;
+    private Paint paintCircleShadow;
     private Paint paintGray;
     private Paint paintLightShadow;
     private Paint paintPoint;
@@ -61,6 +62,9 @@ public class ColorPickerViewTest extends View {
         init();
     }
 
+    public ColorProperty getCurrentColor() {
+        return currentColor;
+    }
 
     public void setOnColorBackListener(OnColorBackListener l) {
         this.colorChangeListener = l;
@@ -72,6 +76,9 @@ public class ColorPickerViewTest extends View {
         arrColorGray = new int[]{0xFFFFFFFF, baseColor, 0xFF000000};
         paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintCircle.setShader(new SweepGradient(0, 0, arrColorCircle, null));
+        paintCircle.setStyle(Paint.Style.FILL);
+
+        paintCircleShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintCircle.setStyle(Paint.Style.FILL);
 
         paintGray = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -91,6 +98,7 @@ public class ColorPickerViewTest extends View {
         canvas.save();
         canvas.translate(centerX, centerY);
         canvas.drawOval(new RectF(-radius, -radius, radius, radius), paintCircle);
+//        canvas.drawOval(new RectF(-radius, -radius, radius, radius), paintCircleShadow);
         if (leftPoint != null) {
             canvas.drawCircle(leftPoint.first, leftPoint.second, dp(4), paintPoint);
         }
@@ -114,6 +122,7 @@ public class ColorPickerViewTest extends View {
         leftViewWidth = (int) (w * leftViewArea);
         leftViewMargin = dp(15);
         radius = (leftViewWidth - leftViewMargin * 2) / 2;
+        paintCircleShadow.setShader(new RadialGradient(0, 0, radius, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP));
         int height = radius * 2;
         centerX = leftViewMargin + radius;
         centerY = radius;
@@ -134,7 +143,8 @@ public class ColorPickerViewTest extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
-                if (isTouchCircle(x, y)) {
+                int distance = getTouchCircleDistance(x, y);
+                if (distance < radius) {
                     float circleX = x - centerX;
                     float circleY = y - centerY;
                     onCircleUpdate(circleX, circleY);
@@ -191,10 +201,8 @@ public class ColorPickerViewTest extends View {
         return colorProperty;
     }
 
-    private boolean isTouchCircle(float x, float y) {
-        int distance = (int) Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-        boolean touchCircle = distance < radius;
-        return touchCircle;
+    private int getTouchCircleDistance(float x, float y) {
+        return (int) Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
     }
 
     private boolean isTouchRightView(float x, float y) {
