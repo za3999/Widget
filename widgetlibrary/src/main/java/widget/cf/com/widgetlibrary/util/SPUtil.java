@@ -1,4 +1,4 @@
-package widget.cf.com.widgetlibrary;
+package widget.cf.com.widgetlibrary.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -15,6 +15,8 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import widget.cf.com.widgetlibrary.util.SPUtil;
+
 public class ColorPickerViewTest extends View {
 
     public static final String KEY_CIRCLE_POINT = "circle_point";
@@ -122,12 +124,12 @@ public class ColorPickerViewTest extends View {
         leftViewWidth = (int) (w * leftViewArea);
         leftViewMargin = dp(15);
         radius = (leftViewWidth - leftViewMargin * 2) / 2;
-        paintCircleShadow.setShader(new RadialGradient(0, 0, radius, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP));
         int height = radius * 2;
+        super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        paintCircleShadow.setShader(new RadialGradient(0, 0, radius, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP));
         centerX = leftViewMargin + radius;
         centerY = radius;
         rightRectWidth = dp(15);
-        super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         rightViewLeft = getMeasuredWidth() - rightRectWidth - dp(40);
         deepness = SPUtil.get(getContext(), KEY_DEEPNESS, 0.5F, Float.class);
         String pointStr = SPUtil.get(getContext(), KEY_CIRCLE_POINT, "0f:0f", String.class);
