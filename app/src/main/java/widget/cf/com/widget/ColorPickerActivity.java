@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import widget.cf.com.widgetlibrary.ColorPickerViewTest;
+import widget.cf.com.widgetlibrary.ColorPickerView;
 
 public class ColorPickerActivity extends AppCompatActivity {
 
     private TextView tv;
-    private ColorPickerViewTest colorPickerView;
+    private ColorPickerView colorPickerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +17,9 @@ public class ColorPickerActivity extends AppCompatActivity {
         setContentView(R.layout.color_pick_layout);
         colorPickerView = findViewById(R.id.color_pick_v);
         tv = findViewById(R.id.tv_info);
-        colorPickerView.setOnColorBackListener(new ColorPickerViewTest.OnColorBackListener() {
+        colorPickerView.setOnColorBackListener(new ColorPickerView.OnColorBackListener() {
             @Override
-            public void onColorBack(ColorPickerViewTest.ColorProperty colorProperty) {
+            public void onColorBack(ColorPickerView.ColorProperty colorProperty) {
                 tv.setText("R:" + colorProperty.r + "\tG:" + colorProperty.g + "\tB:" + colorProperty.b + "\t" + "\n" + colorProperty.getColorStr());
                 tv.setBackgroundColor(colorProperty.getColor());
             }

@@ -14,7 +14,7 @@
         android:text="颜色取值"
         android:textColor="@android:color/black" />
 
-    <widget.cf.com.widgetlibrary.ColorPickerViewTest
+    <widget.cf.com.widgetlibrary.ColorPickerView
         android:id="@+id/color_pick_v"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

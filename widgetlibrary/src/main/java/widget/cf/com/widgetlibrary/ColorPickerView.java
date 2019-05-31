@@ -5,144 +5,222 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import widget.cf.com.widgetlibrary.util.SPUtil;
+
 public class ColorPickerView extends View {
+
+    public static final String KEY_CIRCLE_POINT = "circle_point";
+    public static final String KEY_DEEPNESS = "deepness";
+
     private static final float PI = (float) Math.PI;
 
-    private Paint paintCirclePhantom;
     private Paint paintCircle;
-    private Paint paintCenterShadow;
-    private Paint paintCenter;
-    private Paint paintGrayShadow;
+    private Paint paintCircleShadow;
     private Paint paintGray;
     private Paint paintLightShadow;
-    private Paint paintLight;
-    private double Zoom;
+    private Paint paintPoint;
     private int[] arrColorGray;
-    private final int[] arrColorCircle = new int[]{0xFFFF0000, 0xFFFF00FF,
-            0xFF0000FF, 0xFF00FFFF, 0xFF00FF00, 0xFFFFFF00, 0xFFFF0000};
-    private boolean mRedrawHSV;
-    private boolean IsPressCenter;
-    private boolean IsMoveCenter;
+    private final int[] arrColorCircle = new int[]{0xFFFF0000, 0xFFFF00FF, 0xFF0000FF, 0xFF00FFFF, 0xFF00FF00, 0xFFFFFF00, 0xFFFF0000};
 
-    private int CenterX = 100;
-    private int CenterY = 100;
-    private int CenterRadius = 30;
-    private String strColor = "";
+    private boolean circleUpdate;
+    private OnColorBackListener colorChangeListener;
+    float density;
+    private ColorProperty currentColor;
+    private int baseColor;
+    private float leftViewArea = 0.8f;
+    private int leftViewMargin;
+    int leftViewWidth;
+    private int centerX;
+    private int centerY;
+    int radius;
+    Pair<Float, Float> leftPoint;
 
-    private OnColorBackListener l;
+    private int rightRectWidth;
+    int rightViewLeft;
+    private float deepness = 0.5f;
 
     public ColorPickerView(Context context) {
         super(context);
-        float density = getContext().getResources().getDisplayMetrics().density;
-        double Zoom = (double) (density / 2.0 + 0.5);
-        int color = Color.parseColor("#FFFFFF");
-        init(color, Zoom);
+        init();
     }
 
-    public ColorPickerView(Context context, int color, double Zoom) {
-        super(context);
-        init(color, Zoom);
+    public ColorPickerView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init();
     }
 
-    private void init(int color, double Zoom) {
-        this.Zoom = Zoom;
-        CenterX = (int) (100 * Zoom);
-        CenterY = (int) (100 * Zoom);
-        CenterRadius = (int) (30 * Zoom);
-        paintCirclePhantom = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public ColorPickerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    public ColorProperty getCurrentColor() {
+        return currentColor;
+    }
+
+    public void setOnColorBackListener(OnColorBackListener l) {
+        this.colorChangeListener = l;
+    }
+
+    private void init() {
+        baseColor = Color.parseColor("#FFFFFF");
+        density = getContext().getResources().getDisplayMetrics().density;
+        arrColorGray = new int[]{0xFFFFFFFF, baseColor, 0xFF000000};
         paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintCenterShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintCenter = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintGrayShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintCircle.setShader(new SweepGradient(0, 0, arrColorCircle, null));
+        paintCircle.setStyle(Paint.Style.FILL);
+
+        paintCircleShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintCircle.setStyle(Paint.Style.FILL);
+
         paintGray = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintLightShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintLight = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintCirclePhantom.setColor(0xFF000000);
-        paintCirclePhantom.setStyle(Paint.Style.STROKE);
-        paintCirclePhantom.setStrokeWidth((float) (32 * Zoom));
+        paintLightShadow.setColor(Color.BLACK);
+        paintLightShadow.setStyle(Paint.Style.STROKE);
+        paintLightShadow.setStrokeWidth(dp(1));
 
-        paintCircle.setShader(new SweepGradient(0, 0, arrColorCircle, null));
-        paintCircle.setStyle(Paint.Style.STROKE);
-        paintCircle.setStrokeWidth((float) (32 * Zoom));
-
-        paintCenterShadow.setColor(0xFF000000);
-        paintCenterShadow.setStrokeWidth((float) (5 * Zoom));
-
-        paintCenter.setColor(color);
-        paintCenter.setStrokeWidth((float) (5 * Zoom));
-
-        paintGrayShadow.setColor(0xFF000000);
-        paintGrayShadow.setStrokeWidth((float) (30 * Zoom));
-
-        arrColorGray = new int[]{0xFFFFFFFF, color, 0xFF000000};
-        paintGray.setStrokeWidth((float) (30 * Zoom));
-
-        paintLightShadow.setColor(0xFF000000);
-        paintLightShadow.setStrokeWidth((float) (60 * Zoom));
-
-        paintLight.setStrokeWidth((float) (60 * Zoom));
-
-        mRedrawHSV = true;
+        paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintPoint.setStyle(Paint.Style.FILL);
+        paintPoint.setColor(Color.BLACK);
+        circleUpdate = true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.translate(CenterX, CenterY);
-        float r = CenterX - paintCircle.getStrokeWidth() * 0.5f;
-        int color = paintCenter.getColor();
-        strColor = "#" + Integer.toHexString(color).substring(2).toUpperCase();
-
-        if (mRedrawHSV) {
-            arrColorGray[1] = color;
-            paintGray.setShader(new LinearGradient(CenterX, -CenterY, CenterX,
-                    (float) (100 * Zoom), arrColorGray, null,
-                    Shader.TileMode.CLAMP));
+        canvas.save();
+        canvas.translate(centerX, centerY);
+        canvas.drawOval(new RectF(-radius, -radius, radius, radius), paintCircle);
+//        canvas.drawOval(new RectF(-radius, -radius, radius, radius), paintCircleShadow);
+        if (leftPoint != null) {
+            canvas.drawCircle(leftPoint.first, leftPoint.second, dp(4), paintPoint);
         }
+        canvas.restore();
 
-        canvas.drawOval(new RectF(-r + 3, -r + 3, r + 3, r + 3),
-                paintCirclePhantom);
-        canvas.drawOval(new RectF(-r, -r, r, r), paintCircle);
-        canvas.drawCircle(3, 3, CenterRadius, paintCenterShadow);
-        canvas.drawCircle(0, 0, CenterRadius, paintCenter);
-        canvas.drawRect(new RectF(CenterX + (float) (18 * Zoom), -CenterY + 3,
-                        CenterX + (float) (48 * Zoom), (float) (103 * Zoom)),
-                paintGrayShadow);
-        canvas.drawRect(new RectF(CenterX + (float) (15 * Zoom), -CenterY,
-                CenterX + (float) (45 * Zoom), (float) (100 * Zoom)), paintGray);
-
-        if (IsPressCenter) {
-            paintCenter.setStyle(Paint.Style.STROKE);
-
-            if (IsMoveCenter)
-                paintCenter.setAlpha(0xFF);
-            else
-                paintCenter.setAlpha(0x66);
-
-            canvas.drawCircle(0, 0,
-                    CenterRadius + paintCenter.getStrokeWidth(), paintCenter);
-            paintCenter.setStyle(Paint.Style.FILL);
-            paintCenter.setColor(color);
+        canvas.save();
+        canvas.translate(rightViewLeft, 0);
+        if (circleUpdate) {
+            paintGray.setShader(new LinearGradient(0, 0, rightRectWidth, (float) getHeight(), arrColorGray, null, Shader.TileMode.CLAMP));
         }
-
-        mRedrawHSV = true;
+        canvas.drawRect(new RectF(0, 0, rightRectWidth, getHeight()), paintLightShadow);
+        canvas.drawRect(new RectF(1, 1, rightRectWidth - 1, getHeight() - 1), paintGray);
+        float rightPointY = getHeight() * deepness;
+        canvas.drawRoundRect(new RectF(dp(-3), rightPointY - dp(3), rightRectWidth + dp(3), rightPointY + dp(3)), 0f, 0f, paintPoint);
+        canvas.restore();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(CenterX * 2 + 50, CenterY * 2 + 23);
+        final int w = MeasureSpec.getSize(widthMeasureSpec);
+        leftViewWidth = (int) (w * leftViewArea);
+        leftViewMargin = dp(15);
+        radius = (leftViewWidth - leftViewMargin * 2) / 2;
+        int height = radius * 2;
+        super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        paintCircleShadow.setShader(new RadialGradient(0, 0, radius, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP));
+        centerX = leftViewMargin + radius;
+        centerY = radius;
+        rightRectWidth = dp(15);
+        rightViewLeft = getMeasuredWidth() - rightRectWidth - dp(40);
+        deepness = SPUtil.get(getContext(), KEY_DEEPNESS, 0.5F, Float.class);
+        String pointStr = SPUtil.get(getContext(), KEY_CIRCLE_POINT, "0f:0f", String.class);
+        String[] point = pointStr.split(":");
+        onCircleUpdate(Float.parseFloat(point[0]), Float.parseFloat(point[1]));
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE: {
+                int distance = getTouchCircleDistance(x, y);
+                if (distance < radius) {
+                    float circleX = x - centerX;
+                    float circleY = y - centerY;
+                    onCircleUpdate(circleX, circleY);
+                } else if (isTouchRightView(x, y)) {
+                    circleUpdate = false;
+                    deepness = y / getHeight();
+                    SPUtil.put(getContext(), KEY_DEEPNESS, deepness);
+                    setCurrentColor();
+                }
+                break;
+            }
+        }
+        return true;
+    }
+
+    private void onCircleUpdate(float circleX, float circleY) {
+        circleUpdate = true;
+        leftPoint = new Pair<>(circleX, circleY);
+        float angle = (float) Math.atan2(circleY, circleX);
+        float unit = angle / (2 * PI);
+        if (unit < 0) {
+            unit += 1;
+        }
+        baseColor = interpColor(arrColorCircle, unit);
+        arrColorGray[1] = baseColor;
+        SPUtil.put(getContext(), KEY_CIRCLE_POINT, circleX + ":" + circleY);
+        setCurrentColor();
+    }
+
+    private ColorProperty setCurrentColor() {
+        int c0, c1;
+        float p;
+        int center = getMeasuredHeight() / 2;
+        float rightPointY = getMeasuredHeight() * deepness;
+        if (rightPointY < center) {
+            c0 = arrColorGray[0];
+            c1 = arrColorGray[1];
+            p = rightPointY / center;
+        } else {
+            c0 = arrColorGray[1];
+            c1 = arrColorGray[2];
+            p = (rightPointY - center) / center;
+        }
+        ColorProperty colorProperty = new ColorProperty();
+        colorProperty.a = ave(Color.alpha(c0), Color.alpha(c1), p);
+        colorProperty.r = ave(Color.red(c0), Color.red(c1), p);
+        colorProperty.g = ave(Color.green(c0), Color.green(c1), p);
+        colorProperty.b = ave(Color.blue(c0), Color.blue(c1), p);
+        currentColor = colorProperty;
+        if (colorChangeListener != null) {
+            colorChangeListener.onColorBack(colorProperty);
+        }
+        invalidate();
+        return colorProperty;
+    }
+
+    private int getTouchCircleDistance(float x, float y) {
+        return (int) Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+    }
+
+    private boolean isTouchRightView(float x, float y) {
+        return x > rightViewLeft && x < rightViewLeft + rightRectWidth && y > 0 && y < getHeight();
+    }
+
+    private int dp(float value) {
+        return (int) Math.ceil(density * value);
     }
 
     private int ave(int s, int d, float p) {
-        return s + java.lang.Math.round(p * (d - s));
+        return s + Math.round(p * (d - s));
     }
 
     private int interpColor(int colors[], float unit) {
+
         if (unit <= 0) {
             return colors[0];
         }
@@ -160,185 +238,22 @@ public class ColorPickerView extends View {
         int r = ave(Color.red(c0), Color.red(c1), p);
         int g = ave(Color.green(c0), Color.green(c1), p);
         int b = ave(Color.blue(c0), Color.blue(c1), p);
-        if (l != null) {
-            l.onColorBack(a, r, g, b);
-        }
         return Color.argb(a, r, g, b);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX() - CenterX;
-        float y = event.getY() - CenterY;
-        boolean inCenter = java.lang.Math.sqrt(x * x + y * y) <= CenterRadius;
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                IsPressCenter = inCenter;
-                if (inCenter) {
-                    IsMoveCenter = true;
-                    invalidate();
-                    break;
-                }
-            }
-            case MotionEvent.ACTION_MOVE: {
-                if (IsPressCenter) {
-                    if (IsMoveCenter != inCenter) {
-                        IsMoveCenter = inCenter;
-                        invalidate();
-                    }
-                } else if ((x >= -CenterX && x <= CenterX)
-                        && (y >= -CenterY && y <= CenterY)) {
-                    float angle = (float) java.lang.Math.atan2(y, x);
-                    float unit = angle / (2 * PI);
-                    if (unit < 0)
-                        unit += 1;
-                    paintCenter.setColor(interpColor(arrColorCircle, unit));
-                    invalidate();
-                } else {
-                    int a, r, g, b, c0, c1;
-                    float p;
-
-                    if (y < 0) {
-                        c0 = arrColorGray[0];
-                        c1 = arrColorGray[1];
-                        p = (y + 100) / 100;
-                    } else {
-                        c0 = arrColorGray[1];
-                        c1 = arrColorGray[2];
-                        p = y / 100;
-                    }
-
-                    a = ave(Color.alpha(c0), Color.alpha(c1), p);
-                    r = ave(Color.red(c0), Color.red(c1), p);
-                    g = ave(Color.green(c0), Color.green(c1), p);
-                    b = ave(Color.blue(c0), Color.blue(c1), p);
-
-                    paintCenter.setColor(Color.argb(a, r, g, b));
-                    mRedrawHSV = false;
-                    if (l != null) {
-                        l.onColorBack(a, r, g, b);
-                    }
-                    invalidate();
-                }
-                break;
-            }
-            case MotionEvent.ACTION_UP: {
-                if (IsPressCenter) {
-                    IsPressCenter = false;
-                    invalidate();
-                }
-                break;
-            }
-        }
-        return true;
-    }
-
-    public Paint getpaintCirclePhantom() {
-        return paintCirclePhantom;
-    }
-
-    public void setpaintCirclePhantom(Paint paintCirclePhantom) {
-        this.paintCirclePhantom = paintCirclePhantom;
-    }
-
-    public Paint getPaintCircle() {
-        return paintCircle;
-    }
-
-    public void setPaintCircle(Paint paintCircle) {
-        this.paintCircle = paintCircle;
-    }
-
-    public Paint getPaintCenterShadow() {
-        return paintCenterShadow;
-    }
-
-    public void setPaintCenterShadow(Paint paintCenterShadow) {
-        this.paintCenterShadow = paintCenterShadow;
-    }
-
-    public Paint getPaintCenter() {
-        return paintCenter;
-    }
-
-    public void setPaintCenter(Paint paintCenter) {
-        this.paintCenter = paintCenter;
-    }
-
-    public Paint getPaintGrayShadow() {
-        return paintGrayShadow;
-    }
-
-    public void setPaintGrayShadow(Paint paintGrayShadow) {
-        this.paintGrayShadow = paintGrayShadow;
-    }
-
-    public Paint getPaintGray() {
-        return paintGray;
-    }
-
-    public void setPaintGray(Paint paintGray) {
-        this.paintGray = paintGray;
-    }
-
-    public int[] getArrColorGray() {
-        return arrColorGray;
-    }
-
-    public void setArrColorGray(int[] arrColorGray) {
-        this.arrColorGray = arrColorGray;
-    }
-
-    public boolean ismRedrawHSV() {
-        return mRedrawHSV;
-    }
-
-    public void setmRedrawHSV(boolean mRedrawHSV) {
-        this.mRedrawHSV = mRedrawHSV;
-    }
-
-    public boolean isIsPressCenter() {
-        return IsPressCenter;
-    }
-
-    public void setIsPressCenter(boolean isPressCenter) {
-        IsPressCenter = isPressCenter;
-    }
-
-    public boolean isIsMoveCenter() {
-        return IsMoveCenter;
-    }
-
-    public void setIsMoveCenter(boolean isMoveCenter) {
-        IsMoveCenter = isMoveCenter;
-    }
-
-    public int[] getArrColorCircle() {
-        return arrColorCircle;
-    }
-
-    public String getStrColor() {
-        return strColor;
-    }
-
-    public void setStrColor(String strColor) {
-        this.strColor = strColor;
-    }
-
-    public double getZoom() {
-        return Zoom;
-    }
-
-    public void setZoom(double zoom) {
-        Zoom = zoom;
-    }
-
-    public void setOnColorBackListener(OnColorBackListener l) {
-        this.l = l;
-    }
-
     public interface OnColorBackListener {
-        public void onColorBack(int a, int r, int g, int b);
+        void onColorBack(ColorProperty colorProperty);
+    }
+
+    public static class ColorProperty {
+        public int a, r, g, b;
+
+        public int getColor() {
+            return Color.argb(a, r, g, b);
+        }
+
+        public String getColorStr() {
+            return Integer.toHexString(getColor()).substring(2).toUpperCase();
+        }
     }
 }
