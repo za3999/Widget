@@ -1,4 +1,4 @@
-package widget.cf.com.widgetlibrary;
+package widget.cf.com.widgetlibrary.appearance;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,11 +6,12 @@ import android.graphics.Color;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
+import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.util.SPUtil;
 import widget.cf.com.widgetlibrary.util.ViewUtil;
 
 
-public class AppearanceTextView extends AppCompatTextView {
+public class AppearanceTextView extends AppCompatTextView implements IAppearanceChange {
 
     boolean supportAppearance;
     boolean supportSelected;
@@ -37,7 +38,7 @@ public class AppearanceTextView extends AppCompatTextView {
             supportAppearance = array.getBoolean(R.styleable.AppearanceTextView_support_text_appearance, false);
             supportSelected = array.getBoolean(R.styleable.AppearanceTextView_support_text_selected, false);
             defaultColor = array.getColor(R.styleable.AppearanceTextView_support_text_default_color, Color.TRANSPARENT);
-            checkView();
+            onChange();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -46,14 +47,31 @@ public class AppearanceTextView extends AppCompatTextView {
             }
         }
     }
-    
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (supportAppearance) {
+            AppearanceManager.getInstance().unRegister(this);
+        }
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        checkView();
+        if (supportAppearance) {
+            AppearanceManager.getInstance().register(this);
+        }
     }
 
-    private void checkView() {
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        onChange();
+    }
+
+    @Override
+    public void onChange() {
         if (supportAppearance) {
             if (supportSelected) {
                 setTextColor(ViewUtil.getColorStateList(SPUtil.get(getContext(), "color", 0, Integer.class), defaultColor));
@@ -62,5 +80,4 @@ public class AppearanceTextView extends AppCompatTextView {
             }
         }
     }
-
 }

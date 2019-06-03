@@ -1,4 +1,4 @@
-package widget.cf.com.widgetlibrary.util;
+package widget.cf.com.widgetlibrary.appearance;
 
 import android.content.Context;
 import android.support.v4.view.LayoutInflaterCompat;
@@ -7,10 +7,6 @@ import android.support.v7.app.AppCompatDelegate;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-
-import widget.cf.com.widgetlibrary.AppearanceImageView;
-import widget.cf.com.widgetlibrary.AppearanceTextView;
-
 
 public class AppearanceUtil {
 
@@ -37,4 +33,5 @@ public class AppearanceUtil {
             }
         });
     }
+
 }

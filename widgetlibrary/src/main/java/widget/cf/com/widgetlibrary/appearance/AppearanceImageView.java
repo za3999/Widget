@@ -1,4 +1,4 @@
-package widget.cf.com.widgetlibrary;
+package widget.cf.com.widgetlibrary.appearance;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,10 +6,11 @@ import android.graphics.Color;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
+import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.util.SPUtil;
 import widget.cf.com.widgetlibrary.util.ViewUtil;
 
-public class AppearanceImageView extends AppCompatImageView {
+public class AppearanceImageView extends AppCompatImageView implements IAppearanceChange {
     boolean supportAppearance;
     boolean supportSelected;
     int defaultColor;
@@ -35,7 +36,7 @@ public class AppearanceImageView extends AppCompatImageView {
             supportAppearance = array.getBoolean(R.styleable.AppearanceImageView_support_image_appearance, false);
             supportSelected = array.getBoolean(R.styleable.AppearanceImageView_support_image_selected, false);
             defaultColor = array.getColor(R.styleable.AppearanceImageView_support_image_default_color, Color.TRANSPARENT);
-            checkView();
+            onChange();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -46,12 +47,30 @@ public class AppearanceImageView extends AppCompatImageView {
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        checkView();
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (supportAppearance) {
+            AppearanceManager.getInstance().unRegister(this);
+        }
     }
 
-    public void checkView() {
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (supportAppearance) {
+            AppearanceManager.getInstance().register(this);
+
+        }
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        onChange();
+    }
+
+    @Override
+    public void onChange() {
         if (supportAppearance) {
             if (supportSelected) {
                 ViewUtil.setImageTint(this, SPUtil.get(getContext(), "color", 0, Integer.class), defaultColor);

@@ -6,36 +6,22 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/test_ll"
+
+    <widget.cf.com.widgetlibrary.appearance.AppearanceTextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:text="测试文字"
+        android:textSize="18sp"
+        app:support_text_appearance="true" />
 
-        <LinearLayout
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <widget.cf.com.widgetlibrary.AppearanceTextView
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="测试文字"
-                android:textSize="18sp"
-                app:support_text_appearance="true" />
-
-            <widget.cf.com.widgetlibrary.AppearanceImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/test"
-                app:support_image_selected="true"
-                app:support_image_default_color="@color/color_e3e3e3"
-                android:onClick="onTestClick"
-                app:support_image_appearance="true" />
-        </LinearLayout>
-    </FrameLayout>
+    <widget.cf.com.widgetlibrary.appearance.AppearanceImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onTestClick"
+        android:src="@drawable/test"
+        app:support_image_appearance="true"
+        app:support_image_default_color="@color/color_e3e3e3"
+        app:support_image_selected="true" />
 
 
     <TextView
