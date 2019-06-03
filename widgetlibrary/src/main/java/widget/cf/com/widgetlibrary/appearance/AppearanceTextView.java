@@ -67,7 +67,9 @@ public class AppearanceTextView extends AppCompatTextView implements IAppearance
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
-        onChange();
+        if (supportSelected) {
+            onChange();
+        }
     }
 
     @Override

@@ -59,14 +59,15 @@ public class AppearanceImageView extends AppCompatImageView implements IAppearan
         super.onAttachedToWindow();
         if (supportAppearance) {
             AppearanceManager.getInstance().register(this);
-
         }
     }
 
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
-        onChange();
+        if (supportSelected) {
+            onChange();
+        }
     }
 
     @Override
