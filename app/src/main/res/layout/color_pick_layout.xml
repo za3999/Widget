@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/test_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <widget.cf.com.widgetlibrary.AppearanceTextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="测试文字"
+                android:textSize="18sp"
+                app:support_text_appearance="true" />
+
+            <widget.cf.com.widgetlibrary.AppearanceImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/test"
+                app:support_image_selected="true"
+                app:support_image_default_color="@color/color_e3e3e3"
+                android:onClick="onTestClick"
+                app:support_image_appearance="true" />
+        </LinearLayout>
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/tv_info"

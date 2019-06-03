@@ -20,27 +20,41 @@ public class ViewUtil {
 
     public static void setViewBackgroundTint(View view, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (color == -1) {
-                view.setBackgroundTintList(null);
-            } else {
-                int[][] states = new int[1][];
-                states[0] = new int[]{};
-                ColorStateList colorStateList = new ColorStateList(states, new int[]{color});
-                view.setBackgroundTintList(colorStateList);
-            }
+            view.setBackgroundTintList(getColorStateList(color));
         }
     }
 
     public static void setImageTint(ImageView view, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (color == -1) {
-                view.setImageTintList(null);
-            } else {
-                int[][] states = new int[1][];
-                states[0] = new int[]{};
-                ColorStateList colorStateList = new ColorStateList(states, new int[]{color});
-                view.setImageTintList(colorStateList);
-            }
+            view.setImageTintList(getColorStateList(color));
         }
+    }
+
+    public static void setImageTint(ImageView view, int selectColor, int unSelect) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            view.setImageTintList(getColorStateList(selectColor, unSelect));
+        }
+    }
+
+    public static ColorStateList getColorStateList(int color) {
+        ColorStateList colorStateList = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int[][] states = new int[1][];
+            states[0] = new int[]{};
+            colorStateList = new ColorStateList(states, new int[]{color});
+        }
+        return colorStateList;
+    }
+
+    public static ColorStateList getColorStateList(int selectColor, int unSelect) {
+        ColorStateList colorStateList = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int[] colors = new int[]{selectColor, unSelect};
+            int[][] states = new int[2][];
+            states[0] = new int[]{android.R.attr.state_selected};
+            states[1] = new int[]{};
+            colorStateList = new ColorStateList(states, colors);
+        }
+        return colorStateList;
     }
 }

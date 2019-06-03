@@ -24,4 +24,16 @@
         <attr name="maxLines" format="integer"/>
     </declare-styleable>
 
+    <declare-styleable name="AppearanceTextView">
+        <attr name="support_text_appearance" format="boolean" />
+        <attr name="support_text_selected" format="boolean" />
+        <attr name="support_text_default_color" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AppearanceImageView">
+        <attr name="support_image_appearance" format="boolean" />
+        <attr name="support_image_selected" format="boolean" />
+        <attr name="support_image_default_color" format="color|reference" />
+    </declare-styleable>
+
 </resources>
