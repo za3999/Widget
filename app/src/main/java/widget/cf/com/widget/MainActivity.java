@@ -34,13 +34,17 @@ public class MainActivity extends Activity {
         textView.setLayoutParams(params);
         textView.setBackgroundResource(R.color.color_01dfa6);
         llLayout.addView(textView);
+
+    }
+
+    public void onEmojiClick(View view) {
         mEmojiTv.setText("\uD83D\uDC12\uD83D\uDC37\uD83D\uDC14\uD83D\uDC14\uD83D\uDC38\uD83D\uDC38\uD83D\uDC3A\uD83D\uDC0C\uD83E\uDD8B\uD83D\uDD78\uD83E\uDD91\uD83E\uDD9E\uD83D\uDC22");
     }
 
     public void onSwipeLayoutClick(View view) {
         startActivity(new Intent(this, SwipeLayoutActivity.class));
 
-}
+    }
 
     public void onColorPickerClick(View view) {
         startActivity(new Intent(this, ColorPickerActivity.class));
