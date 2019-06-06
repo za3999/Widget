@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TextView;
 
+import widget.cf.com.widgetlibrary.HeadTextDrawable;
 import widget.cf.com.widgetlibrary.emoji.EmojiData;
 
 
@@ -18,6 +20,7 @@ public class MainActivity extends Activity {
 
     LinearLayout llLayout;
     TextView mEmojiTv;
+    ImageView mDrawableIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         llLayout = findViewById(R.id.ll_layout);
         mEmojiTv = findViewById(R.id.emoji_test_tv);
+        mDrawableIv = findViewById(R.id.emoji_drawable_iv);
     }
 
     public void onSearchClick(View view) {
@@ -48,6 +52,8 @@ public class MainActivity extends Activity {
             content.append(emojis[one][two]);
         }
         mEmojiTv.setText(content.toString());
+        int id = (int) ((Math.random() * 100) % 100);
+        mDrawableIv.setImageDrawable(new HeadTextDrawable(content.toString(), id));
     }
 
     public void onSwipeLayoutClick(View view) {

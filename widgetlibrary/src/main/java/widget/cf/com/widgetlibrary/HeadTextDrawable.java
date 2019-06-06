@@ -69,14 +69,12 @@ public class HeadTextDrawable extends ShapeDrawable {
 
     @Override
     public int getIntrinsicWidth() {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56f,
-                ApplicationUtil.getResources().getDisplayMetrics());
+        return ApplicationUtil.dp2px(56f);
     }
 
     @Override
     public int getIntrinsicHeight() {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56f,
-                ApplicationUtil.getResources().getDisplayMetrics());
+        return ApplicationUtil.dp2px(56f);
     }
 
     @Override
@@ -84,12 +82,8 @@ public class HeadTextDrawable extends ShapeDrawable {
         super.onDraw(shape, canvas, paint);
 
         if (!TextUtils.isEmpty(drawText)) {
-
             Rect rect = getBounds();
-
-            textPaint.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20,
-                    ApplicationUtil.getResources().getDisplayMetrics()));
-
+            textPaint.setTextSize(ApplicationUtil.sp2px(20));
             Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
             float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
                     - (fontMetrics.bottom - fontMetrics.descent);

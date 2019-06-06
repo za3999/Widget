@@ -2,8 +2,8 @@ package widget.cf.com.widgetlibrary.util;
 
 import android.app.Application;
 import android.content.res.Resources;
-import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 
 import widget.cf.com.widgetlibrary.BaseApplication;
 
@@ -30,14 +30,14 @@ public class ApplicationUtil {
         return (int) getResources().getDimension(resId);
     }
 
-    public static int dp(float value) {
-        if (value <= 0) {
-            return (int) value;
-        }
-        return (int) Math.ceil(getResources().getDisplayMetrics().density * value);
+    public static int dp2px(float value) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, ApplicationUtil.getResources().getDisplayMetrics());
+    }
+    public static int sp2px(float value) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, ApplicationUtil.getResources().getDisplayMetrics());
     }
 
-    public static int getScreenWidth(){
+    public static int getScreenWidth() {
         return getResources().getDisplayMetrics().widthPixels;
     }
 }

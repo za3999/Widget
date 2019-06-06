@@ -58,8 +58,8 @@ public class EmojiHelper {
     static {
         int add = 2 / imageResize;
         int emojiFullSize = 64 / imageResize;
-        drawImgSize = ApplicationUtil.dp(20);
-        bigImgSize = ApplicationUtil.dp(32);
+        drawImgSize = ApplicationUtil.dp2px(20);
+        bigImgSize = ApplicationUtil.dp2px(32);
         for (int j = 0; j < EmojiData.data.length; j++) {
             int count2 = (int) Math.ceil(EmojiData.data[j].length / (float) splitCount);
             int position;
@@ -593,7 +593,7 @@ public class EmojiHelper {
             if (original != null) {
                 size = Math.abs(fontMetrics.descent) + Math.abs(fontMetrics.ascent);
                 if (size == 0) {
-                    size = ApplicationUtil.dp(20);
+                    size = ApplicationUtil.dp2px(20);
                 }
             }
         }
@@ -615,8 +615,8 @@ public class EmojiHelper {
 
             if (fontMetrics == null) {
                 size = super.getSize(paint, text, start, end, fm);
-                int offset = ApplicationUtil.dp(8);
-                int w = ApplicationUtil.dp(10);
+                int offset = ApplicationUtil.dp2px(8);
+                int w = ApplicationUtil.dp2px(10);
                 fm.top = -w - offset;
                 fm.bottom = w - offset;
                 fm.ascent = -w - offset;
