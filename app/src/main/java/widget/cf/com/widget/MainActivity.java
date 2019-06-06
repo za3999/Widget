@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TextView;
 
+import widget.cf.com.widgetlibrary.emoji.EmojiData;
+
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
@@ -38,7 +40,14 @@ public class MainActivity extends Activity {
     }
 
     public void onEmojiClick(View view) {
-        mEmojiTv.setText("\uD83D\uDC12\uD83D\uDC37\uD83D\uDC14\uD83D\uDC14\uD83D\uDC38\uD83D\uDC38\uD83D\uDC3A\uD83D\uDC0C\uD83E\uDD8B\uD83D\uDD78\uD83E\uDD91\uD83E\uDD9E\uD83D\uDC22");
+        String[][] emojis = EmojiData.data;
+        StringBuilder content = new StringBuilder();
+        for (int i = 0; i < 300; i++) {
+            int one = (int) (Math.random() * emojis.length);
+            int two = (int) (Math.random() * emojis[one].length);
+            content.append(emojis[one][two]);
+        }
+        mEmojiTv.setText(content.toString());
     }
 
     public void onSwipeLayoutClick(View view) {
