@@ -25,22 +25,27 @@
                 android:id="@+id/ll_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal" />
         </HorizontalScrollView>
 
         <Button
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/sv_layout"
             android:layout_centerVertical="true"
             android:layout_marginLeft="-90dp"
-            android:text="搜索"
-            android:onClick="onSearchClick"/>
+            android:layout_toRightOf="@id/sv_layout"
+            android:onClick="onSearchClick"
+            android:text="搜索" />
     </RelativeLayout>
 
     <Button
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:text="颜色"
-        android:onClick="onColorPickerClick"/>
+        android:onClick="onColorPickerClick"
+        android:text="颜色" />
+
+    <widget.cf.com.widgetlibrary.EmojiAppCompatTextView
+        android:id="@+id/emoji_test_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

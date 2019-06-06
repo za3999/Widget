@@ -15,12 +15,14 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     LinearLayout llLayout;
+    TextView mEmojiTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         llLayout = findViewById(R.id.ll_layout);
+        mEmojiTv = findViewById(R.id.emoji_test_tv);
     }
 
     public void onSearchClick(View view) {
@@ -32,11 +34,13 @@ public class MainActivity extends Activity {
         textView.setLayoutParams(params);
         textView.setBackgroundResource(R.color.color_01dfa6);
         llLayout.addView(textView);
+        mEmojiTv.setText("\uD83D\uDC12\uD83D\uDC37\uD83D\uDC14\uD83D\uDC14\uD83D\uDC38\uD83D\uDC38\uD83D\uDC3A\uD83D\uDC0C\uD83E\uDD8B\uD83D\uDD78\uD83E\uDD91\uD83E\uDD9E\uD83D\uDC22");
     }
 
     public void onSwipeLayoutClick(View view) {
         startActivity(new Intent(this, SwipeLayoutActivity.class));
-    }
+
+}
 
     public void onColorPickerClick(View view) {
         startActivity(new Intent(this, ColorPickerActivity.class));
