@@ -85,12 +85,6 @@ import static android.content.Context.VIBRATOR_SERVICE;
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
     }
 
-    //震动
-    public static void vibrate(Context context) {
-        Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(200);
-    }
-
     //获取屏幕截图
     public static Bitmap getScreenCapture(Activity activity) {
         View view = activity.getWindow().getDecorView();

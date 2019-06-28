@@ -15,6 +15,7 @@
         app:support_text_appearance="true" />
 
     <widget.cf.com.widgetlibrary.appearance.AppearanceImageView
+        android:id="@+id/appearance_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onTestClick"

@@ -14,6 +14,7 @@ public class ColorPickerActivity extends AppCompatActivity {
 
     private TextView tv;
     private ColorPickerView colorPickerView;
+    private View mAppearanceIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +22,14 @@ public class ColorPickerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.color_pick_layout);
         colorPickerView = findViewById(R.id.color_pick_v);
+        mAppearanceIv =findViewById(R.id.appearance_iv);
+        mAppearanceIv.setSelected(true);
         tv = findViewById(R.id.tv_info);
-        colorPickerView.setOnColorBackListener(new ColorPickerView.OnColorBackListener() {
-            @Override
-            public void onColorBack(ColorPickerView.ColorProperty colorProperty) {
-                tv.setText("R:" + colorProperty.r + "\tG:" + colorProperty.g + "\tB:" + colorProperty.b + "\t" + "\n" + colorProperty.getColorStr());
-                tv.setBackgroundColor(colorProperty.getColor());
-                SPUtil.put(ColorPickerActivity.this, "color", colorProperty.getColor());
-                AppearanceManager.getInstance().notifyAppearanceChange();
-            }
+        colorPickerView.setOnColorBackListener(colorProperty -> {
+            tv.setText("R:" + colorProperty.r + "\tG:" + colorProperty.g + "\tB:" + colorProperty.b + "\t" + "\n" + colorProperty.getColorStr());
+            tv.setBackgroundColor(colorProperty.getColor());
+            SPUtil.put(ColorPickerActivity.this, "color", colorProperty.getColor());
+            AppearanceManager.getInstance().notifyAppearanceChange();
         });
     }
 
