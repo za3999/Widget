@@ -13,6 +13,9 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
     private boolean isConstantSpend;
     private int offset;
 
+    public TopLinearSmoothScroller(Context context) {
+        this(context, false);
+    }
     public TopLinearSmoothScroller(Context context, boolean isConstantSpend) {
         super(context);
         this.isConstantSpend = isConstantSpend;
