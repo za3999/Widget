@@ -12,10 +12,12 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
 
     private boolean isConstantSpend;
     private int offset;
+    private boolean smoothScroll = true;
 
     public TopLinearSmoothScroller(Context context) {
         this(context, false);
     }
+
     public TopLinearSmoothScroller(Context context, boolean isConstantSpend) {
         super(context);
         this.isConstantSpend = isConstantSpend;
@@ -27,14 +29,28 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
         int dy = calculateDyToMakeVisible(targetView, getVerticalSnapPreference());
         dy = dy + offset;
         final int distance = (int) Math.sqrt(dx * dx + dy * dy);
-        final int time = calculateTimeForDeceleration(distance);
+        final int time = getScrollTime(distance);
         if (time > 0) {
             action.update(-dx, -dy, time, mDecelerateInterpolator);
         }
     }
 
+    public int getScrollTime(int distance) {
+        int time;
+        if (smoothScroll) {
+            time = calculateTimeForDeceleration(distance);
+        } else {
+            time = 1;
+        }
+        return time;
+    }
+
     public void setOffset(int offset) {
         this.offset = offset;
+    }
+
+    public void setSmoothScroll(boolean smoothScroll) {
+        this.smoothScroll = smoothScroll;
     }
 
     protected int calculateTimeForScrolling(int dx) {
