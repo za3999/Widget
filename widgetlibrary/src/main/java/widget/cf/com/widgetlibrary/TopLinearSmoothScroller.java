@@ -1,6 +1,7 @@
 package widget.cf.com.widgetlibrary;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -12,7 +13,6 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
 
     private boolean isConstantSpend;
     private int offset;
-    private boolean smoothScroll = true;
 
     public TopLinearSmoothScroller(Context context) {
         this(context, false);
@@ -29,28 +29,14 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
         int dy = calculateDyToMakeVisible(targetView, getVerticalSnapPreference());
         dy = dy + offset;
         final int distance = (int) Math.sqrt(dx * dx + dy * dy);
-        final int time = getScrollTime(distance);
+        final int time = calculateTimeForDeceleration(distance);
         if (time > 0) {
             action.update(-dx, -dy, time, mDecelerateInterpolator);
         }
     }
 
-    public int getScrollTime(int distance) {
-        int time;
-        if (smoothScroll) {
-            time = calculateTimeForDeceleration(distance);
-        } else {
-            time = 1;
-        }
-        return time;
-    }
-
     public void setOffset(int offset) {
         this.offset = offset;
-    }
-
-    public void setSmoothScroll(boolean smoothScroll) {
-        this.smoothScroll = smoothScroll;
     }
 
     protected int calculateTimeForScrolling(int dx) {
@@ -69,8 +55,16 @@ public class TopLinearSmoothScroller extends LinearSmoothScroller {
         return SNAP_TO_START;
     }
 
-    public void smoothScroll2Position(RecyclerView.LayoutManager layoutManager, int scrollPosition, int offset) {
-        setTargetPosition(scrollPosition);
+    public void scroll2Position(LinearLayoutManager layoutManager, int position, int offset, boolean smoothScroll) {
+        if (smoothScroll) {
+            smoothScroll2Position(layoutManager, position, offset);
+        } else {
+            layoutManager.scrollToPositionWithOffset(position, offset);
+        }
+    }
+
+    public void smoothScroll2Position(LinearLayoutManager layoutManager, int position, int offset) {
+        setTargetPosition(position);
         setOffset(offset);
         layoutManager.startSmoothScroll(this);
     }
