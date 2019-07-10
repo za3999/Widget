@@ -131,6 +131,10 @@ public class WaveHelper {
 
     private void drawWave(Canvas canvas) {
         if (mProgress < 0 || mProgress >= 1) {
+            if (mWaveAnimator != null) {
+                mWaveAnimator.cancel();
+                mWaveAnimator = null;
+            }
             return;
         }
         mPath.reset();
