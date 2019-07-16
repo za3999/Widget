@@ -105,11 +105,11 @@ public class MainTableActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             if (position == 0) {
-                return new Fragment();
+                return TestFragment.getInstance("我是第一个Fragment");
             } else if (position == 1) {
-                return new Fragment();
+                return TestFragment.getInstance("我是第二个Fragment");
             } else {
-                return new Fragment();
+                return TestFragment.getInstance("我是第三个Fragment");
             }
         }
 
