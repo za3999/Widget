@@ -27,6 +27,8 @@ public class MainTableActivity extends AppCompatActivity {
         mPager = findViewById(R.id.view_pager);
         mTabLayout = findViewById(R.id.tab_layout);
         mTabLayout.removeAllViews();
+        mTabLayout.setMaxShowCount(999);
+        mTabLayout.setMaxShowText("999+");
         mTabLayout.addItemView(R.id.nv_menu_session, R.drawable.menu_session_selecter, ApplicationUtil.getResources().getString(R.string.chat));
         mTabLayout.addItemView(R.id.nv_menu_contacts, R.drawable.menu_contact_selecter, ApplicationUtil.getResources().getString(R.string.contact));
         mTabLayout.addItemView(R.id.nv_menu_settings, R.drawable.menu_user_selecter, ApplicationUtil.getResources().getString(R.string.setting));

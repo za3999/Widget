@@ -20,9 +20,12 @@ import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class MainTabLayout extends LinearLayout {
-    List<MenuItem> mMenuItems = new ArrayList<>();
-    OnTableClickListener mTableClickListener;
-    MenuItem mSelectItem;
+
+    private List<MenuItem> mMenuItems = new ArrayList<>();
+    private OnTableClickListener mTableClickListener;
+    private MenuItem mSelectItem;
+    int mMaxShowCount = 99;
+    String mMaxShowText = "99+";
 
     Handler mainHandler = new Handler(Looper.getMainLooper()) {
 
@@ -42,6 +45,14 @@ public class MainTabLayout extends LinearLayout {
 
     public MainTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void setMaxShowText(String mMaxShowText) {
+        this.mMaxShowText = mMaxShowText;
+    }
+
+    public void setMaxShowCount(int mMaxShowCount) {
+        this.mMaxShowCount = mMaxShowCount;
     }
 
     public void setTableClickListener(OnTableClickListener tableClickListener) {
@@ -74,6 +85,8 @@ public class MainTabLayout extends LinearLayout {
             }
             mSelectItem = menuItem1;
         });
+        menuItem.setMaxShowCount(mMaxShowCount);
+        menuItem.setMaxShowText(mMaxShowText);
         menuItem.bindView(id, iconRes, name);
         mMenuItems.add(menuItem);
     }
@@ -120,6 +133,8 @@ public class MainTabLayout extends LinearLayout {
         TextView mPopTv;
         View mSmallPopV;
         BaseCallBack.CallBack1<MenuItem> mOnSelectListener;
+        int mMaxShowCount;
+        String mMaxShowText;
 
         public MenuItem(View rootView, BaseCallBack.CallBack1<MenuItem> onSelectListener) {
             this.rootView = rootView;
@@ -139,6 +154,14 @@ public class MainTabLayout extends LinearLayout {
             rootView.setId(id);
             mIcon.setImageResource(iconRes);
             mNameTv.setText(name);
+        }
+
+        public void setMaxShowCount(int mMaxShowCount) {
+            this.mMaxShowCount = mMaxShowCount;
+        }
+
+        public void setMaxShowText(String mMaxShowText) {
+            this.mMaxShowText = mMaxShowText;
         }
 
         public void setSelect(boolean isSelected) {
@@ -163,8 +186,8 @@ public class MainTabLayout extends LinearLayout {
                 mPopTv.setVisibility(View.VISIBLE);
                 int padding = count < 10 ? 0 : ApplicationUtil.getIntDimension(R.dimen.dp_4);
                 mPopTv.setPadding(padding, 0, padding, 0);
-                if (count > 99) {
-                    mPopTv.setText("99+");
+                if (count > mMaxShowCount) {
+                    mPopTv.setText(mMaxShowText);
                 } else {
                     mPopTv.setText("" + count);
                 }
