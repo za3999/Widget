@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="nv_menu_session"></item>
+    <item type="id" name="nv_menu_contacts"></item>
+    <item type="id" name="nv_menu_settings"></item>
+</resources>

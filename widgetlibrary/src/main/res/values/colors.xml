@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="grey">#333333</color>
+    <color name="color_green_58b99d">#654321</color>
+    <color name="color_blue_0888ff">#0888ff</color>
+    <color name="color_black_333333">#333333</color>
+    <color name="color_grey_999999">#999999</color>
+    <color name="color_activity_blue_bg">#f7389fff</color>
+    <color name="split_line_grey_color_d9d9d9">#d9d9d9</color>
+    <color name="green_4DC0A4">#4DC0A4</color>
+    <color name="gray7">#c5c4c4</color>
+    <color name="im_list_select_hover">#dbdbdb</color>
+    <color name="color_aaaaaa_content_text">#aaaaaa</color>
+    <color name="title_color_01d9ae">#01D9AE</color>
+    <color name="color_b3b3b3">#b3b3b3</color>
+    <color name="color_green_00d3a9">#ff00D3A9</color>
+    <color name="color_red_ccfa3c55">#ccfa3c55</color>
+    <color name="color_black_b3000000">#b3000000</color>
+    <color name="color_gray_f9f9f9">#fff9f9f9</color>
+    <color name="color_ait">#ff0099cc</color>
+    <color name="color_61bc79">#61bc79</color>
+
+    <!-- main bg color -->
+    <color name="g_child_page_bg_color">#FFFFFF</color>
+    <color name="main_bg_color">#FFFFFF</color>
+    <color name="main_tab_bg">#54b484</color>
+
+    <!-- session -->
+    <color name="pin_item_bg">#f5f5f5</color>
+
+    <!-- image picker -->
+    <color name="color_split_line_d9d9d9">#d9d9d9</color>
+
+    <!-- contact -->
+    <color name="contact_list_hover">#d9d9d9</color>
+    <color name="contacts_letters_color">#909399</color>
+    <color name="press_mask">#33000000</color>
+    <color name="color_red_f04c62">#f04c62</color>
+
+    <!-- setting -->
+    <color name="color_black_ff333333">#ff333333</color>
+    <color name="color_black_ff666666">#ff666666</color>
+    <color name="color_gray_bfc2c5">#bfc2c5</color>
+
+    <color name="action_bar_black_title_1f1f1f">#1f1f1f</color>
+    <color name="action_bar_black_title_color">#252525</color>
+    <color name="color_black_000000_88_transparent">#e0000000</color>
+
+    <color name="download_backgroud">#DBDBDB</color>
+    <color name="download_progress">#00FF00</color>
+
+
+    <color name="darker_gray">#9b9b9b</color>
+
+
+    <color name="search_hint_color">#ff999999</color>
+    <color name="search_dialog_text">#ff82949c</color>
+
+
+    <color name="msg_time_color_left">#ff333333</color>
+    <color name="msg_time_color_right">#ff81ac68</color>
+    <color name="msg_send_color_green">#ff75bd5e</color>
+    <color name="msg_back_green">#ffefffde</color>
+    <color name="msg_action_back">#33333333</color>
+
+    <color name="img_bg">#0fffffff</color>
+
+    <color name="item_hover">#dbdbdb</color>
+
+    <color name="zxing_viewfinder_laser">#ffcc0000</color>
+    <color name="zxing_custom_viewfinder_laser">#1976D2</color>
+
+    <color name="brand">#26b36d</color>
+    <color name="auxiliary">#61bc79</color>
+    <color name="warning">#ffbb52</color>
+    <color name="negative">#ff5454</color>
+
+    <color name="title_font_main">#333333</color>
+    <color name="title_font_secondary">#606266</color>
+    <color name="prompt_text">#909399</color>
+    <color name="edit_prompt_text">#cccccc</color>
+    <color name="none_clickable_status">#c6c6c9</color>
+    <color name="chat_back">#f2f2f2</color>
+    <color name="back_gray_normal">#f6f6f6</color>
+    <color name="chat_spam_back">#fbfbfb</color>
+    <color name="gray_line">#4dcccccc</color>
+    <color name="gray_line2">#cccccc</color>
+    <color name="gray_line3">#c8c7cc</color>
+    <color name="gray_line_light">#d1d1d6</color>
+
+    <color name="color_background">#ffffff</color>
+    <color name="color_background_secondary">#F6F6F6</color>
+    <color name="color_10_transparent">#1a000000</color>
+    <color name="color_20_transparent">#33000000</color>
+    <color name="color_30_transparent">#4d000000</color>
+    <color name="color_3_transparent">#08000000</color>
+    <color name="color_2_transparent">#05000000</color>
+    <color name="text_green">#34A853</color>
+    <color name="color_bg_green">#14b163</color>
+    <color name="color_divider">#e0e0e0</color>
+    <color name="color_text_blue">#007AFF</color>
+    <color name="msg_select_back">#33a4bbb3</color>
+    <color name="color_e5">#E5E5E5</color>
+    <color name="click_bg_black">#0a000000</color>
+    <color name="qrcode_scan_mask">#33000000</color>
+    <color name="color_music_line">#f0f0f0</color>
+    <color name="color_btn_green">#1DB268</color>
+
+    <!-- conversation -->
+    <color name="item_menu_bg_color">#cccccc</color>
+    <color name="pin_bg_selected">#ffcccccc</color>
+    <color name="pin_bg_unselected">#ff61bc79</color>
+    <color name="mute_bg_selected">#ffbebebe</color>
+    <color name="mute_bg_unselected">#ffffbb52</color>
+
+    <!--photo album-->
+    <color name="album_item_bg">#66000000</color>
+    <color name="album_content_title">#333333</color>
+    <color name="album_title">#333333</color>
+
+    <!-- image browse-->
+    <color name="media_browse_mask_back">#b3212121</color>
+    <color name="media_browse_bg">#212121</color>
+    <color name="download_origin_progress">#19ffffff</color>
+    <color name="color_fa">#FAFAFA</color>
+
+    <!-- group -->
+    <color name="group_recent_highlight">#ff109D57</color>
+    <color name="group_recent_datebg">#7f666666</color>
+
+    <!-- sticker -->
+    <color name="sticker_show_dialog_bg">#7f333333</color>
+</resources>

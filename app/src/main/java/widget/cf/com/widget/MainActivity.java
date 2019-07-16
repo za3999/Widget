@@ -56,9 +56,12 @@ public class MainActivity extends Activity {
         mDrawableIv.setImageDrawable(new HeadTextDrawable(content.toString(), id));
     }
 
+    public void onMainTableClick(View view) {
+        startActivity(new Intent(this, MainTableActivity.class));
+    }
+
     public void onSwipeLayoutClick(View view) {
         startActivity(new Intent(this, SwipeLayoutActivity.class));
-
     }
 
     public void onColorPickerClick(View view) {
