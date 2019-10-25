@@ -69,7 +69,9 @@ public class PullRecyclerLayout extends FrameLayout {
             isInit = true;
             originalRect.set(childView.getLeft(), childView.getTop(), childView.getRight(), childView.getBottom());
         }
-        childView.layout(getLeft(), getTop() + offset, getRight(), getBottom() + offset);
+        if (offset != 0) {
+            childView.layout(getLeft(), getTop() + offset, getRight(), getBottom() + offset);
+        }
     }
 
     @Override
