@@ -1,5 +1,6 @@
 package widget.cf.com.widgetlibrary;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,17 +9,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
-
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
-import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class PullRecyclerLayout extends FrameLayout {
 
     private static final long ANIM_TIME = 300;
-    private static final int CHANGE_OFFSET = ApplicationUtil.getIntDimension(R.dimen.dp_50);
     private static final float OFFSET_RADIO = 0.5f;
     private View childView;
     private RecyclerView recyclerView;
@@ -30,6 +27,8 @@ public class PullRecyclerLayout extends FrameLayout {
     private boolean isInit;
     private boolean pullEnable = true;
     private BaseCallBack.CallBack recoverListener;
+
+    private BaseCallBack.CallBack1<Integer> offsetListener;
 
     public PullRecyclerLayout(Context context) {
         this(context, null);
@@ -51,11 +50,7 @@ public class PullRecyclerLayout extends FrameLayout {
 
     private void initChildView() {
         if (getChildCount() == 1) {
-            View view = getChildAt(0);
-//            recyclerView = view.findViewById(R.id.recycler_view);
-            if (recyclerView != null) {
-                childView = view;
-            }
+            childView = getChildAt(0);
         }
     }
 
@@ -69,8 +64,10 @@ public class PullRecyclerLayout extends FrameLayout {
             isInit = true;
             originalRect.set(childView.getLeft(), childView.getTop(), childView.getRight(), childView.getBottom());
         }
-        if (offset != 0) {
-            childView.layout(getLeft(), getTop() + offset, getRight(), getBottom() + offset);
+        if (offset != 0 && isMoved) {
+            if (offsetListener != null) {
+                offsetListener.onCallBack(offset);
+            }
         }
     }
 
@@ -85,7 +82,7 @@ public class PullRecyclerLayout extends FrameLayout {
             case MotionEvent.ACTION_MOVE:
                 float nowY = ev.getY();
                 scrollY = (int) (nowY - startY);
-                if (scrollY > 10) {
+                if (scrollY > 0) {
                     return isCanPullDown();
                 }
                 break;
@@ -113,12 +110,17 @@ public class PullRecyclerLayout extends FrameLayout {
                 float nowY = ev.getY();
                 scrollY = (int) (nowY - startY);
                 if (isCanPullDown() && scrollY > 0) {
-                    offset = (int) (scrollY * OFFSET_RADIO);
-                    childView.layout(originalRect.left, originalRect.top + offset, originalRect.right, originalRect.bottom + offset);
+                    setOffset((int) (scrollY * OFFSET_RADIO));
                     isMoved = true;
+                    if (offsetListener != null) {
+                        offsetListener.onCallBack(offset);
+                    }
                 } else {
+                    if (offsetListener != null) {
+                        offsetListener.onCallBack(0);
+                    }
                     isMoved = false;
-                    childView.layout(originalRect.left, originalRect.top, originalRect.right, originalRect.bottom);
+                    setOffset(0);
                 }
                 return true;
             case MotionEvent.ACTION_UP:
@@ -132,12 +134,17 @@ public class PullRecyclerLayout extends FrameLayout {
         }
     }
 
+
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }
 
     public void setRecoverListener(BaseCallBack.CallBack recoverListener) {
         this.recoverListener = recoverListener;
+    }
+
+    public void setOffsetListener(BaseCallBack.CallBack1<Integer> offsetListener) {
+        this.offsetListener = offsetListener;
     }
 
     public void setPullEnable(boolean pullEnable) {
@@ -148,16 +155,17 @@ public class PullRecyclerLayout extends FrameLayout {
         if (!isMoved) {
             return;
         }
-        TranslateAnimation anim = new TranslateAnimation(0, 0, childView.getTop() - originalRect.top, 0);
-        anim.setInterpolator(new DecelerateInterpolator());
-        anim.setDuration(ANIM_TIME);
-        childView.startAnimation(anim);
-        childView.layout(originalRect.left, originalRect.top, originalRect.right, originalRect.bottom);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(offset, 0);
+        valueAnimator.addUpdateListener(animation -> {
+            int value = (int) animation.getAnimatedValue();
+            setOffset(value);
+        });
+        valueAnimator.setDuration(ANIM_TIME).setInterpolator(new DecelerateInterpolator());
+        valueAnimator.start();
         isMoved = false;
-        if (recoverListener != null && offset > CHANGE_OFFSET) {
+        if (recoverListener != null) {
             recoverListener.onCallBack();
         }
-        offset = 0;
     }
 
     private boolean isCanPullDown() {
@@ -174,6 +182,13 @@ public class PullRecyclerLayout extends FrameLayout {
         }
         int mostTop = (recyclerView.getChildCount() > 0) ? recyclerView.getChildAt(0).getTop() : 0;
         return mostTop >= 0;
+    }
+
+    private void setOffset(int offset) {
+        this.offset = offset;
+        MarginLayoutParams layoutParams1 = (MarginLayoutParams) childView.getLayoutParams();
+        layoutParams1.topMargin = offset;
+        childView.setLayoutParams(layoutParams1);
     }
 }
 
