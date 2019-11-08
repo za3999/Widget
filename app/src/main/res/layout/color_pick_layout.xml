@@ -28,7 +28,7 @@
     <TextView
         android:id="@+id/tv_info"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dm_200dp"
+        android:layout_height="@dimen/dp_200"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="颜色取值"
