@@ -11,11 +11,11 @@ import java.text.DecimalFormat;
 
 public class DimenTool {
 
-    static String outPutPath = "/Users/zhengxs/StudioProjects/github/Widget/app/src/main/res/";
+    static String outPutPath = "app/src/main/res/";
 
     public static void gen(String name, float scaling) {
 
-        File file = new File("/Users/zhengxs/StudioProjects/github/Widget/app/src/main/res/values/dimens.xml");
+        File file = new File("app/src/main/res/values/dimens.xml");
         System.out.println("输出文件路径：" + outPutPath);
         BufferedReader reader = null;
         StringBuilder result = new StringBuilder();
