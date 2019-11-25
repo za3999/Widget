@@ -42,12 +42,16 @@ public class SystemAudioFocusManager implements AudioManager.OnAudioFocusChangeL
     }
 
     public void releaseAudioFocus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mFocusRequest != null) {
-                mAudioManager.abandonAudioFocusRequest(mFocusRequest);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (mFocusRequest != null) {
+                    mAudioManager.abandonAudioFocusRequest(mFocusRequest);
+                }
+            } else {
+                mAudioManager.abandonAudioFocus(this);
             }
-        } else {
-            mAudioManager.abandonAudioFocus(this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
