@@ -23,20 +23,24 @@ public class SystemAudioFocusManager implements AudioManager.OnAudioFocusChangeL
     }
 
     public int requestFocus(boolean longHold) {
-        int result;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mFocusRequest == null) {
-                if (mAudioAttributes == null) {
-                    mAudioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
+        int result = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (mFocusRequest == null) {
+                    if (mAudioAttributes == null) {
+                        mAudioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
+                    }
+                    mFocusRequest = new AudioFocusRequest.Builder(longHold ? AudioManager.AUDIOFOCUS_GAIN : AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                            .setAudioAttributes(mAudioAttributes).setWillPauseWhenDucked(true)
+                            .setOnAudioFocusChangeListener(this).build();
                 }
-                mFocusRequest = new AudioFocusRequest.Builder(longHold ? AudioManager.AUDIOFOCUS_GAIN : AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                        .setAudioAttributes(mAudioAttributes).setWillPauseWhenDucked(true)
-                        .setOnAudioFocusChangeListener(this).build();
+                result = mAudioManager.requestAudioFocus(mFocusRequest);
+            } else {
+                result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, longHold ? AudioManager.AUDIOFOCUS_GAIN : AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
             }
-            result = mAudioManager.requestAudioFocus(mFocusRequest);
-        } else {
-            result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, longHold ? AudioManager.AUDIOFOCUS_GAIN : AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
