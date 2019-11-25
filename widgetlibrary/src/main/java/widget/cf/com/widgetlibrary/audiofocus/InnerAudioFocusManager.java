@@ -4,9 +4,9 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.util.Pair;
 
-
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.LogUtils;
+
 
 public class InnerAudioFocusManager {
 
@@ -38,11 +38,19 @@ public class InnerAudioFocusManager {
     }
 
     public static boolean request(@InnerAudioFocusType int audioType) {
-        return getInstance().requestInner(audioType, getInstance().defaultInnerAudioFocusChangeListener);
+        return getInstance().requestInner(audioType, true, true, getInstance().defaultInnerAudioFocusChangeListener);
     }
 
     public static boolean request(@InnerAudioFocusType int audioType, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
-        return getInstance().requestInner(audioType, innerAudioFocusChangeListener);
+        return getInstance().requestInner(audioType, true, true, innerAudioFocusChangeListener);
+    }
+
+    public static boolean request(@InnerAudioFocusType int audioType, boolean systemLongHold, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
+        return getInstance().requestInner(audioType, true, systemLongHold, innerAudioFocusChangeListener);
+    }
+
+    public static boolean request(@InnerAudioFocusType int audioType, boolean innerLongHold, boolean systemLongHold, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
+        return getInstance().requestInner(audioType, innerLongHold, systemLongHold, innerAudioFocusChangeListener);
     }
 
     public static void release(@InnerAudioFocusType int audioType) {
@@ -69,13 +77,13 @@ public class InnerAudioFocusManager {
         return mInstance;
     }
 
-    private synchronized boolean requestInner(@InnerAudioFocusType int audioType, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
+    private synchronized boolean requestInner(@InnerAudioFocusType int audioType, boolean innerLongHold, boolean systemLongHold, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
         LogUtils.d(TAG, "requestFocus:" + audioType);
         if (innerAudioFocusChangeListener == null) {
             return false;
         }
         innerAudioFocusChangeListener.checkDefaultSystemFocusListener(mAudioManager);
-        mSystemAudioFocusManager.requestFocus();
+        mSystemAudioFocusManager.requestFocus(systemLongHold);
         Pair<Integer, InnerAudioFocusChangeListener> record = records.getCurrentRecord();
         if (record == null) {
             records.add(audioType, innerAudioFocusChangeListener);
@@ -90,12 +98,12 @@ public class InnerAudioFocusManager {
         }
 
         if (getLevel(audioType) <= getLevel(record.first)) {
-            onAudioFocusChange(record.second, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT);
+            onAudioFocusChange(record.second, innerLongHold ? AudioManager.AUDIOFOCUS_LOSS : AudioManager.AUDIOFOCUS_LOSS_TRANSIENT);
             records.add(audioType, innerAudioFocusChangeListener);
             return true;
         } else {
             LogUtils.d(TAG, "request fail current is:" + record.first);
-            onAudioFocusChange(innerAudioFocusChangeListener, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT);
+            onAudioFocusChange(innerAudioFocusChangeListener, innerLongHold ? AudioManager.AUDIOFOCUS_LOSS : AudioManager.AUDIOFOCUS_LOSS_TRANSIENT);
             return false;
         }
     }
