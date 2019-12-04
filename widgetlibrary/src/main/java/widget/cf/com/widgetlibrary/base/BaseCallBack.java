@@ -17,6 +17,29 @@ public class BaseCallBack {
     public interface CallBack3<T, K, M> {
         void onCallBack(T t, K k, M m);
     }
+    public static void onCallBack(CallBack callBack) {
+        if (callBack != null) {
+            callBack.onCallBack();
+        }
+    }
+
+    public static <T> void onCallBack(CallBack1<T> callBack, T t) {
+        if (callBack != null) {
+            callBack.onCallBack(t);
+        }
+    }
+
+    public static <T, K> void onCallBack(CallBack2<T, K> callBack, T t, K k) {
+        if (callBack != null) {
+            callBack.onCallBack(t, k);
+        }
+    }
+
+    public static <T, K, M> void onCallBack(CallBack3<T, K, M> callBack, T t, K k, M m) {
+        if (callBack != null) {
+            callBack.onCallBack(t, k, m);
+        }
+    }
 
     public abstract static class InputCallBack<I, T> implements CallBack1<T> {
         public I input;
