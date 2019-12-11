@@ -1,6 +1,7 @@
 package widget.cf.com.widgetlibrary.audiofocus;
 
-import androidx.annotation.IntDef;
+
+import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
