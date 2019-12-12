@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
 public class ExecutorsManager {
-    private static final int defaultMaxThreadCount = 1;
+    public static final int defaultMaxThreadCount = 1;
     private static ExecutorsManager mInstance = new ExecutorsManager();
-    private volatile ExecutorService defaultExecutorService;
+    private volatile ThreadPoolExecutor defaultExecutorService;
     private Map<String, ThreadPoolExecutor> executorServiceMap = new ConcurrentHashMap<>();
 
     private static ExecutorsManager getInstance() {
@@ -48,7 +48,7 @@ public class ExecutorsManager {
     }
 
     public static Future submit(String key, int maxThreadCount, Runnable runnable) {
-        ExecutorService executorService;
+        ThreadPoolExecutor executorService;
         if (TextUtils.isEmpty(key)) {
             executorService = getInstance().defaultExecutorService;
         } else {
@@ -71,6 +71,24 @@ public class ExecutorsManager {
         ThreadPoolExecutor threadPoolExecutor = getInstance().getExecutorService(key, defaultMaxThreadCount);
         threadPoolExecutor.setCorePoolSize(maxThreadCount);
         threadPoolExecutor.setMaximumPoolSize(maxThreadCount);
+    }
+
+    public static void cancelAllTask() {
+        if (mInstance.defaultExecutorService != null) {
+            mInstance.defaultExecutorService.getQueue().clear();
+        }
+        synchronized (mInstance.executorServiceMap) {
+            for (ThreadPoolExecutor threadPool : mInstance.executorServiceMap.values()) {
+                threadPool.getQueue().clear();
+            }
+        }
+    }
+
+    public static ThreadPoolExecutor getExecutorService(String key) {
+        if (TextUtils.isEmpty(key)) {
+            return getInstance().defaultExecutorService;
+        }
+        return getInstance().executorServiceMap.get(key);
     }
 
     private ThreadPoolExecutor getExecutorService(String key, int maxThreadCount) {
