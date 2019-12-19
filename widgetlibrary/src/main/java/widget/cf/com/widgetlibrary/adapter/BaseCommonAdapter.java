@@ -18,6 +18,7 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
     protected List<T> result = new ArrayList();
     protected BaseCallBack.CallBack3<Integer, View, T> mItemClickListener;
     protected BaseCallBack.CallBack3<Integer, View, T> mItemLongClickListener;
+    protected RecyclerView mRecyclerView;
 
     public void setItemClickListener(BaseCallBack.CallBack3<Integer, View, T> itemClickListener) {
         this.mItemClickListener = itemClickListener;
@@ -25,6 +26,20 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
 
     public void setItemLongClickListener(BaseCallBack.CallBack3<Integer, View, T> itemLongClickListener) {
         this.mItemLongClickListener = itemLongClickListener;
+    }
+
+    public void clear() {
+        result.clear();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        mRecyclerView = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        mRecyclerView = null;
     }
 
     @Override
