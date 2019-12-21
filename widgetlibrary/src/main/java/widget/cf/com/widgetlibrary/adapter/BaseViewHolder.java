@@ -7,8 +7,7 @@ import android.view.View;
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
 
 
-public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
-
+public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener {
     private BaseCallBack.CallBack2<View, T> itemClick;
     private BaseCallBack.CallBack2<View, T> itemLongClick;
     protected T itemData;
@@ -53,6 +52,11 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
     public abstract void bindData(int position, T t);
 
     public abstract void initView(View itemView);
+
+    @Override
+    public void onClick(View v) {
+        onItemClick(v, getItemData());
+    }
 
     public void onItemClick(View v, T t) {
         BaseCallBack.onCallBack(itemClick, v, t);
