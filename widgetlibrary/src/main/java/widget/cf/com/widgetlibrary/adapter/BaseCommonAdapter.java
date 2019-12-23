@@ -6,12 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
+import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
 
@@ -30,6 +33,7 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
 
     public void clear() {
         result.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -39,13 +43,13 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        mRecyclerView = null;
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     @Override
     @CallSuper
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        holder.onBindData(position, result.get(position));
+        holder.onBindData(position, result.size() > position ? result.get(position) : null);
         holder.setItemClick((BaseCallBack.CallBack2<View, T>) (view, t) -> onItemClick(getPosition(t), view, t));
         holder.setItemLongClick((BaseCallBack.CallBack2<View, T>) (View view, T t) -> onItemLongClick(getPosition(t), view, t));
     }
@@ -79,12 +83,25 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
         notifyDataSetChanged();
     }
 
+    public void addData(List<T> list) {
+        result.addAll(list);
+        notifyDataSetChanged();
+    }
+
     public List<T> getData() {
         return result;
     }
 
     public View createView(int layoutId, ViewGroup parent) {
         return LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
+    }
+
+    public int getTextWidth(View itemView, int viewId) {
+        int width = View.MeasureSpec.makeMeasureSpec(mRecyclerView.getWidth(), View.MeasureSpec.EXACTLY);
+        int height = View.MeasureSpec.makeMeasureSpec(ApplicationUtil.getIntDimension(R.dimen.dp_1), View.MeasureSpec.EXACTLY);
+        itemView.measure(width, height);
+        TextView messageTv = itemView.findViewById(viewId);
+        return messageTv.getMeasuredWidth() - messageTv.getCompoundPaddingLeft() - messageTv.getCompoundPaddingRight();
     }
 
     public void onItemClick(int position, View v, T item) {
