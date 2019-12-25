@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 
 import widget.cf.com.widgetlibrary.emoji.EmojiHelper;
+import widget.cf.com.widgetlibrary.language.MultiLanguageUtil;
 
 public class BaseApplication extends Application {
 
@@ -70,6 +71,7 @@ public class BaseApplication extends Application {
         new Thread(() -> EmojiHelper.loadEmoji()).start();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         mInstance = this;
+        MultiLanguageUtil.getInstance().attachBaseContext(this);
     }
 
     public static BaseApplication getApplication() {

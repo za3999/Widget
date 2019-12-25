@@ -1,6 +1,5 @@
 package widget.cf.com.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,8 +16,9 @@ import java.util.ArrayList;
 
 import widget.cf.com.widgetlibrary.SwipeLayout;
 import widget.cf.com.widgetlibrary.SwipeLayoutManager;
+import widget.cf.com.widgetlibrary.base.BaseActivity;
 
-public class SwipeLayoutActivity extends Activity {
+public class SwipeLayoutActivity extends BaseActivity {
 
     RecyclerView recyclerView;
 

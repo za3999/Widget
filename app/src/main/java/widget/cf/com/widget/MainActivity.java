@@ -12,11 +12,12 @@ import android.widget.TableLayout.LayoutParams;
 import android.widget.TextView;
 
 import widget.cf.com.widgetlibrary.HeadTextDrawable;
+import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.emoji.EmojiData;
 
 
 @SuppressLint("NewApi")
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
     LinearLayout llLayout;
     TextView mEmojiTv;

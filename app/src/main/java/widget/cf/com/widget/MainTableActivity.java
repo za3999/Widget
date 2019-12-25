@@ -10,10 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
+import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.tabbar.MainTabLayout;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
-public class MainTableActivity extends AppCompatActivity {
+public class MainTableActivity extends BaseActivity {
 
     private ViewPager mPager;
     private MainTabLayout mTabLayout;

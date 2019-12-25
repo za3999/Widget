@@ -8,9 +8,10 @@ import android.widget.TextView;
 import widget.cf.com.widgetlibrary.ColorPickerView;
 import widget.cf.com.widgetlibrary.appearance.AppearanceManager;
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
+import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.util.SPUtil;
 
-public class ColorPickerActivity extends AppCompatActivity {
+public class ColorPickerActivity extends BaseActivity {
 
     private TextView tv;
     private ColorPickerView colorPickerView;
