@@ -84,6 +84,13 @@ public class ExecutorsManager {
         }
     }
 
+    public static void cancelTask(String tag){
+        ThreadPoolExecutor threadPool = ExecutorsManager.getExecutorService(tag);
+        if (threadPool != null) {
+            threadPool.getQueue().clear();
+        }
+    }
+
     public static ThreadPoolExecutor getExecutorService(String key) {
         if (TextUtils.isEmpty(key)) {
             return getInstance().defaultExecutorService;

@@ -3,7 +3,6 @@ package widget.cf.com.widgetlibrary.executor;
 import android.text.TextUtils;
 
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.LogUtils;
@@ -18,67 +17,37 @@ public final class TaskRunner {
     }
 
     public static void setMaxThreadCount(String key, int maxThreadCount) {
+        if (maxThreadCount <= 0) {
+            LogUtils.e(TAG, "maxThreadCount must greater than 0");
+            return;
+        }
         ExecutorsManager.setMaxThreadCount(key, maxThreadCount);
-    }
-
-    public static void doTask(Runner runner) {
-        doTask("", ExecutorsManager.defaultMaxThreadCount, false, runner);
-    }
-
-    public static void doTask(boolean isNeedPostMainThread, Runner runner) {
-        doTask("", ExecutorsManager.defaultMaxThreadCount, isNeedPostMainThread, runner);
-    }
-
-    public static void doTask(String tag, Runner runner) {
-        doTask(tag, ExecutorsManager.defaultMaxThreadCount, false, runner);
-    }
-
-    public static void doTask(String tag, boolean isNeedPostMainThread, Runner runner) {
-        doTask(tag, ExecutorsManager.defaultMaxThreadCount, isNeedPostMainThread, runner);
-    }
-
-    public static void doTask(String tag, int maxThreadCount, boolean isNeedPostMainThread, Runner runner) {
-        Future future = ExecutorsManager.submit(tag, maxThreadCount, () -> {
-            try {
-                LogUtils.v(TAG, "doTask:" + Thread.currentThread().getName());
-                runner.outputData = runner.run();
-                if (isNeedPostMainThread) {
-                    ApplicationUtil.getMainHandler().post(() -> runner.onResult(runner.outputData));
-                } else {
-                    runner.onResult(runner.outputData);
-                }
-            } catch (Exception e) {
-                runner.onException(e);
-            }
-        });
-        runner.setFuture(future);
     }
 
     public static void cancelAllTask() {
         ExecutorsManager.cancelAllTask();
     }
 
-    public static void cancelFixThreadPendingTasks(String tag) {
+    public static void cancelTask(String tag) {
         LogUtils.v(TAG, "cancelFixThreadPendingTasks:" + tag);
         if (TextUtils.isEmpty(tag)) {
             return;
         }
-        ThreadPoolExecutor threadPool = ExecutorsManager.getExecutorService(tag);
-        if (threadPool != null) {
-            threadPool.getQueue().clear();
-        }
+        ExecutorsManager.cancelTask(tag);
     }
 
-    public static abstract class Runner<T, K> {
-        private T inputData;
-        private K outputData;
+    public static abstract class Runner {
+        private Object inputData;
+        private Object outputData;
         private Future mFuture;
+        private String tag;
+        private boolean isMainResult;
 
-        public Runner(T data) {
+        public Runner(Object data) {
             inputData = data;
         }
 
-        public T getInputData() {
+        public Object getInputData() {
             return inputData;
         }
 
@@ -90,43 +59,136 @@ public final class TaskRunner {
         }
 
         public boolean isCanceling() {
-            return mFuture == null ? true : mFuture.isCancelled();
+            return mFuture == null || mFuture.isCancelled();
         }
 
-        private Runner setFuture(Future future) {
-            this.mFuture = future;
+        public String getTag() {
+            return tag;
+        }
+
+        public Runner setTag(String tag) {
+            this.tag = tag;
             return this;
         }
 
-        public abstract K run() throws InterruptedException;
+        public Runner setMainResult(boolean mainResult) {
+            isMainResult = mainResult;
+            return this;
+        }
 
-        public abstract void onException(Exception e);
+        public boolean isMainResult() {
+            return isMainResult;
+        }
 
-        public abstract void onResult(K k);
+        public Runner start() {
+            mFuture = ExecutorsManager.submit(tag, () -> {
+                try {
+                    LogUtils.v(TAG, "doTask:" + Thread.currentThread().getName());
+                    outputData = run(inputData);
+                    if (!isCanceling()) {
+                        if (isMainResult()) {
+                            ApplicationUtil.getMainHandler().post(() -> onResult(outputData));
+                        } else {
+                            onResult(outputData);
+                        }
+                    }
+                } catch (Exception e) {
+                    onInterrupted(inputData);
+                    e.printStackTrace();
+                }
+            });
+            return this;
+        }
+
+        public abstract Object run(Object data) throws InterruptedException;
+
+        public abstract void onInterrupted(Object data);
+
+        public abstract void onResult(Object data);
     }
 
-    public abstract static class RunnerWithOutIn<K> extends Runner<Void, K> {
 
-        public RunnerWithOutIn() {
+    public abstract static class RunnerWrapper<T, K> extends TaskRunner.Runner {
+
+        public RunnerWrapper(T data) {
+            super(data);
+        }
+
+        public abstract K runWrapper();
+
+        public void onInterrupted() {
+
+        }
+
+        public void onResultWrapper(K resultData) {
+
+        }
+
+        @Override
+        public final T getInputData() {
+            return (T) super.getInputData();
+        }
+
+        @Override
+        public final Object run(Object data) {
+            return runWrapper();
+        }
+
+        @Override
+        public final void onInterrupted(Object data) {
+            onInterrupted();
+        }
+
+        @Override
+        public final void onResult(Object data) {
+            onResultWrapper((K) data);
+        }
+    }
+
+    public abstract static class RunnerOnlyOutput<K> extends RunnerWrapper<Void, K> {
+
+        public RunnerOnlyOutput() {
             super(null);
         }
     }
 
-    public abstract static class RunnerNotOut<T> extends Runner<T, Void> {
+    public abstract static class RunnerOnlyInput<T> extends RunnerWrapper<T, Void> {
 
-        public RunnerNotOut(T data) {
+        public RunnerOnlyInput(T data) {
             super(data);
+        }
+
+        public abstract void run();
+
+        public void onResult() {
+
+        }
+
+        @Override
+        public final Void runWrapper() {
+            run();
+            return null;
+        }
+
+        @Override
+        public final void onResultWrapper(Void resultData) {
+            onResult();
         }
     }
 
-    public abstract static class RunnerNoParam extends Runner<Void, Void> {
+    public abstract static class RunnerNoParam extends RunnerOnlyInput<Void> {
 
         public RunnerNoParam() {
             super(null);
         }
+
+        public void onResult() {
+
+        }
+
     }
 
-    public abstract static class Runner2<T, M, K> extends Runner<T, K> {
+    public abstract static class Runner2<T, M, K> extends RunnerWrapper<T, K> {
 
         private M second;
 
