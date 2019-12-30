@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
 public class ExecutorsManager {
+    private static final String TAG = "TaskRunner";
     public static final int defaultMaxThreadCount = 1;
     private static ExecutorsManager mInstance = new ExecutorsManager();
     private volatile ThreadPoolExecutor defaultExecutorService;
@@ -28,7 +30,7 @@ public class ExecutorsManager {
         if (defaultExecutorService == null) {
             synchronized (this) {
                 if (defaultExecutorService == null) {
-                    defaultExecutorService = createExecutorService("default", 60, 30);
+                    defaultExecutorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS, new SynchronousQueue<>(), new ThreadFactory("default"));
                 }
             }
         }
@@ -84,13 +86,6 @@ public class ExecutorsManager {
         }
     }
 
-    public static void cancelTask(String tag){
-        ThreadPoolExecutor threadPool = ExecutorsManager.getExecutorService(tag);
-        if (threadPool != null) {
-            threadPool.getQueue().clear();
-        }
-    }
-
     public static ThreadPoolExecutor getExecutorService(String key) {
         if (TextUtils.isEmpty(key)) {
             return getInstance().defaultExecutorService;
@@ -112,7 +107,10 @@ public class ExecutorsManager {
     }
 
     private ThreadPoolExecutor createExecutorService(String key, int maximumPoolSize, long keepAliveTime) {
-        LogUtils.d("TaskRunner", "createExecutorService:" + key + "|" + maximumPoolSize);
+        if (maximumPoolSize > 5) {
+            LogUtils.w(TAG, "request too many thread:" + key + "-" + maximumPoolSize);
+        }
+        LogUtils.d(TAG, "createExecutorService:" + key + "|" + maximumPoolSize);
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(maximumPoolSize, maximumPoolSize, keepAliveTime,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactory(key));
         executorService.allowCoreThreadTimeOut(true);
@@ -134,7 +132,7 @@ public class ExecutorsManager {
         public Thread newThread(Runnable r) {
             int i = threadNumber.getAndIncrement();
             Thread t = new Thread(group, r, "pool-" + key + "-thread-" + i, 0);
-            LogUtils.d("TaskRunner", "newThread:" + t.getName());
+            LogUtils.d(TAG, "newThread:" + t.getName());
             if (t.isDaemon())
                 t.setDaemon(false);
             if (t.getPriority() != Thread.NORM_PRIORITY)
