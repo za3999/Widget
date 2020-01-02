@@ -1,7 +1,6 @@
 package widget.cf.com.widgetlibrary.util;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -13,15 +12,16 @@ import android.view.WindowManager;
 
 public class StatusBarUtil {
 
-    public static void setTranslucentStatus(Activity activity, boolean needOffset) {
-        setTranslucentStatus(activity.getWindow(), needOffset);
-    }
 
     public static void setTranslucentStatus(Window window, boolean needOffset) {
+        setTranslucentStatus(window, needOffset, false);
+    }
+
+    public static void setTranslucentStatus(Window window, boolean needOffset, boolean lightBar) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             View decorView = window.getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (lightBar && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 option = option | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
             decorView.setSystemUiVisibility(option);
@@ -41,8 +41,16 @@ public class StatusBarUtil {
         }
     }
 
-    public static void setOffsetView(View view){
+    public static void setOffsetView(View view) {
         view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + getStatusBarHeight(view.getContext()), view.getPaddingRight(), view.getPaddingBottom());
+    }
+
+    public static void setStatusBarLightMode(Window window, boolean isLight) {
+        int flag = window.getDecorView().getSystemUiVisibility();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLight) {
+            flag = flag | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(flag);
     }
 
     public static int getStatusBarHeight(Context context) {
