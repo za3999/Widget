@@ -18,6 +18,9 @@ public class StatusBarUtil {
     }
 
     public static void setTranslucentStatus(Window window, boolean needOffset, boolean lightBar) {
+        if (window == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             View decorView = window.getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
