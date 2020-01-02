@@ -59,11 +59,15 @@ public class StatusBarUtil {
     }
 
     public static void setStatusBarLightMode(Window window, boolean isLight) {
-        int flag = window.getDecorView().getSystemUiVisibility();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLight) {
-            flag = flag | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int flag = window.getDecorView().getSystemUiVisibility();
+            if (isLight) {
+                flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            } else {
+                flag = flag & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+            window.getDecorView().setSystemUiVisibility(flag);
         }
-        window.getDecorView().setSystemUiVisibility(flag);
     }
 
     public static int getStatusBarHeight(Context context) {
