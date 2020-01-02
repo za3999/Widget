@@ -11,9 +11,9 @@ import widget.cf.com.widgetlibrary.util.StatusBarUtil;
 public class BaseActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        StatusBarUtil.setTranslucentStatus(this, isTopOffset());
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        StatusBarUtil.setTranslucentStatus(getWindow(), isTopOffset());
     }
 
     @Override
