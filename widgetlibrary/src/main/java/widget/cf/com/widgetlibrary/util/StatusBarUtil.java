@@ -35,9 +35,19 @@ public class StatusBarUtil {
         }
         if (needOffset) {
             ViewGroup contentView = window.getDecorView().findViewById(android.R.id.content);
-            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
-            layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin + getStatusBarHeight(window.getContext()),
-                    layoutParams.rightMargin, layoutParams.bottomMargin);
+            if (contentView.getChildCount() > 0) {
+                View view = contentView.getChildAt(0);
+                if (view instanceof ViewGroup) {
+                    contentView = (ViewGroup) view;
+                }
+                if (contentView.getChildCount() > 0) {
+                    view = contentView.getChildAt(0);
+                    if (view instanceof ViewGroup) {
+                        contentView = (ViewGroup) view;
+                    }
+                }
+            }
+            contentView.setPadding(contentView.getPaddingLeft(), contentView.getPaddingTop() + getStatusBarHeight(window.getContext()), contentView.getPaddingRight(), contentView.getPaddingBottom());
         }
     }
 
