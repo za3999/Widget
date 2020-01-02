@@ -86,6 +86,10 @@ public class ExecutorsManager {
         }
     }
 
+    public static void cancelTask(String key) {
+        getExecutorService(key).getQueue().clear();
+    }
+
     public static ThreadPoolExecutor getExecutorService(String key) {
         if (TextUtils.isEmpty(key)) {
             return getInstance().defaultExecutorService;
