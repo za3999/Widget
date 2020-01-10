@@ -42,6 +42,7 @@ public final class TaskRunner {
         private Future mFuture;
         private String tag;
         private boolean isMainResult;
+        private boolean isCancel;
 
         public Runner(Object data) {
             inputData = data;
@@ -53,6 +54,7 @@ public final class TaskRunner {
 
         public void cancel() {
             LogUtils.v(TAG, "cancel:" + this);
+            isCancel = true;
             if (mFuture != null) {
                 mFuture.cancel(true);
             }
@@ -95,9 +97,22 @@ public final class TaskRunner {
                 } catch (Exception e) {
                     onInterrupted(inputData);
                     e.printStackTrace();
+                } finally {
+                    mFuture = null;
                 }
             });
             return this;
+        }
+
+        public void restart() {
+            if (isCanceling() || mFuture == null) {
+                isCancel = false;
+                start();
+            }
+        }
+
+        public void delayStart(long delayMillis) {
+            ApplicationUtil.getBgHandler().postDelayed(() -> start(), delayMillis);
         }
 
         public abstract Object run(Object data) throws InterruptedException;
