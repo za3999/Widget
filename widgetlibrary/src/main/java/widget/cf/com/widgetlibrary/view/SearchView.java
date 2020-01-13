@@ -12,8 +12,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.View;
@@ -23,8 +21,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SearchView extends View {
-
-
     // 这个视图拥有的状态
     @IntDef({State.NONE, State.STARTING, State.SEARCHING, State.ENDING})
     @Retention(RetentionPolicy.SOURCE)
@@ -63,11 +59,17 @@ public class SearchView extends View {
     private float mAnimatorValue = 0;
 
     // 动效过程监听器
-    private ValueAnimator.AnimatorUpdateListener mUpdateListener;
-    private Animator.AnimatorListener mAnimatorListener;
+    private ValueAnimator.AnimatorUpdateListener mUpdateListener = animation -> {
+        mAnimatorValue = (float) animation.getAnimatedValue();
+        invalidate();
+    };
+    private Animator.AnimatorListener mAnimatorListener = new AnimatorListenerAdapter() {
 
-    // 用于控制动画状态转换
-    private Handler mAnimatorHandler;
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            goToNextStatus();
+        }
+    };
 
     // 判断是否已经搜索结束
     private boolean isOver = false;
@@ -83,11 +85,22 @@ public class SearchView extends View {
         initAll();
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mViewWidth = w;
+        mViewHeight = h;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        drawSearch(canvas);
+    }
+
     public void initAll() {
         initPaint();
         initPath();
-        initListener();
-        initHandler();
         initAnimator();
         // 进入开始动画
         mCurrentState = State.STARTING;
@@ -112,75 +125,16 @@ public class SearchView extends View {
         pathCircle = new Path();
 
         mMeasure = new PathMeasure();
-
         // 注意,不要到360度,否则内部会自动优化,测量不能取到需要的数值
         RectF oval1 = new RectF(-50, -50, 50, 50);          // 放大镜圆环
         pathSearch.addArc(oval1, 45, 359.9f);
-
         RectF oval2 = new RectF(-100, -100, 100, 100);      // 外部圆环
         pathCircle.addArc(oval2, 45, -359.9f);
-
         float[] pos = new float[2];
-
         mMeasure.setPath(pathCircle, false);               // 放大镜把手的位置
         mMeasure.getPosTan(0, pos, null);
-
         pathSearch.lineTo(pos[0], pos[1]);                 // 放大镜把手
-
     }
-
-
-    private void initListener() {
-        mUpdateListener = animation -> {
-            mAnimatorValue = (float) animation.getAnimatedValue();
-            invalidate();
-        };
-
-        mAnimatorListener = new AnimatorListenerAdapter() {
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                // getHandle发消息通知动画状态更新
-                mAnimatorHandler.sendEmptyMessage(0);
-            }
-        };
-    }
-
-    private void initHandler() {
-        mAnimatorHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (mCurrentState) {
-                    case State.STARTING:
-                        // 从开始动画转换好搜索动画
-                        isOver = false;
-                        mCurrentState = State.SEARCHING;
-                        mStartingAnimator.removeAllListeners();
-                        mSearchingAnimator.start();
-                        break;
-                    case State.SEARCHING:
-                        if (!isOver) {  // 如果搜索未结束 则继续执行搜索动画
-                            mSearchingAnimator.start();
-
-                            count++;
-                            if (count > 2) {       // count大于2则进入结束状态
-                                isOver = true;
-                            }
-                        } else {        // 如果搜索已经结束 则进入结束动画
-                            mCurrentState = State.ENDING;
-                            mEndingAnimator.start();
-                        }
-                        break;
-                    case State.ENDING:
-                        // 从结束动画转变为无状态
-                        mCurrentState = State.NONE;
-                        break;
-                }
-            }
-        };
-    }
-
     private void initAnimator() {
         mStartingAnimator = ValueAnimator.ofFloat(0, 1).setDuration(defaultDuration);
         mSearchingAnimator = ValueAnimator.ofFloat(0, 1).setDuration(defaultDuration);
@@ -194,31 +148,39 @@ public class SearchView extends View {
         mSearchingAnimator.addListener(mAnimatorListener);
         mEndingAnimator.addListener(mAnimatorListener);
     }
+    // 用于控制动画状态转换
 
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mViewWidth = w;
-        mViewHeight = h;
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        drawSearch(canvas);
+    private void goToNextStatus() {
+        switch (mCurrentState) {
+            case State.STARTING:
+                // 从开始动画转换好搜索动画
+                isOver = false;
+                mCurrentState = State.SEARCHING;
+                mSearchingAnimator.start();
+                break;
+            case State.SEARCHING:
+                if (!isOver) {  // 如果搜索未结束 则继续执行搜索动画
+                    mSearchingAnimator.start();
+                    count++;
+                    if (count > 2) {       // count大于2则进入结束状态
+                        isOver = true;
+                    }
+                } else {        // 如果搜索已经结束 则进入结束动画
+                    mCurrentState = State.ENDING;
+                    mEndingAnimator.start();
+                }
+                break;
+            case State.ENDING:
+                // 从结束动画转变为无状态
+                mCurrentState = State.NONE;
+                break;
+        }
     }
 
     private void drawSearch(Canvas canvas) {
-
         mPaint.setColor(Color.WHITE);
-
-
         canvas.translate(mViewWidth / 2, mViewHeight / 2);
-
         canvas.drawColor(Color.parseColor("#0082D7"));
-
         switch (mCurrentState) {
             case State.NONE:
                 canvas.drawPath(pathSearch, mPaint);
