@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.HandlerThread;
@@ -13,6 +15,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.view.View;
 
 import java.lang.ref.SoftReference;
 import java.util.Map;
@@ -20,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BitmapUtil {
     private static Map<String, BitmapUseage> softReferenceMap = new ConcurrentHashMap<>();
+
     private static class BitmapUseage {
         public SoftReference<Bitmap> bitmap;
         public long lastAttacheTime;
@@ -114,6 +118,26 @@ public class BitmapUtil {
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
+        return bitmap;
+    }
+
+
+    public static Bitmap changeColor(Bitmap originalBitmap, int color) {
+        int width = originalBitmap.getWidth();
+        int height = originalBitmap.getHeight();
+        Bitmap result = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(result);
+        Paint paint = new Paint();
+        paint.setColor(color);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawRect(0, 0, width, height, paint);
+        return result;
+    }
+
+    public static Bitmap getBitmap(View view) {
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
         return bitmap;
     }
 }

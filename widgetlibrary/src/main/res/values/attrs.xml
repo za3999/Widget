@@ -18,10 +18,10 @@
     </declare-styleable>
 
     <declare-styleable name="AutoLayout">
-        <attr name="horizontalSpacing" format="dimension"/>
-        <attr name="verticalSpacing" format="dimension"/>
-        <attr name="paddingTop" format="dimension"/>
-        <attr name="maxLines" format="integer"/>
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="verticalSpacing" format="dimension" />
+        <attr name="paddingTop" format="dimension" />
+        <attr name="maxLines" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="AppearanceTextView">
@@ -36,4 +36,11 @@
         <attr name="support_image_default_color" format="color|reference" />
     </declare-styleable>
 
+    <declare-styleable name="DragBubbleView">
+        <attr name="bubble_radius" format="dimension" />
+        <attr name="bubble_color" format="color" />
+        <attr name="bubble_text" format="string" />
+        <attr name="bubble_textSize" format="dimension" />
+        <attr name="bubble_textColor" format="color" />
+    </declare-styleable>
 </resources>
