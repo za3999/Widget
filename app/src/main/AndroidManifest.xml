@@ -21,6 +21,7 @@
         <activity android:name=".SwipeLayoutActivity"></activity>
         <activity android:name=".ColorPickerActivity"></activity>
         <activity android:name=".MainTableActivity"></activity>
+        <activity android:name=".DragBubbleActivity"></activity>
     </application>
 
 </manifest>

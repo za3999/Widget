@@ -109,5 +109,7 @@
     <color name="color_half_transparency">#80000000</color>
     <color name="color_4c4c4c">#4c4c4c</color>
     <color name="color_dddddd">#dddddd</color>
+    <color name="color_26b36d">#26B36D</color>
+
 
 </resources>

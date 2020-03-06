@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget.cf.com.widgetlibrary.bubble.DragBubbleFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drag_bubble_Layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/dp_200"
+    android:background="@color/color_red_f04c62">
+
+    <TextView
+        android:id="@+id/test_view"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_20"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_green"
+        android:gravity="center"
+        android:minWidth="@dimen/dp_20"
+        android:text="50"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_12" />
+
+    <widget.cf.com.widgetlibrary.bubble.DragBubbleView
+        android:id="@+id/drag_bubble_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:bubble_color="#ff0000"
+        app:bubble_radius="12dp"
+        app:bubble_text="12"
+        app:bubble_textColor="#ffffff"
+        app:bubble_textSize="12dp" />
+
+</widget.cf.com.widgetlibrary.bubble.DragBubbleFrameLayout>

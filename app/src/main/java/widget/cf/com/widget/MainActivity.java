@@ -1,7 +1,6 @@
 package widget.cf.com.widget;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -41,7 +40,6 @@ public class MainActivity extends BaseActivity {
         textView.setLayoutParams(params);
         textView.setBackgroundResource(R.color.color_01dfa6);
         llLayout.addView(textView);
-
     }
 
     public void onEmojiClick(View view) {
@@ -67,6 +65,10 @@ public class MainActivity extends BaseActivity {
 
     public void onColorPickerClick(View view) {
         startActivity(new Intent(this, ColorPickerActivity.class));
+    }
+
+    public void onDragBubbleClick(View view) {
+        startActivity(new Intent(this, DragBubbleActivity.class));
     }
 
 }
