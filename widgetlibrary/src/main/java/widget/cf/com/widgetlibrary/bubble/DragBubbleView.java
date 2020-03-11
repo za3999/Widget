@@ -158,10 +158,7 @@ public class DragBubbleView extends View {
         }
         this.bubbleColor = bubbleColor;
         setBubbleColor(bubbleColor);
-
-        if (!useCircle) {
-            viewBitmap = BitmapUtil.getBitmap(dragView);
-        }
+        viewBitmap = BitmapUtil.getBitmap(dragView);
         setBubbleState(BUBBLE_STATE_STATIC);
         startDrag = true;
         invalidate();
@@ -208,13 +205,11 @@ public class DragBubbleView extends View {
             if (mBubbleState != BUBBLE_STATE_STATIC) {
                 moveBubbleCenter.x = event.getX();
                 moveBubbleCenter.y = event.getY();
-                dist = (float) Math.hypot(event.getX() - stillBubbleCenter.x, event.getY() - stillBubbleCenter.y);
-                if (mBubbleState == BUBBLE_STATE_CONNECTION) {
-                    if (dist < maxDist - moveOffSize) {
-                        bubbleStillRadius = bubbleRadius - dist / 10;
-                    } else {
-                        setBubbleState(BUBBLE_STATE_APART);
-                    }
+                updateDist();
+                if (dist < maxDist - moveOffSize) {
+                    setBubbleState(BUBBLE_STATE_CONNECTION);
+                } else {
+                    setBubbleState(BUBBLE_STATE_APART);
                 }
             }
             invalidate();
@@ -330,6 +325,7 @@ public class DragBubbleView extends View {
         vAnimator.setInterpolator(new OvershootInterpolator(5f));
         vAnimator.addUpdateListener(animation -> {
             moveBubbleCenter = (PointF) animation.getAnimatedValue();
+            updateDist();
             invalidate();
         });
         vAnimator.addListener(new AnimatorListenerAdapter() {
@@ -351,4 +347,10 @@ public class DragBubbleView extends View {
         });
         vAnimator.start();
     }
+
+    private void updateDist() {
+        dist = (float) Math.hypot(moveBubbleCenter.x - stillBubbleCenter.x, moveBubbleCenter.y - stillBubbleCenter.y);
+        bubbleStillRadius = bubbleRadius - dist / 12;
+    }
+
 }
