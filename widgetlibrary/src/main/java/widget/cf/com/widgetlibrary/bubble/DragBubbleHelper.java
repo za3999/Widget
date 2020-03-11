@@ -8,6 +8,13 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class DragBubbleHelper {
 
+    public static void bindDragView(View view, int color, BaseCallBack.CallBack1<Boolean> onDragResultListener) {
+        view.setOnTouchListener((v, event) -> {
+            startDragBubbleView(v, color, onDragResultListener);
+            return true;
+        });
+    }
+
     public static boolean startDragBubbleView(View view, int color, BaseCallBack.CallBack1<Boolean> onResultListener) {
         DragBubbleFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
         if (dragBubbleFrameLayout == null) {

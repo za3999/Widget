@@ -79,6 +79,7 @@ public class DragBubbleFrameLayout extends FrameLayout {
             BaseCallBack.onCallBack(onResultListener, isReset);
         });
         setIntercept(true);
+        view.setVisibility(View.INVISIBLE);
         mainHandler.postDelayed(() -> forceStopDragBubble(view), 400);
         return true;
     }

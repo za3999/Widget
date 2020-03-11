@@ -18,14 +18,6 @@ public class DragBubbleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drag_bubble);
         mText = findViewById(R.id.test_view);
-        mText.setOnTouchListener((v, event) -> {
-            boolean success = DragBubbleHelper.startDragBubbleView(v, ContextCompat.getColor(this, R.color.color_26b36d), reset -> {
-                v.setVisibility(View.VISIBLE);
-            });
-            if (success) {
-                v.setVisibility(View.INVISIBLE);
-            }
-            return true;
-        });
+        DragBubbleHelper.bindDragView(mText, ContextCompat.getColor(this, R.color.color_26b36d), reset -> mText.setVisibility(View.VISIBLE));
     }
 }
