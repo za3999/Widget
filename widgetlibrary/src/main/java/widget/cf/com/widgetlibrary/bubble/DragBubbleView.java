@@ -170,12 +170,7 @@ public class DragBubbleView extends View {
         int x = location[0] + view.getWidth() / 2;
         int y = location[1] - yOffset + view.getHeight() / 2;
         stillBubbleCenter = new PointF(x, y);
-        dist = (float) Math.hypot(moveBubbleCenter.x - stillBubbleCenter.x, moveBubbleCenter.y - stillBubbleCenter.y);
-        if (mBubbleState == BUBBLE_STATE_CONNECTION) {
-            if (dist > maxDist - moveOffSize) {
-                setBubbleState(BUBBLE_STATE_APART);
-            }
-        }
+        updateDist();
         invalidate();
     }
 
@@ -206,11 +201,6 @@ public class DragBubbleView extends View {
                 moveBubbleCenter.x = event.getX();
                 moveBubbleCenter.y = event.getY();
                 updateDist();
-                if (dist < maxDist - moveOffSize) {
-                    setBubbleState(BUBBLE_STATE_CONNECTION);
-                } else {
-                    setBubbleState(BUBBLE_STATE_APART);
-                }
             }
             invalidate();
         } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
@@ -351,6 +341,11 @@ public class DragBubbleView extends View {
     private void updateDist() {
         dist = (float) Math.hypot(moveBubbleCenter.x - stillBubbleCenter.x, moveBubbleCenter.y - stillBubbleCenter.y);
         bubbleStillRadius = bubbleRadius - dist / 12;
+        if (dist < maxDist - moveOffSize) {
+            setBubbleState(BUBBLE_STATE_CONNECTION);
+        } else {
+            setBubbleState(BUBBLE_STATE_APART);
+        }
     }
 
 }
