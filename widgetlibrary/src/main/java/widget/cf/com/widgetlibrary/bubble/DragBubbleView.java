@@ -164,6 +164,7 @@ public class DragBubbleView extends View {
         }
         setBubbleState(BUBBLE_STATE_STATIC);
         startDrag = true;
+        invalidate();
     }
 
     public void updateLocation(View view, int yOffset) {
