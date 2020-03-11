@@ -68,7 +68,6 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        new Thread(() -> EmojiHelper.loadEmoji()).start();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         mInstance = this;
         MultiLanguageUtil.getInstance().attachBaseContext(this);

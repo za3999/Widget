@@ -39,10 +39,10 @@ public class HeadTextDrawable extends ShapeDrawable {
         if (!TextUtils.isEmpty(text)) {
             if (text.length() > 1) {
                 text = text.substring(0, 1).toUpperCase() + text.substring(1);
-                drawText = EmojiHelper.getCutString(text, 2);
+                drawText = EmojiHelper.getCutEmojiString(text, 2);
             } else {
                 text = text.substring(0, 1).toUpperCase();
-                drawText = EmojiHelper.getCutString(text, 1);
+                drawText = EmojiHelper.getCutEmojiString(text, 1);
             }
         }
     }

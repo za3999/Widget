@@ -28,6 +28,7 @@ import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.util.BitmapUtil;
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
+
 public class DragBubbleView extends View {
 
     private final int BUBBLE_STATE_STATIC = 0;
@@ -68,6 +69,9 @@ public class DragBubbleView extends View {
     private Bitmap[] bomb_bitmaps;
     private int bombDrawableIndex = 0;
     private boolean isBombAnimStarting = false;
+    private View dragView;
+    private Bitmap viewBitmap;
+    private boolean useCircle = false;
 
     public DragBubbleView(Context context) {
         this(context, null);
@@ -136,22 +140,45 @@ public class DragBubbleView extends View {
 
     public void initBubble(View view, int yOffset, int bubbleColor, BaseCallBack.CallBack1<Boolean> onResultListener) {
         this.onResultListener = onResultListener;
+        this.dragView = view;
         int location[] = new int[2];
         view.getLocationInWindow(location);
         int x = location[0] + view.getWidth() / 2;
         int y = location[1] - yOffset + view.getHeight() / 2;
         stillBubbleCenter = new PointF(x, y);
         moveBubbleCenter = new PointF(x, y);
-        setRadius(Math.max(view.getWidth(), view.getHeight()) / 2);
+        setRadius(Math.min(view.getWidth(), view.getHeight()) / 2);
+
         if (view instanceof TextView) {
             TextView textView = (TextView) view;
             setTextPaint(textView.getCurrentTextColor(), textView.getTextSize());
             bubbleText = textView.getText().toString();
+        } else {
+            useCircle = false;
         }
         this.bubbleColor = bubbleColor;
         setBubbleColor(bubbleColor);
+
+        if (!useCircle) {
+            viewBitmap = BitmapUtil.getBitmap(dragView);
+        }
         setBubbleState(BUBBLE_STATE_STATIC);
         startDrag = true;
+    }
+
+    public void updateLocation(View view, int yOffset) {
+        int location[] = new int[2];
+        view.getLocationInWindow(location);
+        int x = location[0] + view.getWidth() / 2;
+        int y = location[1] - yOffset + view.getHeight() / 2;
+        stillBubbleCenter = new PointF(x, y);
+        dist = (float) Math.hypot(moveBubbleCenter.x - stillBubbleCenter.x, moveBubbleCenter.y - stillBubbleCenter.y);
+        if (mBubbleState == BUBBLE_STATE_CONNECTION) {
+            if (dist > maxDist - moveOffSize) {
+                setBubbleState(BUBBLE_STATE_APART);
+            }
+        }
+        invalidate();
     }
 
     private void setRadius(float radius) {
@@ -202,6 +229,7 @@ public class DragBubbleView extends View {
         if (!startDrag) {
             return;
         }
+        LogUtils.d("drag", "onDraw:" + stillBubbleCenter.x + "," + stillBubbleCenter.y + "|" + moveBubbleCenter.x + "," + moveBubbleCenter.y);
         if (mBubbleState == BUBBLE_STATE_CONNECTION) {
             canvas.drawCircle(stillBubbleCenter.x, stillBubbleCenter.y, bubbleStillRadius, bPaint);
             int anchorx = (int) (stillBubbleCenter.x + moveBubbleCenter.x) / 2;
@@ -230,14 +258,19 @@ public class DragBubbleView extends View {
         }
 
         if (mBubbleState != BUBBLE_STATE_DISMISS) {
-            canvas.drawCircle(moveBubbleCenter.x, moveBubbleCenter.y, bubbleRadius, bPaint);
-            textPaint.getTextBounds(bubbleText, 0, bubbleText.length(), textRect);
-            canvas.drawText(bubbleText, moveBubbleCenter.x - textRect.width() / 2, moveBubbleCenter.y + textRect.height() / 2, textPaint);
+            if (useCircle) {
+                canvas.drawCircle(moveBubbleCenter.x, moveBubbleCenter.y, bubbleRadius, bPaint);
+                textPaint.getTextBounds(bubbleText, 0, bubbleText.length(), textRect);
+                canvas.drawText(bubbleText, moveBubbleCenter.x - textRect.width() / 2, moveBubbleCenter.y + textRect.height() / 2, textPaint);
+            } else {
+                canvas.drawBitmap(viewBitmap, moveBubbleCenter.x - dragView.getWidth() / 2, moveBubbleCenter.y - dragView.getHeight() / 2, bPaint);
+            }
         }
 
         if (isBombAnimStarting) {
-            bombRect.set((int) (moveBubbleCenter.x - bubbleRadius), (int) (moveBubbleCenter.y - bubbleRadius),
-                    (int) (moveBubbleCenter.x + bubbleRadius), (int) (moveBubbleCenter.y + bubbleRadius));
+            int bomOffset = Math.max(dragView.getWidth() / 2, dragView.getHeight() / 2);
+            bombRect.set((int) (moveBubbleCenter.x - bomOffset), (int) (moveBubbleCenter.y - bomOffset),
+                    (int) (moveBubbleCenter.x + bomOffset), (int) (moveBubbleCenter.y + bomOffset));
             canvas.drawBitmap(BitmapUtil.changeColor(bomb_bitmaps[bombDrawableIndex], bubbleColor), null, bombRect, bombPaint);
         }
     }
@@ -317,6 +350,4 @@ public class DragBubbleView extends View {
         });
         vAnimator.start();
     }
-
-
 }

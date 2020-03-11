@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
+import widget.cf.com.widgetlibrary.util.LogUtils;
 
 
 public class DragBubbleFrameLayout extends FrameLayout {
@@ -73,12 +74,23 @@ public class DragBubbleFrameLayout extends FrameLayout {
             mBubbleView = findViewById(R.id.drag_bubble_view);
         }
         mBubbleView.initBubble(view, yOffset, color, isReset -> {
+            LogUtils.d("drag", "DragBubbleFrameLayout drag result:" + isReset);
             setIntercept(false);
             BaseCallBack.onCallBack(onResultListener, isReset);
         });
         setIntercept(true);
         mainHandler.postDelayed(() -> forceStopDragBubble(view), 400);
         return true;
+    }
+
+    public void updateLocation(int yOffset) {
+        if (mBubbleView != null && dragView != null) {
+            if (dragView.isAttachedToWindow()) {
+                mBubbleView.updateLocation(dragView, yOffset);
+            } else {
+                forceStopDragBubble(dragView);
+            }
+        }
     }
 
     public void forceStopDragBubble(View view) {
