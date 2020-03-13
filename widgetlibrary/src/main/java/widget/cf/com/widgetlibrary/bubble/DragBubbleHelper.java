@@ -16,35 +16,39 @@ public class DragBubbleHelper {
     }
 
     public static boolean startDragBubbleView(View view, int color, BaseCallBack.CallBack1<Boolean> onResultListener) {
-        DragBubbleFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
+        DragFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
         if (dragBubbleFrameLayout == null) {
             return false;
         }
+
         int location[] = new int[2];
         dragBubbleFrameLayout.getLocationInWindow(location);
         return dragBubbleFrameLayout.startDragBubbleView(view, location[1], color, onResultListener);
     }
 
     public static void forceStopDragBubble(View view) {
-        DragBubbleFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
-        if (dragBubbleFrameLayout != null) {
-            dragBubbleFrameLayout.forceStopDragBubble(view);
+        DragFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
+        if (dragBubbleFrameLayout == null) {
+            return;
         }
+        dragBubbleFrameLayout.forceStopDragBubble();
     }
 
     public static boolean isDragBubbleView(View view) {
-        DragBubbleFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
+        DragFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
         if (dragBubbleFrameLayout == null) {
             return false;
         }
+
         return dragBubbleFrameLayout.getDragView() == view;
     }
 
     public static void updateLocation(View view) {
-        DragBubbleFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
+        DragFrameLayout dragBubbleFrameLayout = view.getRootView().findViewById(R.id.drag_bubble_Layout);
         if (dragBubbleFrameLayout == null) {
             return;
         }
+
         int location[] = new int[2];
         dragBubbleFrameLayout.getLocationInWindow(location);
         ApplicationUtil.runOnMainThread(() -> dragBubbleFrameLayout.updateLocation(location[1]), 100);

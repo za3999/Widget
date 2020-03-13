@@ -15,42 +15,42 @@ import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
 
-public class DragBubbleFrameLayout extends FrameLayout {
+public class DragFrameLayout extends FrameLayout {
 
     private DragBubbleView mBubbleView;
-    boolean intercept = false;
+    boolean bubbleIntercept = false;
     private View dragView;
     private Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public DragBubbleFrameLayout(@NonNull Context context) {
+    public DragFrameLayout(@NonNull Context context) {
         super(context);
     }
 
-    public DragBubbleFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public DragFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DragBubbleFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DragFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!intercept) {
-            return super.onInterceptTouchEvent(ev);
-        } else {
+        if (bubbleIntercept) {
             mBubbleView.touchDown(ev);
             return true;
+        } else {
+            return super.onInterceptTouchEvent(ev);
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!intercept) {
-            return super.onTouchEvent(event);
-        } else {
+        if (bubbleIntercept) {
             mainHandler.removeCallbacksAndMessages(null);
             return mBubbleView.touchUpdate(event);
+        } else {
+            return super.onTouchEvent(event);
         }
     }
 
@@ -58,7 +58,7 @@ public class DragBubbleFrameLayout extends FrameLayout {
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
         if (!hasWindowFocus) {
-            setIntercept(false);
+            setBubbleIntercept(false);
             if (mBubbleView != null) {
                 mBubbleView.endBubble(true);
             }
@@ -66,7 +66,7 @@ public class DragBubbleFrameLayout extends FrameLayout {
     }
 
     public boolean startDragBubbleView(View view, int yOffset, int color, BaseCallBack.CallBack1<Boolean> onResultListener) {
-        if (intercept) {
+        if (bubbleIntercept) {
             return false;
         }
         dragView = view;
@@ -75,12 +75,12 @@ public class DragBubbleFrameLayout extends FrameLayout {
         }
         mBubbleView.initBubble(view, yOffset, color, isReset -> {
             LogUtils.d("drag", "DragBubbleFrameLayout drag result:" + isReset);
-            setIntercept(false);
+            setBubbleIntercept(false);
             BaseCallBack.onCallBack(onResultListener, isReset);
         });
-        setIntercept(true);
+        setBubbleIntercept(true);
         view.setVisibility(View.INVISIBLE);
-        mainHandler.postDelayed(() -> forceStopDragBubble(view), 400);
+        mainHandler.postDelayed(() -> forceStopDragBubble(), 400);
         return true;
     }
 
@@ -89,28 +89,28 @@ public class DragBubbleFrameLayout extends FrameLayout {
             if (dragView.isAttachedToWindow()) {
                 mBubbleView.updateLocation(dragView, yOffset);
             } else {
-                forceStopDragBubble(dragView);
+                forceStopDragBubble();
             }
         }
     }
 
-    public void forceStopDragBubble(View view) {
-        if (dragView == null || dragView != view) {
+    public void forceStopDragBubble() {
+        if (dragView == null) {
             return;
         }
         if (mBubbleView != null) {
             mBubbleView.endBubble(true);
         }
-        setIntercept(false);
+        setBubbleIntercept(false);
     }
 
     public View getDragView() {
         return dragView;
     }
 
-    private void setIntercept(boolean intercept) {
-        this.intercept = intercept;
-        if (!intercept) {
+    private void setBubbleIntercept(boolean bubbleIntercept) {
+        this.bubbleIntercept = bubbleIntercept;
+        if (!bubbleIntercept) {
             dragView = null;
         }
     }
