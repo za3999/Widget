@@ -53,4 +53,17 @@ public class DragBubbleHelper {
         dragBubbleFrameLayout.getLocationInWindow(location);
         ApplicationUtil.runOnMainThread(() -> dragBubbleFrameLayout.updateLocation(location[1]), 100);
     }
+
+    public static abstract class BubbleDataMonitor<T> implements BaseCallBack.CallBack1<Boolean> {
+
+        T data;
+
+        public void setData(T t) {
+            this.data = t;
+        }
+
+        public T getData() {
+            return data;
+        }
+    }
 }
