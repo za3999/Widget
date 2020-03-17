@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -61,12 +60,6 @@ public class DragBubbleView extends View {
     private BaseCallBack.CallBack1<Boolean> onResultListener;
     private boolean startDrag;
 
-    private int[] BOOM_ARRAY = {R.drawable.burst_1, R.drawable.burst_2
-            , R.drawable.burst_3, R.drawable.burst_4, R.drawable.burst_5,
-            R.drawable.burst_6, R.drawable.burst_7, R.drawable.burst_8,
-            R.drawable.burst_9, R.drawable.burst_10, R.drawable.burst_11,
-            R.drawable.burst_12, R.drawable.burst_13};
-    private Bitmap[] bomb_bitmaps;
     private int bombDrawableIndex = 0;
     private boolean isBombAnimStarting = false;
     private View dragView;
@@ -111,10 +104,7 @@ public class DragBubbleView extends View {
         bombPaint.setAntiAlias(true);
         bombPaint.setFilterBitmap(true);
         bombRect = new Rect();
-        bomb_bitmaps = new Bitmap[BOOM_ARRAY.length];
-        for (int i = 0; i < BOOM_ARRAY.length; i++) {
-            bomb_bitmaps[i] = BitmapFactory.decodeResource(getResources(), BOOM_ARRAY[i]);
-        }
+
     }
 
     private void setTextPaint(int textColor, float textSize) {
@@ -257,7 +247,7 @@ public class DragBubbleView extends View {
             int bomOffset = Math.max(dragView.getWidth() / 2, dragView.getHeight() / 2);
             bombRect.set((int) (moveBubbleCenter.x - bomOffset), (int) (moveBubbleCenter.y - bomOffset),
                     (int) (moveBubbleCenter.x + bomOffset), (int) (moveBubbleCenter.y + bomOffset));
-            canvas.drawBitmap(BitmapUtil.changeColor(bomb_bitmaps[bombDrawableIndex], bubbleColor), null, bombRect, bombPaint);
+            canvas.drawBitmap(BitmapUtil.changeColor(DragBubbleHelper.getBombBitmaps()[bombDrawableIndex], bubbleColor), null, bombRect, bombPaint);
         }
     }
 
@@ -278,7 +268,7 @@ public class DragBubbleView extends View {
     private void bubbleBombAnim() {
         setBubbleState(BUBBLE_STATE_DISMISS);
         isBombAnimStarting = true;
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, BOOM_ARRAY.length);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, DragBubbleHelper.getBombBitmaps().length);
         valueAnimator.setDuration(500);
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.addUpdateListener(animation -> {
@@ -347,5 +337,4 @@ public class DragBubbleView extends View {
             setBubbleState(BUBBLE_STATE_APART);
         }
     }
-
 }
