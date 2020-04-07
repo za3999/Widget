@@ -70,5 +70,8 @@ public class MainActivity extends BaseActivity {
     public void onDragBubbleClick(View view) {
         startActivity(new Intent(this, DragBubbleActivity.class));
     }
+    public void onDevicesInfoClick(View view) {
+        startActivity(new Intent(this, DeviceInfoActivity.class));
+    }
 
 }
