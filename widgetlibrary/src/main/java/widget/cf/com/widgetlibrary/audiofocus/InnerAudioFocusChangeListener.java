@@ -6,9 +6,15 @@ public abstract class InnerAudioFocusChangeListener implements AudioManager.OnAu
 
     private AudioManager.OnAudioFocusChangeListener systemAudioFocusChangeListener;
     private boolean ignoreSystemFocusChange;
+    private VolumeController volumeController;
 
     public InnerAudioFocusChangeListener() {
 
+    }
+
+    public InnerAudioFocusChangeListener setVolumeController(VolumeController volumeController) {
+        this.volumeController = volumeController;
+        return this;
     }
 
     public InnerAudioFocusChangeListener(boolean ignoreSystemFocusChange) {
@@ -22,6 +28,24 @@ public abstract class InnerAudioFocusChangeListener implements AudioManager.OnAu
                 @Override
                 public void onAudioFocusChangeWarp(int focusChange) {
                     InnerAudioFocusChangeListener.this.onAudioFocusChange(focusChange);
+                }
+
+                @Override
+                public void volumeDown() {
+                    if (volumeController != null) {
+                        volumeController.volumeDown();
+                    } else {
+                        super.volumeDown();
+                    }
+                }
+
+                @Override
+                public void restoreVolume() {
+                    if (volumeController != null) {
+                        volumeController.restoreVolume();
+                    } else {
+                        super.restoreVolume();
+                    }
                 }
             });
         }
