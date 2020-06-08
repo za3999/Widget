@@ -59,6 +59,10 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, MainTableActivity.class));
     }
 
+    public void onMainTIndicatorClick(View view) {
+        startActivity(new Intent(this, MainIndicatorActivity.class));
+    }
+
     public void onSwipeLayoutClick(View view) {
         startActivity(new Intent(this, SwipeLayoutActivity.class));
     }
@@ -70,6 +74,7 @@ public class MainActivity extends BaseActivity {
     public void onDragBubbleClick(View view) {
         startActivity(new Intent(this, DragBubbleActivity.class));
     }
+
     public void onDevicesInfoClick(View view) {
         startActivity(new Intent(this, DeviceInfoActivity.class));
     }

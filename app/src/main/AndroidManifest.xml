@@ -23,6 +23,7 @@
         <activity android:name=".MainTableActivity"></activity>
         <activity android:name=".DragBubbleActivity"></activity>
         <activity android:name=".DeviceInfoActivity"></activity>
+        <activity android:name=".MainIndicatorActivity"></activity>
     </application>
 
 </manifest>
