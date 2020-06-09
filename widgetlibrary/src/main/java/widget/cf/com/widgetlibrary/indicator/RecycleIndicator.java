@@ -1,5 +1,9 @@
 package widget.cf.com.widgetlibrary.indicator;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -253,12 +257,14 @@ public class RecycleIndicator extends RecyclerView {
         TextView nameTv;
         View lineView;
         View delView;
+        View contentLayout;
 
         @Override
         public void initView(View view) {
             nameTv = view.findViewById(R.id.tv_name);
             lineView = view.findViewById(R.id.line);
             delView = view.findViewById(R.id.del_view);
+            contentLayout = view.findViewById(R.id.content_layout);
         }
 
         @Override
@@ -272,7 +278,35 @@ public class RecycleIndicator extends RecyclerView {
                 lineView.setVisibility(View.GONE);
             }
             delView.setVisibility(isEditModel ? View.VISIBLE : View.GONE);
+            if (isEditModel) {
+                shakeView(contentLayout, ApplicationUtil.getIntDimension(R.dimen.dp_2));
+            }
         }
+    }
+
+    public void shakeView(final View view, final int xOffset) {
+        if (view == null) {
+            return;
+        }
+        if (!isEditModel) {
+            return;
+        }
+        view.postDelayed(() -> {
+            if (!isEditModel) {
+                return;
+            }
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playSequentially(ObjectAnimator.ofFloat(view, View.ROTATION, xOffset),
+                    ObjectAnimator.ofFloat(view, View.ROTATION, 0));
+            animatorSet.setDuration(50);
+            animatorSet.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    shakeView(view, xOffset);
+                }
+            });
+            animatorSet.start();
+        }, 5000);
     }
 
     public interface EditListener {
