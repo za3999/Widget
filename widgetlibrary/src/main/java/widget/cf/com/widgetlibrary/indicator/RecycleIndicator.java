@@ -2,7 +2,6 @@ package widget.cf.com.widgetlibrary.indicator;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -138,6 +137,8 @@ public class RecycleIndicator extends RecyclerView {
 
     public void setData(List<MenuData> menuData) {
         adapter.setData(menuData);
+        int index = getSelect();
+        layoutManager.scrollToPositionWithOffset(index, 0);
     }
 
     private void updateView(int position) {
@@ -279,6 +280,9 @@ public class RecycleIndicator extends RecyclerView {
             }
             delView.setVisibility(isEditModel ? View.VISIBLE : View.GONE);
             if (isEditModel) {
+                if (contentLayout.getTag() != null && (Boolean) contentLayout.getTag()) {
+                    return;
+                }
                 shakeView(contentLayout, ApplicationUtil.getIntDimension(R.dimen.dp_2));
             }
         }
@@ -289,23 +293,24 @@ public class RecycleIndicator extends RecyclerView {
             return;
         }
         if (!isEditModel) {
+            view.setTag(false);
             return;
         }
+        view.setTag(true);
         view.postDelayed(() -> {
             if (!isEditModel) {
+                view.setTag(false);
                 return;
             }
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.playSequentially(ObjectAnimator.ofFloat(view, View.ROTATION, xOffset),
-                    ObjectAnimator.ofFloat(view, View.ROTATION, 0));
-            animatorSet.setDuration(50);
-            animatorSet.addListener(new AnimatorListenerAdapter() {
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, View.ROTATION, xOffset, 0);
+            objectAnimator.setDuration(50);
+            objectAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     shakeView(view, xOffset);
                 }
             });
-            animatorSet.start();
+            objectAnimator.start();
         }, 5000);
     }
 
