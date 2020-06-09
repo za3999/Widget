@@ -18,7 +18,6 @@ public class MainIndicatorActivity extends BaseActivity {
 
     private NoScrollViewPager mPager;
     private RecycleIndicator mIndicator;
-    private int mCurrentFragmentIndex = -1;
     private List<MenuData> menuDataList = new ArrayList<>();
 
     @Override
@@ -42,14 +41,11 @@ public class MainIndicatorActivity extends BaseActivity {
         mIndicator.setEditListener((selectPosition, menuDataList) -> {
             this.menuDataList = menuDataList;
             mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
-            mIndicator.setData(this.menuDataList);
-            switchFragment(selectPosition);
+            mIndicator.setData(selectPosition, this.menuDataList);
         });
         mIndicator.setViewPager(mPager);
-        mIndicator.setData(menuDataList);
-        switchFragment(0);
+        mIndicator.setData(0, menuDataList);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -58,13 +54,7 @@ public class MainIndicatorActivity extends BaseActivity {
         }
     }
 
-    public void switchFragment(int index) {
-        if (mCurrentFragmentIndex != index) {
-            mPager.setCurrentItem(index, false);
-        }
-    }
-
-    class FragmentStatePagerAdapter extends android.support.v4.app.FragmentStatePagerAdapter {
+    private class FragmentStatePagerAdapter extends android.support.v4.app.FragmentStatePagerAdapter {
         public FragmentStatePagerAdapter(FragmentManager fm) {
             super(fm);
         }

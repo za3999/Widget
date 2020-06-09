@@ -135,10 +135,10 @@ public class RecycleIndicator extends RecyclerView {
         });
     }
 
-    public void setData(List<MenuData> menuData) {
+    public void setData(int selectPosition, List<MenuData> menuData) {
         adapter.setData(menuData);
-        int index = getSelect();
-        layoutManager.scrollToPositionWithOffset(index, 0);
+        layoutManager.scrollToPositionWithOffset(selectPosition, 0);
+        mPager.setCurrentItem(selectPosition);
     }
 
     private void updateView(int position) {
