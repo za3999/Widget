@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +11,12 @@ import java.util.List;
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.indicator.MenuData;
+import widget.cf.com.widgetlibrary.indicator.NoScrollViewPager;
 import widget.cf.com.widgetlibrary.indicator.RecycleIndicator;
 
 public class MainIndicatorActivity extends BaseActivity {
 
-    private ViewPager mPager;
+    private NoScrollViewPager mPager;
     private RecycleIndicator mIndicator;
     private int mCurrentFragmentIndex = -1;
     private List<MenuData> menuDataList = new ArrayList<>();
@@ -39,8 +39,23 @@ public class MainIndicatorActivity extends BaseActivity {
         mPager = findViewById(R.id.view_pager);
         mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
         mIndicator = findViewById(R.id.indicator_layout);
-        mIndicator.setViewPager(mPager, menuDataList);
+        mIndicator.setEditListener((selectPosition, menuDataList) -> {
+            this.menuDataList = menuDataList;
+            mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
+            mIndicator.setData(this.menuDataList);
+            switchFragment(selectPosition);
+        });
+        mIndicator.setViewPager(mPager);
+        mIndicator.setData(menuDataList);
         switchFragment(0);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (!mIndicator.finishEditModel()) {
+            super.onBackPressed();
+        }
     }
 
     public void switchFragment(int index) {
@@ -56,7 +71,7 @@ public class MainIndicatorActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return TestFragment.getInstance("我是第" + position + "个Fragment");
+            return TestFragment.getInstance("我是第" + menuDataList.get(position).getId() + "个Fragment");
         }
 
         @Override

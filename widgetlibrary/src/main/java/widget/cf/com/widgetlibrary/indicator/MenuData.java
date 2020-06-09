@@ -8,7 +8,6 @@ public class MenuData {
     private String unreadCount;
     private View menuView;
     private boolean isSelect;
-    private boolean showLine;
 
     public MenuData(int id, String title) {
         this.id = id;
@@ -39,11 +38,4 @@ public class MenuData {
         this.menuView = menuView;
     }
 
-    public boolean isShowLine() {
-        return showLine;
-    }
-
-    public void setShowLine(boolean showLine) {
-        this.showLine = showLine;
-    }
 }

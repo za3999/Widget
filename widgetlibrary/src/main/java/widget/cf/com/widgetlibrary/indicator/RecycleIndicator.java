@@ -9,11 +9,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import widget.cf.com.widgetlibrary.R;
@@ -23,12 +26,15 @@ import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class RecycleIndicator extends RecyclerView {
-    private ViewPager mPager;
+    private boolean isEditModel;
+    private NoScrollViewPager mPager;
     private BaseCommonAdapter<MenuData> adapter;
     private LinearLayoutManager layoutManager;
     private Rect indicatorRect = new Rect();
     private Paint indicatorPaint;
-    private int currentSelect = -1;
+    private boolean indicatorScroll = true;
+    private ItemTouchHelper mItemTouchHelper;
+    private EditListener mEditListener;
 
     public RecycleIndicator(Context context) {
         this(context, null);
@@ -50,46 +56,73 @@ public class RecycleIndicator extends RecyclerView {
             @NonNull
             @Override
             public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new DefaultViewHolder<MenuData>(createView(R.layout.recycle_indicatior_item, parent)) {
-                    TextView nameTv;
+                return new ItemHolder(createView(R.layout.recycle_indicatior_item, parent));
+            }
 
-                    @Override
-                    public void initView(View view) {
-                        nameTv = view.findViewById(R.id.tv_name);
-                    }
+            @Override
+            public void onItemClick(int position, View v, MenuData item) {
+                mPager.setCurrentItem(position, true);
+            }
 
-                    @Override
-                    protected void onBindData(int position, MenuData data) {
-                        nameTv.setText(data.getTitle());
-                        data.setMenuView(itemView);
-                        itemView.setSelected(data.isSelect());
-                        itemView.setOnClickListener(v -> mPager.setCurrentItem(position, true));
-                    }
-                };
+            @Override
+            public void onItemLongClick(int position, View v, MenuData item) {
+                setEditModel(true);
             }
         };
         setAdapter(adapter);
         addItemDecoration(new ItemDecoration() {
+
             @Override
             public void onDrawOver(Canvas c, RecyclerView parent, State state) {
-                super.onDrawOver(c, parent, state);
-                c.drawRect(indicatorRect, indicatorPaint);
+                if (indicatorScroll) {
+                    c.drawRect(indicatorRect, indicatorPaint);
+                }
             }
         });
+        addTouchHelper();
     }
 
-    public void setViewPager(ViewPager pager, List<MenuData> menus) {
+    public void setEditListener(EditListener editListener) {
+        this.mEditListener = editListener;
+    }
+
+    private void setEditModel(boolean editModel) {
+        isEditModel = editModel;
+        mPager.setScroll(!editModel);
+        adapter.notifyDataSetChanged();
+    }
+
+    public boolean finishEditModel() {
+        if (isEditModel) {
+            setEditModel(false);
+            if (mEditListener != null) {
+                mEditListener.onFinish(getSelect(), new ArrayList<>(adapter.getData()));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private int getSelect() {
+        int size = adapter.getData().size();
+        for (int i = 0; i < size; i++) {
+            if (adapter.getData().get(i).isSelect()) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void setViewPager(NoScrollViewPager pager) {
         this.mPager = pager;
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 selectChild(position, positionOffset);
-                invalidate();
             }
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
@@ -97,32 +130,27 @@ public class RecycleIndicator extends RecyclerView {
 
             }
         });
-        notifyDataSetChanged(menus);
     }
 
-    public void notifyDataSetChanged(List<MenuData> menus) {
-        adapter.setData(menus);
-        adapter.notifyDataSetChanged();
+    public void setData(List<MenuData> menuData) {
+        adapter.setData(menuData);
     }
 
-    private void selectChild(int position) {
+    private void updateView(int position) {
         List<MenuData> menuData = adapter.getData();
         if (adapter.getData().size() == 0) {
             return;
         }
-        if (currentSelect != position) {
-            int size = menuData.size();
-            for (int i = 0; i < size; i++) {
-                MenuData itemData = menuData.get(i);
-                if (i == position) {
-                    itemData.setSelect(true);
-                    adapter.notifyItemChanged(i);
-                } else if (itemData.isSelect()) {
-                    itemData.setSelect(false);
-                    adapter.notifyItemChanged(i);
-                }
+        int size = menuData.size();
+        for (int i = 0; i < size; i++) {
+            MenuData itemData = menuData.get(i);
+            if (i == position) {
+                itemData.setSelect(true);
+                adapter.notifyItemChanged(i);
+            } else if (itemData.isSelect()) {
+                itemData.setSelect(false);
+                adapter.notifyItemChanged(i);
             }
-            currentSelect = position;
         }
     }
 
@@ -130,8 +158,8 @@ public class RecycleIndicator extends RecyclerView {
         if (adapter.getData().size() == 0) {
             return;
         }
-        selectChild(position);
         calculateIndicatorRect(position, offset);
+        updateView(position);
     }
 
     private void calculateIndicatorRect(int position, float pageOffset) {
@@ -139,15 +167,16 @@ public class RecycleIndicator extends RecyclerView {
         if (menuView == null) {
             return;
         }
-        int bottom = getBottom();
+        int bottom = getHeight();
         int top = bottom - ApplicationUtil.getIntDimension(R.dimen.dp_2);
         int left;
         int right;
         if (pageOffset == 0f) {
             left = menuView.getLeft();
             right = menuView.getRight();
-            indicatorRect.set(left, top, right, bottom);
+            indicatorScroll = false;
         } else {
+            indicatorScroll = true;
             View nextView = adapter.getItem(position + 1).getMenuView();
             if (nextView == null) {
                 return;
@@ -159,6 +188,94 @@ public class RecycleIndicator extends RecyclerView {
         int scrollOffset = getWidth() / 2;
         int offset = left + ((right - left) / 2) - scrollOffset;
         scrollBy(offset, 0);
-        invalidate();
+    }
+
+    private void addTouchHelper() {
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return isEditModel;
+            }
+
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int dragFlags = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+                return makeMovementFlags(dragFlags, 0);
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return true;
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int
+                    fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+                if (target instanceof ItemHolder) {
+                    super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+                    Collections.swap(adapter.getData(), fromPos, toPos);
+                    adapter.notifyItemMoved(fromPos, toPos);
+                }
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+
+        });
+        mItemTouchHelper.attachToRecyclerView(this);
+    }
+
+    private class ItemHolder extends DefaultViewHolder<MenuData> {
+
+        public ItemHolder(View view) {
+            super(view, true);
+        }
+
+        TextView nameTv;
+        View lineView;
+        View delView;
+
+        @Override
+        public void initView(View view) {
+            nameTv = view.findViewById(R.id.tv_name);
+            lineView = view.findViewById(R.id.line);
+            delView = view.findViewById(R.id.del_view);
+        }
+
+        @Override
+        public void bindData(int position, MenuData data) {
+            nameTv.setText(data.getTitle());
+            data.setMenuView(itemView);
+            itemView.setSelected(data.isSelect());
+            if (!indicatorScroll && data.isSelect()) {
+                lineView.setVisibility(View.VISIBLE);
+            } else {
+                lineView.setVisibility(View.GONE);
+            }
+            delView.setVisibility(isEditModel ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public interface EditListener {
+        void onFinish(int selectPosition, List<MenuData> menuDataList);
     }
 }
