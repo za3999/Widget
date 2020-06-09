@@ -12,12 +12,12 @@ import java.util.List;
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.indicator.MenuData;
-import widget.cf.com.widgetlibrary.indicator.TabIndicator;
+import widget.cf.com.widgetlibrary.indicator.RecycleIndicator;
 
 public class MainIndicatorActivity extends BaseActivity {
 
     private ViewPager mPager;
-    private TabIndicator mIndicator;
+    private RecycleIndicator mIndicator;
     private int mCurrentFragmentIndex = -1;
     private List<MenuData> menuDataList = new ArrayList<>();
 

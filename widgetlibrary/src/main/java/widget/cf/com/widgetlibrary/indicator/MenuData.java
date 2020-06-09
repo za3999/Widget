@@ -1,9 +1,14 @@
 package widget.cf.com.widgetlibrary.indicator;
 
+import android.view.View;
+
 public class MenuData {
     private int id;
     private String title;
     private String unreadCount;
+    private View menuView;
+    private boolean isSelect;
+    private boolean showLine;
 
     public MenuData(int id, String title) {
         this.id = id;
@@ -16,5 +21,29 @@ public class MenuData {
 
     public String getTitle() {
         return title;
+    }
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
+    public View getMenuView() {
+        return menuView;
+    }
+
+    public void setMenuView(View menuView) {
+        this.menuView = menuView;
+    }
+
+    public boolean isShowLine() {
+        return showLine;
+    }
+
+    public void setShowLine(boolean showLine) {
+        this.showLine = showLine;
     }
 }
