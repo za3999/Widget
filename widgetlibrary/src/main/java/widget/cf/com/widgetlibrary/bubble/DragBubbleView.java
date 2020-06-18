@@ -14,13 +14,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.base.BaseCallBack;

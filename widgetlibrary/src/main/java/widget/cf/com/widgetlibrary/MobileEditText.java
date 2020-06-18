@@ -1,11 +1,11 @@
 package widget.cf.com.widgetlibrary;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatEditText;
 
 /**
  * Created by zhengcf on 2017/7/11.

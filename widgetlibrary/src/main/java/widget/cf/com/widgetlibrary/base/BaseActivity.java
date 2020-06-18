@@ -1,9 +1,8 @@
 package widget.cf.com.widgetlibrary.base;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import widget.cf.com.widgetlibrary.language.MultiLanguageUtil;
 import widget.cf.com.widgetlibrary.util.StatusBarUtil;

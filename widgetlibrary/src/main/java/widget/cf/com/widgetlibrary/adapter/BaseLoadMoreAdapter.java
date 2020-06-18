@@ -1,8 +1,8 @@
 package widget.cf.com.widgetlibrary.adapter;
 
-import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 
 import java.util.List;
 

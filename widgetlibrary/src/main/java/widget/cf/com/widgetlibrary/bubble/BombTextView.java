@@ -14,7 +14,7 @@ import android.view.animation.LinearInterpolator;
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.util.BitmapUtil;
 
-public class BombTextView extends android.support.v7.widget.AppCompatTextView {
+public class BombTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private int bombColor;
     private int bombDrawableIndex = 0;

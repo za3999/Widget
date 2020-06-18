@@ -3,7 +3,6 @@ package widget.cf.com.widgetlibrary;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -11,6 +10,8 @@ import android.text.method.ArrowKeyMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 import widget.cf.com.widgetlibrary.emoji.EmojiHelper;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;

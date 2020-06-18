@@ -1,9 +1,10 @@
 package widget.cf.com.widget;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.bubble.DragBubbleHelper;

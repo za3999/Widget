@@ -2,39 +2,41 @@ package widget.cf.com.widget;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
-import widget.cf.com.widgetlibrary.indicator.MenuData;
-import widget.cf.com.widgetlibrary.indicator.NoScrollViewPager;
+import widget.cf.com.widgetlibrary.indicator.FolderData;
+import widget.cf.com.widgetlibrary.indicator.Menu;
+import widget.cf.com.widgetlibrary.indicator.PartScrollViewPager;
 import widget.cf.com.widgetlibrary.indicator.RecycleIndicator;
 
 public class MainIndicatorActivity extends BaseActivity {
 
-    private NoScrollViewPager mPager;
+    private PartScrollViewPager mPager;
     private RecycleIndicator mIndicator;
-    private List<MenuData> menuDataList = new ArrayList<>();
+    private List<Menu> menuDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppearanceUtil.setDelegate(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_indicator_layout);
-        menuDataList.add(new MenuData(1, "Test1"));
-        menuDataList.add(new MenuData(2, "Test2"));
-        menuDataList.add(new MenuData(3, "Test3"));
-        menuDataList.add(new MenuData(4, "Test4"));
-        menuDataList.add(new MenuData(5, "Test5"));
-        menuDataList.add(new MenuData(6, "Test6"));
-        menuDataList.add(new MenuData(7, "Test7"));
-        menuDataList.add(new MenuData(8, "Test8"));
-        menuDataList.add(new MenuData(9, "Test9"));
-        menuDataList.add(new MenuData(10, "Test10"));
+        menuDataList.add(new Menu(new FolderData(1, "Test1")));
+        menuDataList.add(new Menu(new FolderData(2, "Test2")));
+        menuDataList.add(new Menu(new FolderData(3, "Test3")));
+        menuDataList.add(new Menu(new FolderData(4, "Test4")));
+        menuDataList.add(new Menu(new FolderData(5, "Test5")));
+        menuDataList.add(new Menu(new FolderData(6, "Test6")));
+        menuDataList.add(new Menu(new FolderData(7, "Test7")));
+        menuDataList.add(new Menu(new FolderData(8, "Test8")));
+        menuDataList.add(new Menu(new FolderData(9, "Test9")));
+        menuDataList.add(new Menu(new FolderData(10, "Test10")));
         mPager = findViewById(R.id.view_pager);
         mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
         mIndicator = findViewById(R.id.indicator_layout);
@@ -54,7 +56,7 @@ public class MainIndicatorActivity extends BaseActivity {
         }
     }
 
-    private class FragmentStatePagerAdapter extends android.support.v4.app.FragmentStatePagerAdapter {
+    private class FragmentStatePagerAdapter extends androidx.fragment.app.FragmentStatePagerAdapter {
         public FragmentStatePagerAdapter(FragmentManager fm) {
             super(fm);
         }

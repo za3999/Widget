@@ -3,8 +3,9 @@ package widget.cf.com.widgetlibrary.appearance;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.util.SPUtil;

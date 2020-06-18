@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 /**
  * 宽高按比例自动缩放的ImageView
  */
-public class AutoImageView extends android.support.v7.widget.AppCompatImageView {
+public class AutoImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     private float yScale, xScale;
 

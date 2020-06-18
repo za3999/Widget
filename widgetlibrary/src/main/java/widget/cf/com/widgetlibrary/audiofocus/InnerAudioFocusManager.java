@@ -3,9 +3,10 @@ package widget.cf.com.widgetlibrary.audiofocus;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Pair;
+
+import androidx.annotation.RequiresApi;
 
 import java.util.Iterator;
 import java.util.WeakHashMap;

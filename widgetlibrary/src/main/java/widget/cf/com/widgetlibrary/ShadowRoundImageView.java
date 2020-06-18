@@ -11,14 +11,13 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 
 /**
  * Created by zhengcf on 2017/7/5.
  */
 
-public class ShadowRoundImageView extends android.support.v7.widget.AppCompatImageView {
+public class ShadowRoundImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     private Paint mBitmapPaint = new Paint();
     private int mRadius;

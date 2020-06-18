@@ -1,12 +1,13 @@
 package widget.cf.com.widgetlibrary.appearance;
 
 import android.content.Context;
-import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.LayoutInflaterCompat;
 
 public class AppearanceUtil {
 

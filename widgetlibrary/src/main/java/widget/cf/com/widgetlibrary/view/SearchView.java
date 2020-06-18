@@ -12,9 +12,10 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.os.Build;
-import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

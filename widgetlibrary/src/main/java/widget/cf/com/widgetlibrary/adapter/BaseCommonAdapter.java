@@ -1,13 +1,13 @@
 package widget.cf.com.widgetlibrary.adapter;
 
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +41,33 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
         mRecyclerView = recyclerView;
     }
 
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    public void detachedAllFromWindow() {
+        int count = mRecyclerView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            BaseViewHolder holder = (BaseViewHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+            holder.onDetachedFromWindow();
+        }
+    }
+
+    @CallSuper
+    @Override
+    public void onViewAttachedToWindow(@NonNull BaseViewHolder holder) {
+        holder.onAttachedToWindow();
+    }
+
+    @CallSuper
+    @Override
+    public void onViewDetachedFromWindow(@NonNull BaseViewHolder holder) {
+        holder.onDetachedFromWindow();
     }
 
     @Override
@@ -61,7 +85,7 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
 
     @Override
     public int getItemViewType(int position) {
-        if (result.get(position) instanceof MultiItem) {
+        if (position < result.size() && result.get(position) instanceof MultiItem) {
             return ((MultiItem) result.get(position)).getItemType();
         }
         return 0;
@@ -96,7 +120,17 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
         return LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
     }
 
-    public int getTextWidth(View itemView, int viewId) {
+    public void notifyDataSetChangedSafe() {
+        if (mRecyclerView != null) {
+            if (!mRecyclerView.isComputingLayout()) {
+                notifyDataSetChanged();
+            } else {
+                mRecyclerView.post(() -> notifyDataSetChangedSafe());
+            }
+        }
+    }
+
+    public int getMessageTextWidth(View itemView, int viewId) {
         int width = View.MeasureSpec.makeMeasureSpec(mRecyclerView.getWidth(), View.MeasureSpec.EXACTLY);
         int height = View.MeasureSpec.makeMeasureSpec(ApplicationUtil.getIntDimension(R.dimen.dp_1), View.MeasureSpec.EXACTLY);
         itemView.measure(width, height);
@@ -123,4 +157,5 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
         }
         return position;
     }
+
 }

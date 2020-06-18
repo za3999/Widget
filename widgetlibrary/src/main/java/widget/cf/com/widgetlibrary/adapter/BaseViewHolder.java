@@ -1,8 +1,9 @@
 package widget.cf.com.widgetlibrary.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
 
@@ -17,15 +18,21 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
     }
 
     public BaseViewHolder(View view, boolean itemClickEnable) {
+        this(view, itemClickEnable, true);
+    }
+
+    public BaseViewHolder(View view, boolean itemClickEnable, boolean itemLongClickEnable) {
         super(view);
         initView(view);
         if (itemClickEnable) {
             itemView.setOnClickListener(v -> onItemClick(itemView, itemData));
         }
-        itemView.setOnLongClickListener(v -> {
-            onItemLongClick(v, itemData);
-            return false;
-        });
+        if (itemLongClickEnable) {
+            itemView.setOnLongClickListener(v -> {
+                onItemLongClick(v, itemData);
+                return true;
+            });
+        }
     }
 
     public void setItemClick(BaseCallBack.CallBack2<View, T> itemClick) {
@@ -64,6 +71,12 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
 
     public void onItemLongClick(View v, T t) {
         BaseCallBack.onCallBack(itemLongClick, v, t);
+    }
+
+    public void onAttachedToWindow() {
+    }
+
+    public void onDetachedFromWindow() {
     }
 
 }

@@ -19,13 +19,28 @@
             android:textColor="@color/indicator_selector"
             android:textSize="@dimen/dp_15" />
 
-        <View
-            android:id="@+id/del_view"
-            android:layout_width="@dimen/dp_5"
-            android:layout_height="@dimen/dp_5"
+        <TextView
+            android:id="@+id/unread_number_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_20"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/dp_5"
-            android:background="@color/color_red_ccfa3c55"
+            android:layout_marginLeft="@dimen/dp_2"
+            android:background="@drawable/bg_green"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:minWidth="@dimen/dp_20"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_12"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/del_view"
+            android:layout_width="@dimen/dp_13"
+            android:layout_height="@dimen/dp_13"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dp_2"
+            android:scaleType="centerInside"
+            android:src="@drawable/edit_text_del"
             android:visibility="gone" />
     </LinearLayout>
 

@@ -7,32 +7,25 @@ import android.view.MotionEvent;
 import androidx.viewpager.widget.ViewPager;
 
 
-public class NoScrollViewPager extends ViewPager {
-    private boolean isScroll = true;
+public class PartScrollViewPager extends ViewPager {
 
-    public NoScrollViewPager(Context context, AttributeSet attrs) {
+    private boolean isScroll;
+
+    public PartScrollViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NoScrollViewPager(Context context) {
+    public PartScrollViewPager(Context context) {
         super(context);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getParent() != null) {
-            if (getCurrentItem() > 0) {
-                getParent().requestDisallowInterceptTouchEvent(true);
-            } else {
-                getParent().requestDisallowInterceptTouchEvent(false);
-            }
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (isScroll) {
+            float touchX = ev.getX();
+            if (touchX > getWidth() * 0.8) {
+                return false;
+            }
             return super.onInterceptTouchEvent(ev);
         } else {
             return false;
