@@ -2,11 +2,8 @@ package widget.cf.com.widgetlibrary.audiofocus;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.Pair;
-
-import androidx.annotation.RequiresApi;
 
 import java.util.Iterator;
 import java.util.WeakHashMap;
@@ -22,7 +19,6 @@ public class InnerAudioFocusManager {
     private InnerAudioFocusChangeListener defaultInnerAudioFocusChangeListener;
     private WeakHashMap<FocusTypeChangeListener, Integer> mTypeChangeListenerMap = new WeakHashMap<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     private InnerAudioFocusManager() {
         mAudioManager = (AudioManager) ApplicationUtil.getApplication().getSystemService(Context.AUDIO_SERVICE);
         mSystemAudioFocusManager = new SystemAudioFocusManager(mAudioManager);
@@ -80,13 +76,13 @@ public class InnerAudioFocusManager {
     public static String getFocusBusyHint() {
         String hint = "";
         int focusType = getCurrentFocusType();
-        if (InnerAudioFocusType.CALL == focusType) {
-            hint = "";
-        } else if (InnerAudioFocusType.MEDIA_RECORD == focusType) {
-            hint = "";
-        } else if (InnerAudioFocusType.AUDIO_RECORD == focusType) {
-            hint = "";
-        }
+//        if (InnerAudioFocusType.CALL == focusType) {
+//            hint = ApplicationUtil.getResString(R.string.audio_call_ongoing);
+//        } else if (InnerAudioFocusType.MEDIA_RECORD == focusType) {
+//            hint = ApplicationUtil.getResString(R.string.media_record_ongoing);
+//        } else if (InnerAudioFocusType.AUDIO_RECORD == focusType) {
+//            hint = ApplicationUtil.getResString(R.string.audio_record_ongoing);
+//        }
         return hint;
     }
 
@@ -120,7 +116,6 @@ public class InnerAudioFocusManager {
         }
 
         boolean success = true;
-        innerAudioFocusChangeListener.checkDefaultSystemFocusListener(mAudioManager);
         Pair<Integer, InnerAudioFocusChangeListener> record = records.getCurrentRecord();
         if (record == null) {
             records.add(param.getAudioType(), innerAudioFocusChangeListener);
@@ -145,7 +140,6 @@ public class InnerAudioFocusManager {
         } else if (param.isShowToast()) {
             String hint = getFocusBusyHint();
             if (!TextUtils.isEmpty(hint)) {
-                //todo
             }
         }
         return success;
@@ -163,7 +157,9 @@ public class InnerAudioFocusManager {
         } else {
             mSystemAudioFocusManager.releaseAudioFocus();
         }
-        ApplicationUtil.runOnBgThread(() -> notifyFocusTypeChange());
+        if (isCurrentRecord) {
+            ApplicationUtil.runOnBgThread(() -> notifyFocusTypeChange());
+        }
     }
 
     private static void onAudioFocusChange(InnerAudioFocusChangeListener innerAudioFocusAdapter, int focusChange) {

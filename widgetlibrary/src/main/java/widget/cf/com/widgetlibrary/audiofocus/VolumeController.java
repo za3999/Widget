@@ -5,4 +5,6 @@ public interface VolumeController {
     void volumeDown();
 
     void restoreVolume();
+
+    boolean isVolumeDown();
 }

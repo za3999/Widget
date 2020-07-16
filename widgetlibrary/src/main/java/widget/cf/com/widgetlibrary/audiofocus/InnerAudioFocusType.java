@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
         InnerAudioFocusType.CALL, InnerAudioFocusType.MEDIA_RECORD,
         InnerAudioFocusType.VIDEO, InnerAudioFocusType.AUDIO_RECORD,
         InnerAudioFocusType.RECORD_PLAY_VIDEO,
-        InnerAudioFocusType.SILENT_VIDEO_PLAY})
+        InnerAudioFocusType.SILENT_VIDEO_PLAY, InnerAudioFocusType.PIP_VIDEO})
 @Retention(RetentionPolicy.SOURCE)
 public @interface InnerAudioFocusType {
     int NON = 0;
@@ -20,4 +20,5 @@ public @interface InnerAudioFocusType {
     int AUDIO_RECORD = 5;
     int RECORD_PLAY_VIDEO = 6;
     int SILENT_VIDEO_PLAY = 7;
+    int PIP_VIDEO = 8;
 }
