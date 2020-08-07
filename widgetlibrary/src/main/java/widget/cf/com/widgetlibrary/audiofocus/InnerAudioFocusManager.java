@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.WeakHashMap;
 
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
+import widget.cf.com.widgetlibrary.util.LogUtils;
 
 public class InnerAudioFocusManager {
 
@@ -49,8 +50,17 @@ public class InnerAudioFocusManager {
         ApplicationUtil.runOnBgThread(() -> getInstance().mTypeChangeListenerMap.remove(focusTypeChangeListener));
     }
 
+    public static void notifyRequest(@InnerAudioFocusType int focusType, boolean success) {
+        LogUtils.d(AudioConstant.TAG, "notifyRequest:" + focusType + ":" + success);
+        Iterator<FocusTypeChangeListener> it = getInstance().mTypeChangeListenerMap.keySet().iterator();
+        while (it.hasNext()) {
+            it.next().onRequest(focusType, success);
+        }
+    }
+
     public static void notifyFocusTypeChange() {
         int focusType = getCurrentFocusType();
+        LogUtils.d(AudioConstant.TAG, "notifyFocusTypeChange:" + focusType);
         Iterator<FocusTypeChangeListener> it = getInstance().mTypeChangeListenerMap.keySet().iterator();
         while (it.hasNext()) {
             it.next().onFocusTypeChange(focusType);
@@ -76,13 +86,6 @@ public class InnerAudioFocusManager {
     public static String getFocusBusyHint() {
         String hint = "";
         int focusType = getCurrentFocusType();
-//        if (InnerAudioFocusType.CALL == focusType) {
-//            hint = ApplicationUtil.getResString(R.string.audio_call_ongoing);
-//        } else if (InnerAudioFocusType.MEDIA_RECORD == focusType) {
-//            hint = ApplicationUtil.getResString(R.string.media_record_ongoing);
-//        } else if (InnerAudioFocusType.AUDIO_RECORD == focusType) {
-//            hint = ApplicationUtil.getResString(R.string.audio_record_ongoing);
-//        }
         return hint;
     }
 
@@ -107,11 +110,13 @@ public class InnerAudioFocusManager {
     }
 
     private synchronized boolean requestInner(RequestParam param, InnerAudioFocusChangeListener innerAudioFocusChangeListener) {
+        LogUtils.d(AudioConstant.TAG, "requestFocus:" + param.getAudioType());
         if (param == null || innerAudioFocusChangeListener == null) {
             return false;
         }
 
         if (getLevel(param.getAudioType()) == Integer.MAX_VALUE && mAudioManager.isMusicActive()) {
+            notifyRequest(param.getAudioType(), false);
             return false;
         }
 
@@ -133,6 +138,7 @@ public class InnerAudioFocusManager {
                 records.insert(param.getAudioType(), innerAudioFocusChangeListener);
                 onAudioFocusChange(innerAudioFocusChangeListener, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT);
             }
+            LogUtils.d(AudioConstant.TAG, "request fail current is:" + record.first);
             success = false;
         }
         if (success) {
@@ -140,12 +146,15 @@ public class InnerAudioFocusManager {
         } else if (param.isShowToast()) {
             String hint = getFocusBusyHint();
             if (!TextUtils.isEmpty(hint)) {
+                //todo
             }
         }
+        notifyRequest(param.getAudioType(), success);
         return success;
     }
 
     private synchronized void releaseInner(@InnerAudioFocusType int audioType) {
+        LogUtils.d(AudioConstant.TAG, "release:" + audioType);
         Pair<Integer, InnerAudioFocusChangeListener> record = records.getCurrentRecord();
         boolean isCurrentRecord = record != null && record.first == audioType;
         records.remove(audioType);

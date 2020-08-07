@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.caifu.test.KotlinTestKt;
+
 import widget.cf.com.widgetlibrary.HeadTextDrawable;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.emoji.EmojiData;
@@ -29,6 +31,7 @@ public class MainActivity extends BaseActivity {
         llLayout = findViewById(R.id.ll_layout);
         mEmojiTv = findViewById(R.id.emoji_test_tv);
         mDrawableIv = findViewById(R.id.emoji_drawable_iv);
+        KotlinTestKt.test();
     }
 
     public void onSearchClick(View view) {
