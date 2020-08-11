@@ -142,7 +142,7 @@ public class InnerAudioFocusManager {
             success = false;
         }
         if (success) {
-            innerAudioFocusChangeListener.resetVoice();
+            innerAudioFocusChangeListener.restoreVolume();
             mSystemAudioFocusManager.requestFocus(param.isSystemLongHold());
         } else if (param.isShowToast()) {
             String hint = getFocusBusyHint();

@@ -12,7 +12,7 @@ public abstract class InnerAudioFocusChangeListener implements AudioManager.OnAu
         this.ignoreSystemFocusChange = ignoreSystemFocusChange;
     }
 
-    public void resetVoice() {
+    public void restoreVolume() {
         if (mVolumeController != null && mVolumeController.isVolumeDown()) {
             mVolumeController.restoreVolume();
         }
