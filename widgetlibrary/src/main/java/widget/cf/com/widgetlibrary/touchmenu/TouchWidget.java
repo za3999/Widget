@@ -49,11 +49,13 @@ public class TouchWidget extends FrameLayout {
         });
     }
 
-    public void hide() {
+    public boolean hide() {
         if (isShowing) {
             disAttachActivity(mActivity);
             isShowing = false;
+            return true;
         }
+        return false;
     }
 
     private void animMenu() {

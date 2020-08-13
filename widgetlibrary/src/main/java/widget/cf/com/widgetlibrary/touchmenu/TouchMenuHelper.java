@@ -1,6 +1,7 @@
 package widget.cf.com.widgetlibrary.touchmenu;
 
 import android.app.Activity;
+import android.view.MotionEvent;
 import android.view.View;
 
 import widget.cf.com.widgetlibrary.R;
@@ -15,17 +16,43 @@ public class TouchMenuHelper {
         mTouchWidget = new TouchWidget(activity);
     }
 
-    public void hide() {
-        mTouchWidget.hide();
+    public boolean hide() {
+        return mTouchWidget.hide();
     }
 
     public void registerView(View view, IMenu menu) {
-        view.setOnLongClickListener(v -> {
-            if (!mTouchWidget.isShowing()) {
-                initMenuWidget(v, menu);
-                mTouchWidget.show(true);
+//        view.setOnLongClickListener(v -> {
+//            if (!mTouchWidget.isShowing()) {
+//                initMenuWidget(v, menu);
+//                mTouchWidget.show(true);
+//            }
+//            return true;
+//        });
+        view.setOnTouchListener(new View.OnTouchListener() {
+
+            float y;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        y = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (event.getY() - y > 10) {
+                            if (!mTouchWidget.isShowing()) {
+                                initMenuWidget(v, menu);
+                                mTouchWidget.show(true);
+                                return true;
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return false;
             }
-            return true;
         });
         view.setOnClickListener(v -> {
             if (mTouchWidget.isShowing()) {
