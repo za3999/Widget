@@ -1,11 +1,3 @@
-/*
- * This is the source code of Telegram for Android v. 5.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2018.
- */
-
 package widget.cf.com.widgetlibrary.emoji;
 
 import android.graphics.Bitmap;
@@ -34,16 +26,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
+import java.util.WeakHashMap;
 
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.base.Container3;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class EmojiHelper {
+
+    private static final int MAX_EMOJI_COUNT = 300;
 
     private static boolean useSysEmoji = false;
     private static int maxEmojiLength = 15;
@@ -55,7 +48,7 @@ public class EmojiHelper {
     private static boolean[][] loadingEmoji = new boolean[8][];
     private static HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
     private static int imageResize = 1;
-    private static volatile Set<IEmojiObserve> emojiObserves = new HashSet<>();
+    private static volatile WeakHashMap<IEmojiObserve, Integer> emojiObserves = new WeakHashMap<>();
     private static boolean loadPage = true;
 
     static {
@@ -76,7 +69,7 @@ public class EmojiHelper {
     }
 
     public static void register(IEmojiObserve emojiObserve) {
-        ApplicationUtil.getMainHandler().post(() -> emojiObserves.add(emojiObserve));
+        ApplicationUtil.getMainHandler().post(() -> emojiObserves.put(emojiObserve, emojiObserve.hashCode()));
     }
 
     public static void unRegister(IEmojiObserve emojiObserve) {
@@ -85,7 +78,7 @@ public class EmojiHelper {
 
     private static void notifyEmojiLoaded() {
         ApplicationUtil.getMainHandler().post(() -> {
-            Iterator<IEmojiObserve> it = emojiObserves.iterator();
+            Iterator<IEmojiObserve> it = emojiObserves.keySet().iterator();
             while (it.hasNext()) {
                 it.next().onEmojiLoaded();
             }
@@ -254,7 +247,7 @@ public class EmojiHelper {
                     emojiCode.setLength(0);
                     doneEmoji = false;
                 }
-                if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29) && emojiCount >= 50) {
+                if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29) && emojiCount > MAX_EMOJI_COUNT) {
                     break;
                 }
             }
@@ -265,10 +258,10 @@ public class EmojiHelper {
     }
 
     public static CharSequence getCutString(CharSequence text, int start, int end) {
-        if (start < 0 || end < 0 || start < end) {
+        if (start < 0 || end < 0 || start >= end || start >= text.length()) {
             return text;
         }
-        ArrayList<Container3<String, Integer, Integer>> emojiList = getEmojiLocationList(text, 0, end);
+        ArrayList<Container3<String, Integer, Integer>> emojiList = getEmojiLocationList(text, start, text.length());
         for (Container3<String, Integer, Integer> emojiStr : emojiList) {
             int spanStart = emojiStr.second;
             int spanEnd = emojiStr.third;
@@ -282,14 +275,19 @@ public class EmojiHelper {
                 end += spanLength - 1;
             }
         }
-        return text.subSequence(0, Math.min(end, text.length()));
+        return text.subSequence(start, Math.min(end, text.length()));
     }
 
     public static CharSequence getCutEmojiString(CharSequence text, int end) {
+        return getCutEmojiString(text, end, null);
+    }
+
+    public static CharSequence getCutEmojiString(CharSequence text, int end, Paint paint) {
         if (end < 0) {
             return Spannable.Factory.getInstance().newSpannable(text.subSequence(0, end));
         }
-        CharSequence charSequence = EmojiHelper.replaceEmoji(text + " ", new Paint());
+        CharSequence charSequence = EmojiHelper.replaceEmoji(text + " ",
+                paint != null ? paint : new Paint());
         if (charSequence instanceof Spannable) {
             Spannable textSpannable = (Spannable) charSequence;
             EmojiSpan[] spans = textSpannable.getSpans(0, textSpannable.length(), EmojiSpan.class);
@@ -335,16 +333,12 @@ public class EmojiHelper {
 
     public static int getLengthWhenEmojiEnd(CharSequence inputStr, int index) {
         int length = -1;
-        if (inputStr instanceof Spannable) {
-            Spannable textSpannable = (Spannable) inputStr;
-            int start = index > 20 ? index - 20 : 0;
-            EmojiSpan[] spans = textSpannable.getSpans(start, index, EmojiSpan.class);
-            if (spans != null && spans.length > 0) {
-                EmojiSpan lastSpans = spans[spans.length - 1];
-                int spanEnd = textSpannable.getSpanEnd(lastSpans);
-                if (spanEnd == index) {
-                    length = spanEnd - textSpannable.getSpanStart(lastSpans);
-                }
+        int start = Math.max(0, index - 20);
+        ArrayList<Container3<String, Integer, Integer>> emojiLocationList = EmojiHelper.getEmojiLocationList(inputStr, start, index);
+        if (emojiLocationList != null && emojiLocationList.size() > 0) {
+            Container3<String, Integer, Integer> endEmoji = emojiLocationList.get(emojiLocationList.size() - 1);
+            if (endEmoji.third == index) {
+                length = endEmoji.third - endEmoji.second;
             }
         }
         return length;
@@ -497,7 +491,7 @@ public class EmojiHelper {
                     emojiCode.setLength(0);
                     doneEmoji = false;
                 }
-                if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29) && emojiCount >= 50) {
+                if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29) && emojiCount > MAX_EMOJI_COUNT) {
                     break;
                 }
             }
@@ -618,13 +612,16 @@ public class EmojiHelper {
 
         @Override
         public CharSequence getTransformation(@Nullable CharSequence source, @NonNull final View view) {
-            if (view.isInEditMode()) {
-                return source;
+            if (mTransformationMethod != null) {
+                return mTransformationMethod.getTransformation(source, view);
             }
-            if (source != null && view instanceof TextView) {
-                TextView textView = (TextView) view;
-                return EmojiHelper.replaceEmoji(source, textView.getPaint());
-            }
+//            if (view.isInEditMode()) {
+//                return source;
+//            }
+//            if (source != null && view instanceof TextView) {
+//                TextView textView = (TextView) view;
+//                return EmojiHelper.replaceEmoji(source, textView.getPaint());
+//            }
             return source;
         }
 

@@ -43,4 +43,8 @@
         <attr name="bubble_textSize" format="dimension" />
         <attr name="bubble_textColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="EmojiAppCompatTextView">
+        <attr name="support_bold" format="boolean" />
+    </declare-styleable>
 </resources>
