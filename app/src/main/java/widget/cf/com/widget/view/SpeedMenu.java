@@ -17,6 +17,7 @@ import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.tintview.TintSelectTextView;
 import widget.cf.com.widgetlibrary.touchmenu.ITouchPopMenu;
 import widget.cf.com.widgetlibrary.touchmenu.TouchItemListener;
+import widget.cf.com.widgetlibrary.touchmenu.TouchPopParam;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class SpeedMenu extends LinearLayout implements ITouchPopMenu<Float> {
@@ -26,6 +27,7 @@ public class SpeedMenu extends LinearLayout implements ITouchPopMenu<Float> {
     private TouchItemListener<Float> mTouchListener;
     private float selectSpeed;
     private BaseCallBack.CallBack mCloseHelper;
+    private TouchPopParam mTouchPopParam = new TouchPopParam();
 
     public SpeedMenu(Context context, float selectSpeed) {
         this(context, null);
@@ -109,6 +111,11 @@ public class SpeedMenu extends LinearLayout implements ITouchPopMenu<Float> {
     public ITouchPopMenu setTouchListener(TouchItemListener<Float> touchListener) {
         mTouchListener = touchListener;
         return this;
+    }
+
+    @Override
+    public TouchPopParam getPopParam() {
+        return mTouchPopParam;
     }
 
     private String getSpeedStr(float speed) {

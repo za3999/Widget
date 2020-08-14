@@ -15,7 +15,9 @@ public interface ITouchPopMenu<T> {
 
     void onResult();
 
-    void setCloseHelper(BaseCallBack.CallBack closeHelper);
+    void setCloseHelper(BaseCallBack.CallBack closeListener);
+
+    TouchPopParam getPopParam();
 
     ITouchPopMenu setTouchListener(TouchItemListener<T> touchListener);
 
@@ -36,6 +38,16 @@ public interface ITouchPopMenu<T> {
 
     default void onTouchUp() {
         onResult();
+    }
+
+    default ITouchPopMenu setXOffset(float offset) {
+        getPopParam().setXOffset(offset);
+        return this;
+    }
+
+    default ITouchPopMenu setYOffset(float offset) {
+        getPopParam().setYOffset(offset);
+        return this;
     }
 
 }

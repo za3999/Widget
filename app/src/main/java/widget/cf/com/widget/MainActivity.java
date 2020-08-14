@@ -18,7 +18,6 @@ import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.emoji.EmojiData;
 import widget.cf.com.widgetlibrary.touchmenu.TouchItemListener;
 import widget.cf.com.widgetlibrary.touchmenu.TouchMenuHelper;
-import widget.cf.com.widgetlibrary.touchmenu.TouchPopParam;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 
@@ -103,6 +102,6 @@ public class MainActivity extends BaseActivity {
                 mPopView.setSelected(true);
                 mPopView.setText(speed + "");
             }
-        }), new TouchPopParam().setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12)));
+        }).setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12)));
     }
 }

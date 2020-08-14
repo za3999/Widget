@@ -8,20 +8,20 @@ public class TouchMenuHelper {
 
     private TouchWidget mTouchWidget;
 
-    public TouchMenuHelper registerView(View view, ITouchPopMenu menu, TouchPopParam popParam) {
+    public TouchMenuHelper registerView(View view, ITouchPopMenu menu) {
         if (mTouchWidget == null) {
             mTouchWidget = new TouchWidget((Activity) view.getContext());
         }
-        if (popParam.isLongClickEnable()) {
+        if (menu.getPopParam().isLongClickEnable()) {
             view.setOnLongClickListener(v -> {
                 if (!mTouchWidget.isShowing()) {
-                    initMenuWidget(v, menu, popParam);
+                    initMenuWidget(v, menu, menu.getPopParam());
                     mTouchWidget.show(true);
                 }
                 return true;
             });
         }
-        if (popParam.isTouchDownEnable()) {
+        if (menu.getPopParam().isTouchDownEnable()) {
             view.setOnTouchListener(new View.OnTouchListener() {
 
                 float y;
@@ -36,7 +36,7 @@ public class TouchMenuHelper {
                         case MotionEvent.ACTION_MOVE:
                             if (event.getY() - y > 10) {
                                 if (!mTouchWidget.isShowing()) {
-                                    initMenuWidget(v, menu, popParam);
+                                    initMenuWidget(v, menu, menu.getPopParam());
                                     mTouchWidget.show(true);
                                     return true;
                                 }
@@ -50,12 +50,12 @@ public class TouchMenuHelper {
                 }
             });
         }
-        if (popParam.isClickEnable()) {
+        if (menu.getPopParam().isClickEnable()) {
             view.setOnClickListener(v -> {
                 if (mTouchWidget.isShowing()) {
                     return;
                 }
-                initMenuWidget(v, menu, popParam);
+                initMenuWidget(v, menu, menu.getPopParam());
                 mTouchWidget.show(false);
             });
         }
