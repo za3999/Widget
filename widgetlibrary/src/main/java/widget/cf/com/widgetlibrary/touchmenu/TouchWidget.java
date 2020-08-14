@@ -1,6 +1,5 @@
 package widget.cf.com.widgetlibrary.touchmenu;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Build;
 import android.os.SystemClock;
@@ -62,19 +61,12 @@ public class TouchWidget extends FrameLayout {
         if (mMenuView == null) {
             return;
         }
-        mMenuView.getRoot().setPivotX(0f);
+        mMenuView.getRoot().setPivotX(mMenuView.getMenuWith() / 2);
         mMenuView.getRoot().setPivotY(0f);
-        mMenuView.getRoot().setScaleX(0f);
         mMenuView.getRoot().setScaleY(0f);
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1f, 1.2f, 1f);
-        valueAnimator.setDuration(200);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.addUpdateListener(animation -> {
-            float value = (float) animation.getAnimatedValue();
-            mMenuView.getRoot().setScaleX(value);
-            mMenuView.getRoot().setScaleY(value);
-        });
-        valueAnimator.start();
+        mMenuView.getRoot().animate().scaleY(1)
+                .setInterpolator(new LinearInterpolator())
+                .setDuration(200).start();
     }
 
     @Override
