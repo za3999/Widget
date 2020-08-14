@@ -1,11 +1,9 @@
 package widget.cf.com.widgetlibrary.touchmenu;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
@@ -13,14 +11,19 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class TouchWidget extends FrameLayout {
 
+
     private ITouchPopMenu mMenuView;
     private Activity mActivity;
     private boolean isShowing = false;
     private boolean isTouchModel;
+    private ViewGroup parent;
+    private FrameLayout.LayoutParams lp;
 
     public TouchWidget(Activity activity) {
         super(activity);
         this.mActivity = activity;
+        parent = (ViewGroup) activity.getWindow().getDecorView();
+        lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
     }
 
     public boolean isShowing() {
@@ -37,20 +40,20 @@ public class TouchWidget extends FrameLayout {
     }
 
     public void show(boolean isTouchModel) {
+        isShowing = true;
         ApplicationUtil.runOnMainThread(() -> {
             this.isTouchModel = isTouchModel;
-            attachActivity(mActivity);
+            attachActivity();
             if (isTouchModel) {
                 transferTouchEvent(mActivity);
             }
             animMenu();
-            isShowing = true;
         });
     }
 
     public boolean hide() {
         if (isShowing) {
-            disAttachActivity(mActivity);
+            disAttachActivity();
             isShowing = false;
             return true;
         }
@@ -99,39 +102,29 @@ public class TouchWidget extends FrameLayout {
         return true;
     }
 
-    private void attachActivity(Activity activity) {
-        ViewParent parent = getParent();
-        if (parent != null && parent instanceof ViewGroup) {
-            ViewGroup parentView = (ViewGroup) parent;
-            parentView.removeView(this);
+    private void attachActivity() {
+        if (isAttachedToWindow()) {
+            parent.removeView(this);
         }
-        FrameLayout decor = (FrameLayout) activity.getWindow().getDecorView();
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        decor.addView(this, lp);
+        parent.addView(this, lp);
     }
 
-    private void disAttachActivity(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (!isAttachedToWindow()) {
-                return;
-            }
+    private void disAttachActivity() {
+        if (!isAttachedToWindow()) {
+            return;
         }
         try {
-            FrameLayout decor = (FrameLayout) activity.getWindow().getDecorView();
-            decor.removeView(this);
+            parent.removeView(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            //do nothing
         }
     }
 
     private void transferTouchEvent(final Activity activity) {
         postDelayed(() -> {
             long uptimeMillis = SystemClock.uptimeMillis();
-            activity.dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis,
-                    MotionEvent.ACTION_UP, 0f, 0f, 0));
-            activity.getWindow().getDecorView().dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis,
-                    MotionEvent.ACTION_DOWN, 0f, 0f, 0));
+            activity.dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_UP, 0f, 0f, 0));
+            activity.getWindow().getDecorView().dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_DOWN, 0f, 0f, 0));
         }, 200);
     }
-
 }
