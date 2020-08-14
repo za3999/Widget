@@ -13,7 +13,7 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class TouchWidget extends FrameLayout {
 
-    private IMenu mMenuView;
+    private ITouchPopMenu mMenuView;
     private Activity mActivity;
     private boolean isShowing = false;
     private boolean isTouchModel;
@@ -27,9 +27,9 @@ public class TouchWidget extends FrameLayout {
         return isShowing;
     }
 
-    public void setMenuView(int x, int y, IMenu menuView) {
+    public void setMenuView(int x, int y, ITouchPopMenu menuView) {
         mMenuView = menuView;
-        mMenuView.setCloseListener(() -> hide());
+        mMenuView.setCloseHelper(() -> hide());
         removeAllViews();
         mMenuView.getRoot().setX(x);
         mMenuView.getRoot().setY(y);

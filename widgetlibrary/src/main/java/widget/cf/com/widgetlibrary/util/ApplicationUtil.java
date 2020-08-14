@@ -7,6 +7,8 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.TypedValue;
 
+import androidx.core.content.ContextCompat;
+
 import widget.cf.com.widgetlibrary.BaseApplication;
 
 
@@ -40,6 +42,10 @@ public class ApplicationUtil {
 
     public static int getIntDimension(int resId) {
         return (int) getResources().getDimension(resId);
+    }
+
+    public static int getColor(int resId) {
+        return ContextCompat.getColor(getApplication(), resId);
     }
 
     public static int dp2px(float value) {

@@ -55,6 +55,7 @@
         android:layout_height="wrap_content"
         android:onClick="onMainTableClick"
         android:text="Main Table" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,13 +67,20 @@
         android:layout_height="wrap_content"
         android:onClick="onDragBubbleClick"
         android:text="Drag Bubble" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onDevicesInfoClick"
         android:text="Devices Info" />
 
-    <widget.cf.com.widgetlibrary.EmojiAppCompatTextView
+    <widget.cf.com.widgetlibrary.tintview.TintSelectTextView
+        android:id="@+id/pop_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.0" />
+
+    <widget.cf.com.widgetlibrary.emoji.EmojiAppCompatTextView
         android:id="@+id/emoji_test_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

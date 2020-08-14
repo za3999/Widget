@@ -1,6 +1,6 @@
 package widget.cf.com.widgetlibrary.touchmenu;
 
-public interface TouchListener<T> {
+public interface TouchItemListener<T> {
 
     void onSelect(T data);
 

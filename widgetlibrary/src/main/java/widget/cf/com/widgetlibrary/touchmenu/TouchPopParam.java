@@ -1,6 +1,6 @@
 package widget.cf.com.widgetlibrary.touchmenu;
 
-public class PopParam {
+public class TouchPopParam {
     private boolean longClickEnable;
     private boolean touchDownEnable;
     private boolean clickEnable;
@@ -11,7 +11,7 @@ public class PopParam {
         return longClickEnable;
     }
 
-    public PopParam setLongClickEnable(boolean longClickEnable) {
+    public TouchPopParam setLongClickEnable(boolean longClickEnable) {
         this.longClickEnable = longClickEnable;
         return this;
     }
@@ -20,7 +20,7 @@ public class PopParam {
         return touchDownEnable;
     }
 
-    public PopParam setTouchDownEnable(boolean touchDownEnable) {
+    public TouchPopParam setTouchDownEnable(boolean touchDownEnable) {
         this.touchDownEnable = touchDownEnable;
         return this;
     }
@@ -29,7 +29,7 @@ public class PopParam {
         return clickEnable;
     }
 
-    public PopParam setClickEnable(boolean clickEnable) {
+    public TouchPopParam setClickEnable(boolean clickEnable) {
         this.clickEnable = clickEnable;
         return this;
     }
@@ -38,7 +38,7 @@ public class PopParam {
         return xOffset;
     }
 
-    public PopParam setXOffset(float xOffset) {
+    public TouchPopParam setXOffset(float xOffset) {
         this.xOffset = xOffset;
         return this;
     }
@@ -47,7 +47,7 @@ public class PopParam {
         return yOffset;
     }
 
-    public PopParam setYOffset(float yOffset) {
+    public TouchPopParam setYOffset(float yOffset) {
         this.yOffset = yOffset;
         return this;
     }

@@ -47,4 +47,10 @@
     <declare-styleable name="EmojiAppCompatTextView">
         <attr name="support_bold" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="TintTextView">
+        <attr name="background_tint" format="boolean" />
+        <attr name="text_tint" format="boolean" />
+        <attr name="drawableLeft_tint" format="boolean" />
+    </declare-styleable>
 </resources>

@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 
 import widget.cf.com.widgetlibrary.base.BaseCallBack;
 
-public interface IMenu<T> {
+public interface ITouchPopMenu<T> {
 
     ViewGroup getRoot();
 
@@ -15,9 +15,9 @@ public interface IMenu<T> {
 
     void onResult();
 
-    void setCloseListener(BaseCallBack.CallBack closeListener);
+    void setCloseHelper(BaseCallBack.CallBack closeHelper);
 
-    void setTouchListener(TouchListener<T> touchListener);
+    void setTouchListener(TouchItemListener<T> touchListener);
 
     default void onTouchMove(float eventX, float eventY) {
         if (getRoot() == null || getRoot().getChildCount() == 0) {

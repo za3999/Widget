@@ -8,7 +8,7 @@ public class TouchMenuHelper {
 
     private TouchWidget mTouchWidget;
 
-    public TouchMenuHelper registerView(View view, IMenu menu, PopParam popParam) {
+    public TouchMenuHelper registerView(View view, ITouchPopMenu menu, TouchPopParam popParam) {
         if (mTouchWidget == null) {
             mTouchWidget = new TouchWidget((Activity) view.getContext());
         }
@@ -69,7 +69,7 @@ public class TouchMenuHelper {
         return mTouchWidget.hide();
     }
 
-    private void initMenuWidget(View view, IMenu menu, PopParam popParam) {
+    private void initMenuWidget(View view, ITouchPopMenu menu, TouchPopParam popParam) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
         int x = (int) (location[0] - (menu.getMenuWith() - view.getWidth()) / 2 + popParam.getXOffset());

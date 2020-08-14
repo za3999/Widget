@@ -12,17 +12,24 @@ import android.widget.TextView;
 
 import com.caifu.test.KotlinTestKt;
 
+import widget.cf.com.widget.view.SpeedMenu;
 import widget.cf.com.widgetlibrary.HeadTextDrawable;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.emoji.EmojiData;
+import widget.cf.com.widgetlibrary.touchmenu.TouchItemListener;
+import widget.cf.com.widgetlibrary.touchmenu.TouchMenuHelper;
+import widget.cf.com.widgetlibrary.touchmenu.TouchPopParam;
+import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 
 @SuppressLint("NewApi")
 public class MainActivity extends BaseActivity {
 
-    LinearLayout llLayout;
-    TextView mEmojiTv;
-    ImageView mDrawableIv;
+    private LinearLayout llLayout;
+    private TextView mEmojiTv;
+    private ImageView mDrawableIv;
+    private TouchMenuHelper mTouch3DHelper;
+    private TextView mPopView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +39,7 @@ public class MainActivity extends BaseActivity {
         mEmojiTv = findViewById(R.id.emoji_test_tv);
         mDrawableIv = findViewById(R.id.emoji_drawable_iv);
         KotlinTestKt.test();
+        initPopMenu();
     }
 
     public void onSearchClick(View view) {
@@ -82,4 +90,23 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, DeviceInfoActivity.class));
     }
 
+    private void initPopMenu() {
+        mPopView = findViewById(R.id.pop_view);
+        SpeedMenu speedMenu = new SpeedMenu(this, 1f);
+        speedMenu.setTouchListener(new TouchItemListener<Float>() {
+            @Override
+            public void onSelect(Float speed) {
+                //do something
+            }
+
+            @Override
+            public void onTouchChange(Float speed) {
+                mPopView.setSelected(true);
+                mPopView.setText(speed + "");
+            }
+        });
+        TouchPopParam popParam = new TouchPopParam().setClickEnable(true).setTouchDownEnable(true)
+                .setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12));
+        mTouch3DHelper = new TouchMenuHelper().registerView(mPopView, speedMenu, popParam);
+    }
 }

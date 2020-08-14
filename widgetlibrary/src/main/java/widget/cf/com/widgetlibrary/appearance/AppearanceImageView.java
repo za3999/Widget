@@ -67,7 +67,7 @@ public class AppearanceImageView extends AppCompatImageView implements IAppearan
     public void onChange() {
         if (supportAppearance) {
             if (supportSelected) {
-                ViewUtil.setImageTint(this, SPUtil.get(getContext(), "color", 0, Integer.class), defaultColor);
+                ViewUtil.setImageTint(this, SPUtil.get(getContext(), "color", 0, Integer.class));
             } else {
                 ViewUtil.setImageTint(this, SPUtil.get(getContext(), "color", 0, Integer.class));
             }
