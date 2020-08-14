@@ -2,8 +2,8 @@ package widget.cf.com.widgetlibrary.touchmenu;
 
 public class TouchPopParam {
     private boolean longClickEnable;
-    private boolean touchDownEnable;
-    private boolean clickEnable;
+    private boolean touchDownEnable = true;
+    private boolean clickEnable = true;
     private float xOffset;
     private float yOffset;
 

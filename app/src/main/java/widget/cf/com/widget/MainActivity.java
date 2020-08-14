@@ -92,8 +92,7 @@ public class MainActivity extends BaseActivity {
 
     private void initPopMenu() {
         mPopView = findViewById(R.id.pop_view);
-        SpeedMenu speedMenu = new SpeedMenu(this, 1f);
-        speedMenu.setTouchListener(new TouchItemListener<Float>() {
+        mTouch3DHelper = new TouchMenuHelper().registerView(mPopView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
             @Override
             public void onSelect(Float speed) {
                 //do something
@@ -104,9 +103,6 @@ public class MainActivity extends BaseActivity {
                 mPopView.setSelected(true);
                 mPopView.setText(speed + "");
             }
-        });
-        TouchPopParam popParam = new TouchPopParam().setClickEnable(true).setTouchDownEnable(true)
-                .setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12));
-        mTouch3DHelper = new TouchMenuHelper().registerView(mPopView, speedMenu, popParam);
+        }), new TouchPopParam().setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12)));
     }
 }

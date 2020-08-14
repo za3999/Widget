@@ -17,7 +17,7 @@ public interface ITouchPopMenu<T> {
 
     void setCloseHelper(BaseCallBack.CallBack closeHelper);
 
-    void setTouchListener(TouchItemListener<T> touchListener);
+    ITouchPopMenu setTouchListener(TouchItemListener<T> touchListener);
 
     default void onTouchMove(float eventX, float eventY) {
         if (getRoot() == null || getRoot().getChildCount() == 0) {

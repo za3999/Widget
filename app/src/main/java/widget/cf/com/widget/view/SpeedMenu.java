@@ -106,8 +106,9 @@ public class SpeedMenu extends LinearLayout implements ITouchPopMenu<Float> {
     }
 
     @Override
-    public void setTouchListener(TouchItemListener<Float> touchListener) {
+    public ITouchPopMenu setTouchListener(TouchItemListener<Float> touchListener) {
         mTouchListener = touchListener;
+        return this;
     }
 
     private String getSpeedStr(float speed) {
