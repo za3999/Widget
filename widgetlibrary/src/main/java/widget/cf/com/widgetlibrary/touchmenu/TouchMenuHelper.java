@@ -4,70 +4,76 @@ import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.View;
 
-import widget.cf.com.widgetlibrary.R;
-import widget.cf.com.widgetlibrary.util.ApplicationUtil;
-
-
 public class TouchMenuHelper {
 
     private TouchWidget mTouchWidget;
 
-    public TouchMenuHelper(Activity activity) {
-        mTouchWidget = new TouchWidget(activity);
+    public TouchMenuHelper registerView(View view, IMenu menu, PopParam popParam) {
+        if (mTouchWidget == null) {
+            mTouchWidget = new TouchWidget((Activity) view.getContext());
+        }
+        if (popParam.isLongClickEnable()) {
+            view.setOnLongClickListener(v -> {
+                if (!mTouchWidget.isShowing()) {
+                    initMenuWidget(v, menu, popParam);
+                    mTouchWidget.show(true);
+                }
+                return true;
+            });
+        }
+        if (popParam.isTouchDownEnable()) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                float y;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            y = event.getY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if (event.getY() - y > 10) {
+                                if (!mTouchWidget.isShowing()) {
+                                    initMenuWidget(v, menu, popParam);
+                                    mTouchWidget.show(true);
+                                    return true;
+                                }
+                            }
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                        case MotionEvent.ACTION_UP:
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
+        if (popParam.isClickEnable()) {
+            view.setOnClickListener(v -> {
+                if (mTouchWidget.isShowing()) {
+                    return;
+                }
+                initMenuWidget(v, menu, popParam);
+                mTouchWidget.show(false);
+            });
+        }
+        return this;
     }
 
     public boolean hide() {
+        if (mTouchWidget == null) {
+            return false;
+        }
         return mTouchWidget.hide();
     }
 
-    public void registerView(View view, IMenu menu) {
-//        view.setOnLongClickListener(v -> {
-//            if (!mTouchWidget.isShowing()) {
-//                initMenuWidget(v, menu);
-//                mTouchWidget.show(true);
-//            }
-//            return true;
-//        });
-        view.setOnTouchListener(new View.OnTouchListener() {
-
-            float y;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        y = event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (event.getY() - y > 10) {
-                            if (!mTouchWidget.isShowing()) {
-                                initMenuWidget(v, menu);
-                                mTouchWidget.show(true);
-                                return true;
-                            }
-                        }
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        break;
-                }
-                return false;
-            }
-        });
-        view.setOnClickListener(v -> {
-            if (mTouchWidget.isShowing()) {
-                return;
-            }
-            initMenuWidget(v, menu);
-            mTouchWidget.show(false);
-        });
-    }
-
-    private <T> void initMenuWidget(View view, IMenu menu) {
+    private void initMenuWidget(View view, IMenu menu, PopParam popParam) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
-        int x = location[0] - (menu.getMenuWith() - view.getWidth()) / 2;
-        int y = location[1] + view.getHeight() + ApplicationUtil.getIntDimension(R.dimen.dp_5);
+        int x = (int) (location[0] - (menu.getMenuWith() - view.getWidth()) / 2 + popParam.getXOffset());
+        int y = (int) (location[1] + view.getHeight() + popParam.getYOffset());
         mTouchWidget.setMenuView(x, y, menu);
     }
 }
