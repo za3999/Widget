@@ -7,13 +7,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,18 +29,24 @@ import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
+import widget.cf.com.widgetlibrary.util.LogUtils;
+import widget.cf.com.widgetlibrary.util.ViewUtil;
 
 
 public class RecycleIndicator extends RecyclerView {
+    private static final String TAG = "RecycleIndicator";
     private boolean isEditModel;
     private PartScrollViewPager mPager;
     private BaseCommonAdapter<Menu> adapter;
     private LinearLayoutManager layoutManager;
     private Rect indicatorRect = new Rect();
     private Paint indicatorPaint;
-    private boolean indicatorScroll = true;
+    private boolean indicatorScroll = false;
     private ItemTouchHelper mItemTouchHelper;
     private EditListener mEditListener;
+    private Handler mainHandler = ApplicationUtil.getMainHandler();
+    private Runnable runnable;
+    private String selectId;
 
     public RecycleIndicator(Context context) {
         this(context, null);
@@ -52,7 +59,6 @@ public class RecycleIndicator extends RecyclerView {
     public RecycleIndicator(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         indicatorPaint = new Paint();
-        indicatorPaint.setColor(ContextCompat.getColor(context, R.color.color_red_ccfa3c55));
         layoutManager = new LinearLayoutManager(context);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         setLayoutManager(layoutManager);
@@ -70,13 +76,17 @@ public class RecycleIndicator extends RecyclerView {
                     adapter.getData().remove(position);
                     adapter.notifyItemRemoved(position);
                 } else if (!isEditModel) {
-                    mPager.setCurrentItem(position, true);
+                    if (mPager.getCurrentItem() != position) {
+                        mPager.setCurrentItem(position, true);
+                    } else {
+                        mEditListener.scroll2NextUnreadItem();
+                    }
                 }
             }
 
             @Override
             public void onItemLongClick(int position, View v, Menu item) {
-                setEditModel(true);
+                //todo
             }
         };
         setAdapter(adapter);
@@ -92,12 +102,27 @@ public class RecycleIndicator extends RecyclerView {
         addTouchHelper();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+    }
+
+    public boolean isEditModel() {
+        return isEditModel;
+    }
+
     public void setEditListener(EditListener editListener) {
         this.mEditListener = editListener;
     }
 
-    private void setEditModel(boolean editModel) {
+    public void setEditModel(boolean editModel) {
         isEditModel = editModel;
+        mEditListener.onIndicatorEditChange(isEditModel);
         mPager.setScroll(!editModel);
         adapter.notifyDataSetChanged();
     }
@@ -116,11 +141,27 @@ public class RecycleIndicator extends RecyclerView {
     private int getSelect() {
         int size = adapter.getData().size();
         for (int i = 0; i < size; i++) {
-            if (adapter.getData().get(i).isSelect()) {
+            if (TextUtils.equals(adapter.getData().get(i).getId(), selectId)) {
                 return i;
             }
         }
         return 0;
+    }
+
+    public String getSelectItemId() {
+        return selectId;
+    }
+
+    public void scroll2Menu(Menu Menu) {
+        int size = adapter.getData().size();
+        Menu menu;
+        for (int i = 0; i < size; i++) {
+            menu = adapter.getData().get(i);
+            if (TextUtils.equals(menu.getId(), Menu.getId())) {
+                mPager.setCurrentItem(i, true);
+                break;
+            }
+        }
     }
 
     public void setViewPager(PartScrollViewPager pager) {
@@ -129,59 +170,48 @@ public class RecycleIndicator extends RecyclerView {
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                selectChild(position, positionOffset);
+                updateIndicatorRect(position, positionOffset);
             }
 
             @Override
             public void onPageSelected(int position) {
+                LogUtils.d(TAG, "onPageSelected:" + position);
+                selectId = adapter.getData().get(position).getId();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    updateItemStatus();
+                }
             }
         });
     }
 
     public void setData(int selectPosition, List<Menu> menuData) {
+        if (menuData == null) {
+            setVisibility(View.GONE);
+            return;
+        }
+        setVisibility(menuData.size() > 1 ? View.VISIBLE : View.GONE);
+        selectId = menuData.get(selectPosition).getId();
         adapter.setData(menuData);
         layoutManager.scrollToPositionWithOffset(selectPosition, 0);
-        mPager.setCurrentItem(selectPosition);
+        mPager.setCurrentItem(selectPosition, true);
     }
 
-    private void updateView(int position) {
-        List<Menu> menuData = adapter.getData();
+    private void updateIndicatorRect(int position, float pageOffset) {
         if (adapter.getData().size() == 0) {
             return;
         }
-        int size = menuData.size();
-        for (int i = 0; i < size; i++) {
-            Menu itemData = menuData.get(i);
-            if (i == position) {
-                itemData.setSelect(true);
-                adapter.notifyItemChanged(i);
-            } else if (itemData.isSelect()) {
-                itemData.setSelect(false);
-                adapter.notifyItemChanged(i);
-            }
+        if (runnable != null) {
+            mainHandler.removeCallbacks(runnable);
+            runnable = null;
         }
-    }
-
-    private void selectChild(int position, float offset) {
-        if (adapter.getData().size() == 0) {
-            return;
-        }
-        updateView(position);
-        calculateIndicatorRect(position, offset);
-    }
-
-    private void calculateIndicatorRect(int position, float pageOffset) {
-        RecyclerView recyclerView = adapter.getRecyclerView();
-        if (recyclerView == null) {
-            return;
-        }
-        ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(position);
+        ViewHolder holder = findViewHolderForAdapterPosition(position);
         if (holder == null) {
+            scrollToPosition(position);
+            mainHandler.post(runnable = () -> updateIndicatorRect(position, pageOffset));
             return;
         }
         View menuView = holder.itemView;
@@ -195,10 +225,10 @@ public class RecycleIndicator extends RecyclerView {
         if (pageOffset == 0f) {
             left = menuView.getLeft();
             right = menuView.getRight();
-            indicatorScroll = false;
+            setIndicatorScroll(false);
         } else {
-            indicatorScroll = true;
-            holder = recyclerView.findViewHolderForAdapterPosition(position + 1);
+            setIndicatorScroll(true);
+            holder = findViewHolderForAdapterPosition(position + 1);
             if (holder == null) {
                 return;
             }
@@ -213,10 +243,26 @@ public class RecycleIndicator extends RecyclerView {
         scroll2Center(left, right);
     }
 
+    void setIndicatorScroll(boolean scroll) {
+        if (indicatorScroll != scroll) {
+            indicatorScroll = scroll;
+            updateItemStatus();
+        }
+    }
+
+    private void updateItemStatus() {
+        adapter.runOnHolders(viewHolder -> {
+            if (viewHolder instanceof ItemHolder) {
+                ((ItemHolder) viewHolder).updateSelect();
+            }
+        });
+    }
+
     private void scroll2Center(int left, int right) {
         int offset = left + ((right - left) / 2) - getWidth() / 2;
         if (offset < 0 && !canScrollHorizontally(-1)
                 || offset > 0 && !canScrollHorizontally(1)) {
+            invalidate();
             return;
         }
         scrollBy(offset, 0);
@@ -233,7 +279,7 @@ public class RecycleIndicator extends RecyclerView {
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return isEditModel;
+                return false;
             }
 
             @Override
@@ -262,6 +308,10 @@ public class RecycleIndicator extends RecyclerView {
             public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int
                     fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
                 if (target instanceof ItemHolder) {
+                    ItemHolder itemHolder = (ItemHolder) target;
+                    if (itemHolder.getItemData().isAll()) {
+                        return;
+                    }
                     super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
                     Collections.swap(adapter.getData(), fromPos, toPos);
                     adapter.notifyItemMoved(fromPos, toPos);
@@ -291,7 +341,7 @@ public class RecycleIndicator extends RecyclerView {
                 view.setTag(false);
                 return;
             }
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, View.ROTATION, xOffset, 0);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, View.ROTATION, xOffset, 0, -xOffset, 0);
             objectAnimator.setDuration(50);
             objectAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -303,17 +353,17 @@ public class RecycleIndicator extends RecyclerView {
         }, 5000);
     }
 
-    private class ItemHolder extends DefaultViewHolder<Menu> implements IndicatorListener {
-
-        public ItemHolder(View view) {
-            super(view, true);
-        }
+    private class ItemHolder extends DefaultViewHolder<Menu> {
 
         TextView nameTv;
         TextView unreadNumberView;
         View delView;
         View lineView;
         View contentLayout;
+
+        public ItemHolder(View view) {
+            super(view, true);
+        }
 
         @Override
         public void initView(View view) {
@@ -323,64 +373,68 @@ public class RecycleIndicator extends RecyclerView {
             delView.setOnClickListener(this);
             lineView = view.findViewById(R.id.line);
             contentLayout = view.findViewById(R.id.content_layout);
-        }
-
-        @Override
-        public void onAttachedToWindow() {
-            updateUnreadCount();
-        }
-
-        @Override
-        public void onDetachedFromWindow() {
+            contentLayout.setOnClickListener(this);
+            contentLayout.setOnTouchListener((v, event) -> {
+                if (isEditModel && !itemData.isAll()) {
+                    mItemTouchHelper.startDrag(this);
+                    return true;
+                }
+                return false;
+            });
+            contentLayout.setOnLongClickListener(v -> {
+                if (!isEditModel) {
+                    onItemLongClick(v, itemData);
+                    return true;
+                }
+                return false;
+            });
         }
 
         @Override
         public void bindData(int position, Menu data) {
-            nameTv.setText(data.getTitle());
-            itemView.setSelected(data.isSelect());
-            updateLine();
-            updateUnreadCount();
-            delView.setVisibility(isEditModel && !data.isAll() ? View.VISIBLE : View.GONE);
-            if (isEditModel) {
+            update();
+        }
+
+        private void updateSelect() {
+            if (!indicatorScroll && TextUtils.equals(itemData.getId(), selectId)) {
+                lineView.setVisibility(View.VISIBLE);
+            } else {
+                lineView.setVisibility(View.GONE);
+            }
+            nameTv.setSelected(TextUtils.equals(itemData.getId(), selectId));
+        }
+
+        public void updateUnread() {
+            if (itemData.getUnreadCount() <= 0 || isEditModel) {
+                unreadNumberView.setVisibility(View.GONE);
+            } else {
+                unreadNumberView.setVisibility(View.VISIBLE);
+            }
+            unreadNumberView.setText(itemData.getUnreadCount() + "");
+        }
+
+        public void update() {
+            itemView.setSelected(TextUtils.equals(itemData.getId(), selectId));
+            nameTv.setText(itemData.getTitle());
+            updateSelect();
+            updateUnread();
+            delView.setVisibility(isEditModel && !itemData.isAll() ? View.VISIBLE : View.GONE);
+            if (isEditModel && !itemData.isAll()) {
                 if (contentLayout.getTag() != null && (Boolean) contentLayout.getTag()) {
                     return;
                 }
                 shakeView(contentLayout, ApplicationUtil.getIntDimension(R.dimen.dp_2));
             }
+            ViewUtil.setViewBackgroundTint(unreadNumberView, ApplicationUtil.getColor(TextUtils.equals(itemData.getId(), selectId) ? R.color.brand : R.color.edit_prompt_text));
         }
 
-        private void updateLine() {
-            if (!indicatorScroll && itemData.isSelect()) {
-                lineView.setVisibility(View.VISIBLE);
-            } else {
-                lineView.setVisibility(View.GONE);
-            }
-        }
-
-        private void updateUnreadCount() {
-            unreadNumberView.setVisibility(itemData.getUnreadCount() > 0 && !isEditModel ? View.VISIBLE : View.GONE);
-            unreadNumberView.setText(itemData.getUnreadCount() + "");
-        }
-
-        @Override
-        public void unreadChange(int unreadCount) {
-            updateUnreadCount();
-        }
-
-        @Override
-        public int getKey() {
-            return itemData.getId();
-        }
     }
 
     public interface EditListener {
         void onFinish(int selectPosition, List<Menu> menuList);
-    }
 
-    public interface IndicatorListener {
+        void onIndicatorEditChange(boolean isEdit);
 
-        void unreadChange(int unreadCount);
-
-        int getKey();
+        void scroll2NextUnreadItem();
     }
 }

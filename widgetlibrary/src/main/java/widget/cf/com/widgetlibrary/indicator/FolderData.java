@@ -6,28 +6,28 @@ import java.util.Set;
 
 public class FolderData {
 
-    private int id;
+    private String id;
     private String name;
     private Set<String> dialogIdSet = new HashSet<>();
     private int unreadCount;
     private boolean isAll;
 
-    public FolderData(int id, String name) {
+    public FolderData(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public FolderData(int id, String name, List<String> dialogIds) {
+    public FolderData(String id, String name, List<String> dialogIds) {
         this.id = id;
         this.name = name;
         this.dialogIdSet.addAll(dialogIds);
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

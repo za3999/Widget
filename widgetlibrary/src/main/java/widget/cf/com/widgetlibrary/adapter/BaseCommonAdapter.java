@@ -58,6 +58,14 @@ public abstract class BaseCommonAdapter<T> extends RecyclerView.Adapter<BaseView
         }
     }
 
+    public void runOnHolders(BaseCallBack.CallBack1<BaseViewHolder> callBack) {
+        int count = mRecyclerView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            BaseViewHolder holder = (BaseViewHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+            BaseCallBack.onCallBack(callBack, holder);
+        }
+    }
+
     @CallSuper
     @Override
     public void onViewAttachedToWindow(@NonNull BaseViewHolder holder) {

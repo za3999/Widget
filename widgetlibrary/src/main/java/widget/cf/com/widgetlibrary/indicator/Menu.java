@@ -9,7 +9,7 @@ public class Menu {
         this.mFolderData = folderData;
     }
 
-    public int getId() {
+    public String getId() {
         return mFolderData.getId();
     }
 
