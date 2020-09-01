@@ -100,4 +100,11 @@ public class ApplicationUtil {
         return BaseApplication.isAppForeground;
     }
 
+    public static int getStatusBarHeight() {
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
 }

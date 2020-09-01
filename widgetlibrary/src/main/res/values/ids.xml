@@ -2,4 +2,5 @@
 <resources>
     <item name="drag_bubble_Layout" type="id"></item>
     <item name="drag_bubble_view" type="id"></item>
+    <item name="target_id" type="id" />
 </resources>

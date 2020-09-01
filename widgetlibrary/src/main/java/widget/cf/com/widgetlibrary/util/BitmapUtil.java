@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.renderscript.Allocation;
@@ -21,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BitmapUtil {
+
     private static Map<String, BitmapUseage> softReferenceMap = new ConcurrentHashMap<>();
 
     private static class BitmapUseage {
@@ -133,11 +136,41 @@ public class BitmapUtil {
         return result;
     }
 
+    public static Bitmap blurWallpaper(Bitmap src, int degree) {
+        if (src == null) {
+            return null;
+        }
+        Bitmap b;
+        if (src.getHeight() > src.getWidth()) {
+            b = Bitmap.createBitmap(Math.round(450f * src.getWidth() / src.getHeight()), 450, Bitmap.Config.ARGB_8888);
+        } else {
+            b = Bitmap.createBitmap(450, Math.round(450f * src.getHeight() / src.getWidth()), Bitmap.Config.ARGB_8888);
+        }
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        Rect rect = new Rect(0, 0, b.getWidth(), b.getHeight());
+        new Canvas(b).drawBitmap(src, null, rect, paint);
+//        ImageNativeUtil.stackBlurBitmap(b, degree);
+        return b;
+    }
+
     public static Bitmap getBitmap(View view) {
         view.setDrawingCacheEnabled(true);
         view.destroyDrawingCache();
         view.buildDrawingCache();
         Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
         return bitmap;
+    }
+
+    public static Bitmap getCoverBitmap(Bitmap bitmap, int coverColor) {
+        if (bitmap == null) {
+            return null;
+        }
+        Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        Canvas canvas = new Canvas(outBitmap);
+        Paint paint = new Paint();
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+        paint.setColor(coverColor);
+        canvas.drawRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), paint);
+        return outBitmap;
     }
 }

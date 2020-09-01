@@ -27,24 +27,39 @@ public class MainIndicatorActivity extends BaseActivity {
         AppearanceUtil.setDelegate(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_indicator_layout);
-        menuDataList.add(new Menu(new FolderData(1, "Test1")));
-        menuDataList.add(new Menu(new FolderData(2, "Test2")));
-        menuDataList.add(new Menu(new FolderData(3, "Test3")));
-        menuDataList.add(new Menu(new FolderData(4, "Test4")));
-        menuDataList.add(new Menu(new FolderData(5, "Test5")));
-        menuDataList.add(new Menu(new FolderData(6, "Test6")));
-        menuDataList.add(new Menu(new FolderData(7, "Test7")));
-        menuDataList.add(new Menu(new FolderData(8, "Test8")));
-        menuDataList.add(new Menu(new FolderData(9, "Test9")));
-        menuDataList.add(new Menu(new FolderData(10, "Test10")));
+        menuDataList.add(new Menu(new FolderData("1", "Test1")));
+        menuDataList.add(new Menu(new FolderData("2", "Test2")));
+        menuDataList.add(new Menu(new FolderData("3", "Test3")));
+        menuDataList.add(new Menu(new FolderData("4", "Test4")));
+        menuDataList.add(new Menu(new FolderData("5", "Test5")));
+        menuDataList.add(new Menu(new FolderData("6", "Test6")));
+        menuDataList.add(new Menu(new FolderData("7", "Test7")));
+        menuDataList.add(new Menu(new FolderData("8", "Test8")));
+        menuDataList.add(new Menu(new FolderData("9", "Test9")));
+        menuDataList.add(new Menu(new FolderData("10", "Test10")));
         mPager = findViewById(R.id.view_pager);
         mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
         mIndicator = findViewById(R.id.indicator_layout);
-        mIndicator.setEditListener((selectPosition, menuDataList) -> {
-            this.menuDataList = menuDataList;
-            mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
-            mIndicator.setData(selectPosition, this.menuDataList);
-        });
+        mIndicator.setEditListener(
+                new RecycleIndicator.EditListener() {
+
+                    @Override
+                    public void onFinish(int selectPosition, List<Menu> menuList) {
+                        menuDataList = menuList;
+                        mPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()));
+                        mIndicator.setData(selectPosition, menuDataList);
+                    }
+
+                    @Override
+                    public void onIndicatorEditChange(boolean isEdit) {
+                    }
+
+                    @Override
+                    public void scroll2NextUnreadItem() {
+                    }
+                }
+
+        );
         mIndicator.setViewPager(mPager);
         mIndicator.setData(0, menuDataList);
     }
