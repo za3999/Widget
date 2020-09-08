@@ -187,6 +187,7 @@ public class SearchView extends View {
                 canvas.drawPath(pathSearch, mPaint);
                 break;
             case State.STARTING:
+            case State.ENDING:
                 mMeasure.setPath(pathSearch, false);
                 Path dst = new Path();
                 mMeasure.getSegment(mMeasure.getLength() * mAnimatorValue, mMeasure.getLength(), dst, true);
@@ -199,12 +200,6 @@ public class SearchView extends View {
                 float start = (float) (stop - ((0.5 - Math.abs(mAnimatorValue - 0.5)) * 200f));
                 mMeasure.getSegment(start, stop, dst2, true);
                 canvas.drawPath(dst2, mPaint);
-                break;
-            case State.ENDING:
-                mMeasure.setPath(pathSearch, false);
-                Path dst3 = new Path();
-                mMeasure.getSegment(mMeasure.getLength() * mAnimatorValue, mMeasure.getLength(), dst3, true);
-                canvas.drawPath(dst3, mPaint);
                 break;
         }
     }
