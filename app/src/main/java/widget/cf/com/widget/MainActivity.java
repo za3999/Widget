@@ -104,4 +104,8 @@ public class MainActivity extends BaseActivity {
             }
         }).setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12)));
     }
+
+    public void onFaceClick(View view) {
+        startActivity(new Intent(this, FaceActivity.class));
+    }
 }

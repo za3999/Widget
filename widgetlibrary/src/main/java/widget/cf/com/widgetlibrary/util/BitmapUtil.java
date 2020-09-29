@@ -19,6 +19,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 
 import java.lang.ref.SoftReference;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -171,6 +172,81 @@ public class BitmapUtil {
         canvas.drawBitmap(bitmap, 0, 0, paint);
         paint.setColor(coverColor);
         canvas.drawRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), paint);
+        return outBitmap;
+    }
+
+    public static Bitmap getBlurBitmap(Bitmap bitmapOriginal, List<Rect> rects, int radius) {
+        if (bitmapOriginal == null || bitmapOriginal.isRecycled()) {
+            return null;
+        }
+        try {
+            // 1. copy origin bitmap
+            Bitmap newBitmap = bitmapOriginal.copy(bitmapOriginal.getConfig(), true);
+            Canvas canvas = new Canvas(newBitmap);
+            // 2. blur rects
+            Paint photoPaint = new Paint();
+            photoPaint.setDither(true);
+            photoPaint.setFilterBitmap(true);
+            Paint rectPaint = new Paint();
+            rectPaint.setAntiAlias(true);
+            rectPaint.setStyle(Paint.Style.FILL);
+            for (Rect factRect : rects) {
+                Bitmap faceBitmap = Bitmap.createBitmap(bitmapOriginal, factRect.left, factRect.top, factRect.width(), factRect.height());
+                faceBitmap = getBlurBitmap(faceBitmap, radius);
+                canvas.drawBitmap(faceBitmap, factRect.left, factRect.top, photoPaint);
+                if (!faceBitmap.isRecycled()) {
+                    faceBitmap.recycle();
+                }
+            }
+            return newBitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Bitmap getBlurBitmap(Bitmap image, float radius) {
+        RenderScript rs = RenderScript.create(ApplicationUtil.getApplication());
+        Bitmap outputBitmap = Bitmap.createBitmap(image.getHeight(), image.getWidth(), image.getConfig());
+        Allocation in = Allocation.createFromBitmap(rs, image);
+        Allocation out = Allocation.createFromBitmap(rs, outputBitmap);
+        ScriptIntrinsicBlur intrinsicBlur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        intrinsicBlur.setRadius(radius);
+        intrinsicBlur.setInput(in);
+        intrinsicBlur.forEach(out);
+        out.copyTo(outputBitmap);
+        image.recycle();
+        rs.destroy();
+        return outputBitmap;
+    }
+
+    public static Bitmap getMosaicBitmap(Bitmap sourceBitmap, List<Rect> faceList, int radius) {
+        final int width = sourceBitmap.getWidth();
+        final int height = sourceBitmap.getHeight();
+        final Bitmap outBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), sourceBitmap.getConfig());
+        try {
+            final int[] pixels = new int[width * height];
+            sourceBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    boolean isInFaceRect = false;
+                    for (Rect faceRect : faceList) {
+                        if (faceRect.contains(x, y)) {
+                            isInFaceRect = true;
+                            break;
+                        }
+                    }
+                    if (isInFaceRect) {
+                        int newX = x % radius;
+                        int newY = y % radius;
+                        pixels[y * width + x] = pixels[(y - newY) * width + x - newX];
+                    }
+                }
+            }
+            outBitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return outBitmap;
     }
 }
