@@ -30,8 +30,7 @@ public class FaceHelper {
             new TaskRunner.RunnerOnlyOutput<Bitmap>() {
                 @Override
                 public Bitmap runWrapper() {
-                    Bitmap outBitmap = BitmapUtil.getMosaicBitmap(sourceBitmap, faceList, 10);
-                    return outBitmap;
+                    return BitmapUtil.getMosaicBitmap(sourceBitmap, faceList, 10);
                 }
 
                 @Override
