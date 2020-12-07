@@ -18,6 +18,8 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 
+import androidx.palette.graphics.Palette;
+
 import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.Map;
@@ -249,4 +251,25 @@ public class BitmapUtil {
         }
         return outBitmap;
     }
+
+    /**
+     * 获取主题色
+     * @param bitmap
+     * @return
+     */
+    public static int getVibrantColor(Bitmap bitmap) {
+        Palette palette = Palette.from(bitmap).generate();
+        return palette.getVibrantColor(Color.WHITE);
+    }
+
+    /**
+     * 获取以 bitmap 为背景时的推荐标题颜色
+     * @param bitmap
+     * @return
+     */
+    public static int getVibrantSwitch(Bitmap bitmap) {
+        Palette palette = Palette.from(bitmap).generate();
+        return palette.getVibrantSwatch().getRgb();
+    }
+
 }
