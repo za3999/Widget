@@ -1,4 +1,4 @@
-package widget.cf.com.widget.tool;
+package com.test.tool;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -108,8 +108,13 @@ public class DimenTool {
 
     public static void main(String[] args) {
         gen("values-sw390dp", 13f / 12f);
-        gen("values-sw420dp", 7f / 6f);
+        gen("values-sw420dp", 14f / 12f);
         gen("values-sw450dp", 15f / 12f);
-        gen("values-sw480dp", 4f / 3f);
+        gen("values-sw480dp", 16f / 12f);
+        gen("values-sw510dp", 17f / 12f);
+        gen("values-sw540dp", 18f / 12f);
+        gen("values-sw570dp", 19f / 12f);
+        gen("values-sw600dp", 20f / 12f);
+        gen("values-sw630dp", 21f / 12f);
     }
 }

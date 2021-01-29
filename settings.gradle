@@ -1,3 +1,4 @@
+include ':Javalib'
 include ':app', ':widgetl', ':qrcode'
 project(':widgetl').projectDir = new File('widgetlibrary')
 project(':qrcode').projectDir = new File('kkqrcode')
