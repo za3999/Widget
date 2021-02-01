@@ -47,6 +47,7 @@ public class RecycleIndicator extends RecyclerView {
     private Handler mainHandler = ApplicationUtil.getMainHandler();
     private Runnable runnable;
     private String selectId;
+    private int indicatorTargetViewId;
 
     public RecycleIndicator(Context context) {
         this(context, null);
@@ -59,7 +60,7 @@ public class RecycleIndicator extends RecyclerView {
     public RecycleIndicator(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         indicatorPaint = new Paint();
-        layoutManager = new LinearLayoutManager(context);
+        layoutManager = new IndicatorLayoutManager(context);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         setLayoutManager(layoutManager);
         setItemAnimator(null);
@@ -112,6 +113,10 @@ public class RecycleIndicator extends RecyclerView {
         super.onDetachedFromWindow();
     }
 
+    public void setIndicatorTargetViewId(int indicatorTargetViewId) {
+        this.indicatorTargetViewId = indicatorTargetViewId;
+    }
+
     public boolean isEditModel() {
         return isEditModel;
     }
@@ -123,7 +128,7 @@ public class RecycleIndicator extends RecyclerView {
     public void setEditModel(boolean editModel) {
         isEditModel = editModel;
         mEditListener.onIndicatorEditChange(isEditModel);
-        mPager.setScroll(!editModel);
+        mPager.setScrollAble(!editModel);
         adapter.notifyDataSetChanged();
     }
 
@@ -166,7 +171,7 @@ public class RecycleIndicator extends RecyclerView {
 
     public void setViewPager(PartScrollViewPager pager) {
         this.mPager = pager;
-        mPager.setScroll(true);
+        mPager.setScrollAble(true);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -236,8 +241,12 @@ public class RecycleIndicator extends RecyclerView {
             if (nextView == null) {
                 return;
             }
-            left = (int) (menuView.getLeft() + menuView.getWidth() * pageOffset);
-            right = (int) (nextView.getLeft() + nextView.getWidth() * pageOffset);
+            int leftStart = menuView.getLeft() + menuView.findViewById(indicatorTargetViewId).getLeft();
+            int leftEnd = nextView.getLeft() + nextView.findViewById(indicatorTargetViewId).getLeft();
+            int rightStart = menuView.getRight() - (menuView.getWidth() - menuView.findViewById(indicatorTargetViewId).getWidth()) / 2;
+            int rightEnd = nextView.getRight() - (nextView.getWidth() - nextView.findViewById(indicatorTargetViewId).getWidth()) / 2;
+            left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
+            right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
             indicatorRect.set(left, top, right, bottom);
         }
         scroll2Center(left, right);
@@ -266,7 +275,6 @@ public class RecycleIndicator extends RecyclerView {
             return;
         }
         scrollBy(offset, 0);
-        indicatorRect.set(left - offset, indicatorRect.top, right - offset, indicatorRect.bottom);
     }
 
     private void addTouchHelper() {
@@ -367,6 +375,7 @@ public class RecycleIndicator extends RecyclerView {
 
         @Override
         public void initView(View view) {
+            setIndicatorTargetViewId(R.id.target_view);
             nameTv = view.findViewById(R.id.tv_name);
             unreadNumberView = view.findViewById(R.id.unread_number_view);
             delView = view.findViewById(R.id.del_view);
