@@ -29,7 +29,6 @@ import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
-import widget.cf.com.widgetlibrary.util.LogUtils;
 import widget.cf.com.widgetlibrary.util.ViewUtil;
 
 
@@ -78,7 +77,7 @@ public class RecycleIndicator extends RecyclerView {
                     adapter.notifyItemRemoved(position);
                 } else if (!isEditModel) {
                     if (mPager.getCurrentItem() != position) {
-                        mPager.setCurrentItem(position, true);
+                        mPager.setCurrentItem(position, false);
                     } else {
                         mEditListener.scroll2NextUnreadItem();
                     }
@@ -163,7 +162,7 @@ public class RecycleIndicator extends RecyclerView {
         for (int i = 0; i < size; i++) {
             menu = adapter.getData().get(i);
             if (TextUtils.equals(menu.getId(), Menu.getId())) {
-                mPager.setCurrentItem(i, true);
+                mPager.setCurrentItem(i, false);
                 break;
             }
         }
@@ -173,21 +172,38 @@ public class RecycleIndicator extends RecyclerView {
         this.mPager = pager;
         mPager.setScrollAble(true);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            int oldPosition = -1;
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 updateIndicatorRect(position, positionOffset);
+                if (positionOffset != 0f || oldPosition == position || adapter.getData().size() <= position) {
+                    return;
+                }
+                changePosition(position);
             }
 
             @Override
             public void onPageSelected(int position) {
-                LogUtils.d(TAG, "onPageSelected:" + position);
+                if (adapter.getData().size() <= position) {
+                    return;
+                }
+                changePosition(position);
+            }
+
+            private void changePosition(int position) {
+                oldPosition = position;
                 selectId = adapter.getData().get(position).getId();
+                updateItemStatus();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    updateItemStatus();
+                    setIndicatorScroll(false);
+                } else {
+                    setIndicatorScroll(true);
                 }
             }
         });
@@ -202,7 +218,7 @@ public class RecycleIndicator extends RecyclerView {
         selectId = menuData.get(selectPosition).getId();
         adapter.setData(menuData);
         layoutManager.scrollToPositionWithOffset(selectPosition, 0);
-        mPager.setCurrentItem(selectPosition, true);
+        mPager.setCurrentItem(selectPosition, false);
     }
 
     private void updateIndicatorRect(int position, float pageOffset) {
@@ -230,9 +246,7 @@ public class RecycleIndicator extends RecyclerView {
         if (pageOffset == 0f) {
             left = menuView.getLeft();
             right = menuView.getRight();
-            setIndicatorScroll(false);
         } else {
-            setIndicatorScroll(true);
             holder = findViewHolderForAdapterPosition(position + 1);
             if (holder == null) {
                 return;
