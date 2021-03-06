@@ -13,25 +13,23 @@ import android.widget.RelativeLayout;
 import androidx.core.content.ContextCompat;
 
 import widget.cf.com.widgetlibrary.R;
+import widget.cf.com.widgetlibrary.executor.TaskRunner;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.BitmapUtil;
 
 
 public class BlurDialog extends BaseAlertDialog {
-    private Drawable mDrawable;
-    protected View mTargetView;
+
+    protected View mTouchView;
     protected RelativeLayout mRootLayout;
     protected boolean isCancelAble;
 
     public BlurDialog(View targetView) {
         super(targetView.getContext(), R.style.ThemeTranslucent);
-        this.mTargetView = targetView;
+        this.mTouchView = targetView;
         mRootLayout = new RelativeLayout(getContext());
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addContentView(mRootLayout, layoutParams);
-        Bitmap blurBitmap = BitmapUtil.blurWallpaper(BitmapUtil.getBitmap(targetView.getRootView()), 20);
-        blurBitmap = BitmapUtil.getCoverBitmap(blurBitmap, ContextCompat.getColor(getContext(), R.color.color_20_transparent));
-        mDrawable = new BitmapDrawable(ApplicationUtil.getResources(), blurBitmap);
     }
 
     @Override
@@ -44,11 +42,27 @@ public class BlurDialog extends BaseAlertDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(mRootLayout);
-        getWindow().setBackgroundDrawable(mDrawable);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        loadBackgroundDrawable();
         if (isCancelAble) {
             mRootLayout.setOnClickListener(v -> dismiss());
         }
+    }
+
+    private void loadBackgroundDrawable() {
+        new TaskRunner.RunnerOnlyOutput<Drawable>() {
+            @Override
+            public Drawable runWrapper() {
+                Bitmap blurBitmap = BitmapUtil.blurWallpaper(BitmapUtil.getBitmap(mTouchView.getRootView()), 20);
+                blurBitmap = BitmapUtil.getCoverBitmap(blurBitmap, ContextCompat.getColor(getContext(), R.color.color_20_transparent));
+                return new BitmapDrawable(ApplicationUtil.getResources(), blurBitmap);
+            }
+
+            @Override
+            public void onResultWrapper(Drawable drawable) {
+                getWindow().setBackgroundDrawable(drawable);
+            }
+        }.setMainResult(true).start();
     }
 
     protected void startAnim(View view, int pivotX, int pivotY) {

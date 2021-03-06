@@ -1,6 +1,6 @@
 package widget.cf.com.widgetlibrary.dialog;
 
-import android.util.Pair;
+import android.graphics.Point;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -37,8 +37,8 @@ public class SessionMenuDialog extends BaseBlurDialog {
     }
 
     @Override
-    public Pair<Integer, Integer> getAnimPoint() {
-        return new Pair<>(0, mContentView.getHeight());
+    public Point getAnimPoint() {
+        return new Point(0, mContentView.getHeight());
     }
 
     @Override
@@ -60,12 +60,12 @@ public class SessionMenuDialog extends BaseBlurDialog {
     }
 
     @Override
-    public RelativeLayout.LayoutParams getLayoutParams() {
+    public RelativeLayout.LayoutParams getContentLayoutParams() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getMenuWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.leftMargin = mTargetRect.width() / 3;
         layoutParams.bottomMargin = ApplicationUtil.getIntDimension(R.dimen.dp_8);
         layoutParams.topMargin = ApplicationUtil.getIntDimension(R.dimen.dp_100);
-        layoutParams.addRule(RelativeLayout.ABOVE, mMirrorView.getId());
+        layoutParams.addRule(RelativeLayout.ABOVE, mTargetView.getId());
         return layoutParams;
     }
 

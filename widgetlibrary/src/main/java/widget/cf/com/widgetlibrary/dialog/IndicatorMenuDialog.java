@@ -1,6 +1,6 @@
 package widget.cf.com.widgetlibrary.dialog;
 
-import android.util.Pair;
+import android.graphics.Point;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -27,8 +27,8 @@ public class IndicatorMenuDialog extends BaseBlurDialog {
     }
 
     @Override
-    public Pair<Integer, Integer> getAnimPoint() {
-        return new Pair<>(getMenuWidth() / 2, 0);
+    public Point getAnimPoint() {
+        return new Point(getMenuWidth() / 2, 0);
     }
 
     @Override
@@ -39,11 +39,13 @@ public class IndicatorMenuDialog extends BaseBlurDialog {
         return layoutParams;
     }
 
-    public RelativeLayout.LayoutParams getLayoutParams() {
+
+    @Override
+    public RelativeLayout.LayoutParams getContentLayoutParams() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getMenuWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.leftMargin = getMenuLeftMargin();
         layoutParams.topMargin = ApplicationUtil.getIntDimension(R.dimen.dp_8);
-        layoutParams.addRule(RelativeLayout.BELOW, mMirrorView.getId());
+        layoutParams.addRule(RelativeLayout.BELOW, mTargetView.getId());
         return layoutParams;
     }
 

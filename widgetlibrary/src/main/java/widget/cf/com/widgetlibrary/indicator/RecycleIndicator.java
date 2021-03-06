@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -28,6 +29,7 @@ import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
+import widget.cf.com.widgetlibrary.dialog.IndicatorMenuDialog;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.ViewUtil;
 
@@ -86,7 +88,10 @@ public class RecycleIndicator extends RecyclerView {
 
             @Override
             public void onItemLongClick(int position, View v, Menu item) {
-                //todo
+                IndicatorMenuDialog indicatorMenuDialog = new IndicatorMenuDialog(v, code -> {
+                    Toast.makeText(v.getContext(), "callback:" + code, Toast.LENGTH_LONG).show();
+                });
+                indicatorMenuDialog.show();
             }
         };
         setAdapter(adapter);
