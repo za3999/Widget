@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
+import widget.cf.com.widgetlibrary.base.BaseCallBack;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class TouchWidget extends FrameLayout {
-
 
     private ITouchPopMenu mMenuView;
     private Activity mActivity;
@@ -18,12 +18,17 @@ public class TouchWidget extends FrameLayout {
     private boolean isTouchModel;
     private ViewGroup parent;
     private FrameLayout.LayoutParams lp;
+    private boolean parentCancel;
 
     public TouchWidget(Activity activity) {
         super(activity);
         this.mActivity = activity;
         parent = (ViewGroup) activity.getWindow().getDecorView();
         lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+    }
+
+    public ITouchPopMenu getMenuView() {
+        return mMenuView;
     }
 
     public boolean isShowing() {
@@ -41,13 +46,19 @@ public class TouchWidget extends FrameLayout {
 
     public void show(boolean isTouchModel) {
         isShowing = true;
+        parentCancel = false;
         ApplicationUtil.runOnMainThread(() -> {
             this.isTouchModel = isTouchModel;
-            attachActivity();
-            if (isTouchModel) {
-                transferTouchEvent(mActivity);
+            if (attachActivity()) {
+                animMenu();
+                if (isTouchModel) {
+                    transferTouchEvent(mActivity, success -> {
+                        if (!success) {
+                            hide();
+                        }
+                    });
+                }
             }
-            animMenu();
         });
     }
 
@@ -58,6 +69,13 @@ public class TouchWidget extends FrameLayout {
             return true;
         }
         return false;
+    }
+
+    public void onParentTouchUp() {
+        if (!isTouchModel) {
+            return;
+        }
+        parentCancel = true;
     }
 
     private void animMenu() {
@@ -102,11 +120,17 @@ public class TouchWidget extends FrameLayout {
         return true;
     }
 
-    private void attachActivity() {
-        if (isAttachedToWindow()) {
-            parent.removeView(this);
+    private boolean attachActivity() {
+        try {
+            if (isAttachedToWindow()) {
+                parent.removeView(this);
+            }
+            parent.addView(this, lp);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        parent.addView(this, lp);
+        return false;
     }
 
     private void disAttachActivity() {
@@ -120,11 +144,20 @@ public class TouchWidget extends FrameLayout {
         }
     }
 
-    private void transferTouchEvent(final Activity activity) {
+    private void transferTouchEvent(final Activity activity, BaseCallBack.CallBack1<Boolean> result) {
         postDelayed(() -> {
-            long uptimeMillis = SystemClock.uptimeMillis();
-            activity.dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_UP, 0f, 0f, 0));
-            activity.getWindow().getDecorView().dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_DOWN, 0f, 0f, 0));
+            try {
+                if (isAttachedToWindow() && !parentCancel) {
+                    long uptimeMillis = SystemClock.uptimeMillis();
+                    activity.dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_UP, 0f, 0f, 0));
+                    activity.getWindow().getDecorView().dispatchTouchEvent(MotionEvent.obtain(uptimeMillis, uptimeMillis, MotionEvent.ACTION_DOWN, 0f, 0f, 0));
+                    BaseCallBack.onCallBack(result, true);
+                } else {
+                    BaseCallBack.onCallBack(result, false);
+                }
+            } catch (Exception e) {
+                BaseCallBack.onCallBack(result, false);
+            }
         }, 200);
     }
 }

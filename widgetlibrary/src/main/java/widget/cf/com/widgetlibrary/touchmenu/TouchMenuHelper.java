@@ -44,6 +44,7 @@ public class TouchMenuHelper {
                             break;
                         case MotionEvent.ACTION_CANCEL:
                         case MotionEvent.ACTION_UP:
+                            mTouchWidget.onParentTouchUp();
                             break;
                     }
                     return false;

@@ -94,7 +94,8 @@ public class MainActivity extends BaseActivity {
         mTouch3DHelper = new TouchMenuHelper().registerView(mPopView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
             @Override
             public void onSelect(Float speed) {
-                //do something
+                mPopView.setSelected(true);
+                mPopView.setText(speed + "");
             }
 
             @Override
