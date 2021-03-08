@@ -222,8 +222,10 @@ public class RecycleIndicator extends RecyclerView {
         setVisibility(menuData.size() > 1 ? View.VISIBLE : View.GONE);
         selectId = menuData.get(selectPosition).getId();
         adapter.setData(menuData);
-        layoutManager.scrollToPositionWithOffset(selectPosition, 0);
-        mPager.setCurrentItem(selectPosition, false);
+        if (!isEditModel) {
+            layoutManager.scrollToPositionWithOffset(getSelect(), 0);
+            mPager.setCurrentItem(getSelect(), false);
+        }
     }
 
     private void updateIndicatorRect(int position, float pageOffset) {
@@ -237,7 +239,6 @@ public class RecycleIndicator extends RecyclerView {
         ViewHolder holder = findViewHolderForAdapterPosition(position);
         if (holder == null) {
             scrollToPosition(position);
-            mainHandler.post(runnable = () -> updateIndicatorRect(position, pageOffset));
             return;
         }
         View menuView = holder.itemView;
@@ -254,6 +255,9 @@ public class RecycleIndicator extends RecyclerView {
         } else {
             holder = findViewHolderForAdapterPosition(position + 1);
             if (holder == null) {
+                if (position + 1 < adapter.getItemCount()) {
+                    scrollToPosition(position + 1);
+                }
                 return;
             }
             View nextView = holder.itemView;
