@@ -23,7 +23,7 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 public abstract class BaseIndicator<T> extends RecyclerView {
 
     private static float indicatorHigh = ApplicationUtil.getDimension(R.dimen.dp_2);
-    private ViewPager mPager;
+    protected ViewPager mPager;
     private BaseCommonAdapter<T> adapter;
     private LinearLayoutManager layoutManager;
     private RectF indicatorRect = new RectF();
@@ -204,7 +204,12 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     public abstract class IndicatorHolder<T> extends DefaultViewHolder<T> {
 
         public IndicatorHolder(View view) {
-            super(view);
+            super(view, true);
+        }
+
+        @Override
+        public void onItemClick(View v, T t) {
+            mPager.setCurrentItem(getAdapterPosition(), false);
         }
 
         abstract void updateSelect();
