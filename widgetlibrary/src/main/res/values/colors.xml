@@ -1,14 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="color_fff6f6f6_ff121212">#f6f6f6</color>
+    <color name="color_ffffffff_ff909399">#ffffffff</color>
+    <color name="color_ffffffff_ff212121">#ffffffff</color>
+    <color name="color_ffffffff_ff333333">#ffffffff</color>
+    <color name="color_e6ffffff_e6333333">#e6ffffff</color>
+    <color name="color_ffffffff_ff161616">#ffffffff</color>
+    <color name="color_fff2f2f2_ff121212">#fff2f2f2</color>
+    <color name="color_ff333333_ffffffff">#ff333333</color>
+    <color name="color_ffcccccc_ff606266">#ffcccccc</color>
+    <color name="color_ff606266_ffcccccc">#ff606266</color>
+    <color name="color_ff909399_ff909399">#ff909399</color>
+    <color name="color_ff909399_ffffffff">#ff909399</color>
+    <color name="color_33909399_ffffffff">#33909399</color> <!-- 20%-->
+    <color name="color_33909399_33909399">#33909399</color>
+    <color name="color_33cccccc_33606266">#33cccccc</color> <!-- 20% -->
+    <color name="color_4dcccccc_4d606266">#4dcccccc</color> <!-- 30% -->
+    <color name="color_4dcccccc_4dffffff">#4dcccccc</color>
+    <color name="color_1a000000_33ffffff">#1a000000</color>
+    <color name="color_1a000000_4d606266">#1a000000</color>
+    <color name="color_4d000000_4dffffff">#4d000000</color>
+    <color name="color_fffff5d0_fffee36b">#fffff5d0</color>
+    <color name="color_fffff5d0_ff212121">#fffff5d0</color>
+    <color name="color_ffffe000_ffdda023">#ffffe000</color>
+    <color name="color_ffdefacd_ff212121">#ffdefacd</color>
+    <color name="color_ff606266_ffafe98b">#ff606266</color>
+    <color name="color_ff606266_fffee36b">#ff606266</color>
+    <color name="color_ffeeeeee_33ffffff">#ffeeeeee</color>
+    <color name="color_0f000000_4d606266">#0f000000</color>
+    <color name="color_ff212121_ff212121">#ff212121</color>
+    <color name="color_80ffffff_80333333">#80ffffff</color>
+    <color name="color_80000000_80ffffff">#80000000</color>
+
+    <color name="color_day_night_38_cccccc">#38cccccc</color>
+    <color name="color_day_night_4b_cccccc">#4bcccccc</color>
+
+    <color name="color_day_night_30_d8d8d8">#4cd8d8d8</color>
+    <color name="color_day_night_04_000000">#0a000000</color>
+    <color name="color_day_night_E2E4E8">#E2E4E8</color>
+
+    <color name="color_day_input">#4Dcccccc</color>
+    <!-- common day and night -->
+
+    <!-- common day -->
+
+    <color name="color_day_909399">#909399</color>
+    <color name="color_day_61BC79">#61BC79</color>
+    <color name="color_day_ffffff">#ffffff</color>
+    <color name="color_day_E2E4E8">#E2E4E8</color>
+    <color name="color_day_ff5454">#ff5454</color>
+    <color name="color_day_1DB268">#1DB268</color>
+    <color name="color_day_10_26B36D">#1A26B36D</color>
+    <color name="color_day_10_000000">#1A000000</color>
+    <color name="color_day_99_ffffff">#99ffffff</color>
+    <color name="color_day_606266">#606266</color>
+    <color name="color_day_F54540">#F54540</color>
+
+    <!-- common day -->
+
+    <!-- syncMsg -->
+    <color name="color_sync_msg_progress_index">#606266</color>
+    <!-- syncMsg -->
 
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_final">#ffffff</color>
+    <color name="final_cccccc">#cccccc</color>
     <color name="black">#000000</color>
     <color name="grey">#333333</color>
     <color name="color_green_58b99d">#654321</color>
     <color name="color_blue_0888ff">#0888ff</color>
     <color name="color_black_333333">#333333</color>
     <color name="color_grey_999999">#999999</color>
+    <color name="color_green_1a33a854">#1a33a854</color>
     <color name="color_activity_blue_bg">#f7389fff</color>
     <color name="split_line_grey_color_d9d9d9">#d9d9d9</color>
     <color name="green_4DC0A4">#4DC0A4</color>
@@ -23,10 +87,15 @@
     <color name="color_gray_f9f9f9">#fff9f9f9</color>
     <color name="color_ait">#ff0099cc</color>
     <color name="color_61bc79">#61bc79</color>
+    <color name="navigationBarColor">#ffffff</color>
+    <color name="navigationBarColorMain">#33000000</color>
+    <color name="text_enable">#cccccc</color>
+    <color name="btn_text_enable">#909399</color>
+    <color name="btn_text_disable">#cccccc</color>
 
     <!-- main bg color -->
     <color name="g_child_page_bg_color">#FFFFFF</color>
-    <color name="main_bg_color">#FFFFFF</color>
+    <color name="main_bg_color">@color/color_ffffffff_ff212121</color>
     <color name="main_tab_bg">#54b484</color>
 
     <!-- session -->
@@ -66,6 +135,7 @@
     <color name="msg_send_color_green">#ff75bd5e</color>
     <color name="msg_back_green">#ffefffde</color>
     <color name="msg_action_back">#33333333</color>
+    <color name="msg_text_select_back">#FFC7E1FF</color>
 
     <color name="img_bg">#0fffffff</color>
 
@@ -79,36 +149,48 @@
     <color name="warning">#ffbb52</color>
     <color name="negative">#ff5454</color>
 
+    <color name="pop_share_bg">#333333</color>
+    <color name="pop_share_text">#FFFFFF</color>
     <color name="title_font_main">#333333</color>
     <color name="title_font_secondary">#606266</color>
+    <color name="title_font_sec_disable">#4D606266</color>
     <color name="prompt_text">#909399</color>
     <color name="edit_prompt_text">#cccccc</color>
+    <color name="edit_bg">#4DD8D8D8</color>
     <color name="none_clickable_status">#c6c6c9</color>
     <color name="chat_back">#f2f2f2</color>
-    <color name="back_gray_normal">#f6f6f6</color>
+    <color name="back_gray_normal">@color/color_fff6f6f6_ff121212</color>
     <color name="chat_spam_back">#fbfbfb</color>
     <color name="gray_line">#4dcccccc</color>
     <color name="gray_line2">#cccccc</color>
     <color name="gray_line3">#c8c7cc</color>
     <color name="gray_line_light">#d1d1d6</color>
+    <color name="gray_40">#66CCCCCC</color>
 
-    <color name="color_background">#ffffff</color>
-    <color name="color_background_secondary">#F6F6F6</color>
+    <color name="color_background">#f2f2f2</color>
+    <color name="color_background_secondary">@color/color_fff6f6f6_ff121212</color>
     <color name="color_10_transparent">#1a000000</color>
     <color name="color_20_transparent">#33000000</color>
     <color name="color_30_transparent">#4d000000</color>
     <color name="color_3_transparent">#08000000</color>
     <color name="color_2_transparent">#05000000</color>
     <color name="text_green">#34A853</color>
-    <color name="color_bg_green">#14b163</color>
+    <color name="color_bg_green">#b163</color>
     <color name="color_divider">#e0e0e0</color>
-    <color name="color_text_blue">#007AFF</color>
     <color name="msg_select_back">#33a4bbb3</color>
     <color name="color_e5">#E5E5E5</color>
+    <color name="color_day_night_e5">#E5E5E5</color>
+    <color name="color_day_night_f5">#F5F5F5</color>
     <color name="click_bg_black">#0a000000</color>
     <color name="qrcode_scan_mask">#33000000</color>
     <color name="color_music_line">#f0f0f0</color>
     <color name="color_btn_green">#1DB268</color>
+    <color name="search_bg">#eeeeee</color>
+    <color name="gradient_start_color">#05000000</color>
+    <color name="color_line_black_0d">#0d000050</color>
+    <color name="dialog_transparent_back">#e6f8f8f8</color>
+    <color name="dialog_cancel_blue">#ff007AFF</color>
+    <color name="lock_bg">#606266</color>
 
     <!-- conversation -->
     <color name="item_menu_bg_color">#cccccc</color>
@@ -116,6 +198,7 @@
     <color name="pin_bg_unselected">#ff61bc79</color>
     <color name="mute_bg_selected">#ffbebebe</color>
     <color name="mute_bg_unselected">#ffffbb52</color>
+    <color name="pop_menu_text">#333333</color>
 
     <!--photo album-->
     <color name="album_item_bg">#66000000</color>
@@ -127,11 +210,106 @@
     <color name="media_browse_bg">#212121</color>
     <color name="download_origin_progress">#19ffffff</color>
     <color name="color_fa">#FAFAFA</color>
+    <color name="color_placeholder">#000000</color>
 
     <!-- group -->
     <color name="group_recent_highlight">#ff109D57</color>
     <color name="group_recent_datebg">#7f666666</color>
+    <color name="group_dismiss_btn_tv">#ffff3b30</color>
+    <color name="group_dismiss_btn_cancel">#ff26b36d</color>
 
     <!-- sticker -->
     <color name="sticker_show_dialog_bg">#7f333333</color>
+    <color name="sticker_send_bg">#d0ffffff</color>
+    <color name="image_overlay_false">#20000000</color>
+    <color name="emoji_panel_bg">#f5f6f8</color>
+
+    <!-- switch button widget -->
+    <color name="mswitch_button_ball_shadow">#dddddddd</color>
+
+    <color name="grey_line">#EAEAEA</color>
+    <color name="dialog_comment_bg">#4DD8D8D8</color>
+    <color name="msg_status_gray">#909399</color>
+    <color name="msg_status_green">#909399</color>
+    <color name="msg_status_red">#ff5454</color>
+    <color name="msg_bubble_line_color">#FFEEEEEE</color>
+    <color name="msg_bg_send">#ffcfead6</color>
+
+    <color name="white_image_browse">#FFFFFF</color>
+    <color name="data_limit_green">#ff26b36d</color>
+    <color name="gray_line2_image_browse">#cccccc</color>
+
+    <color name="color_black_333333_final">#333333</color>
+
+    <color name="input_panel_voice_recording_time_color">#909399</color>
+    <color name="input_panel_voice_recording_green_color">#ff26b36d</color>
+    <color name="color_d8">#D8D8D8</color>
+    <color name="color_tint_green">#EEF8F2</color>
+
+    <!--media edit-->
+    <color name="video_clip_shadow_color">#99000000</color>
+    <color name="video_clip_bar_pressing_color">#61bc79</color>
+    <color name="video_clip_resolution_size_color">#909399</color>
+
+    <color name="iamge_edit_mosaic_size_default_color">#909399</color>
+    <color name="iamge_edit_mosaic_size_select_color">#ffffff</color>
+    <color name="image_edit_effect_seekbar_progress_color">#909399</color>
+
+    <!--audio/media call-->
+    <color name="macall_bg">#99000000</color>
+    <color name="macall_float_window_bg">#44cccccc</color>
+    <color name="macall_voice_anim_circle1">#55cccccc</color>
+    <color name="macall_voice_anim_circle2">#33aaaaaa</color>
+    <color name="macall_voice_anim_circle3">#33888888</color>
+    <color name="macall_state_text">#cccccc</color>
+    <color name="macall_calling_anim_ripple1_rgb">#00999999</color>
+    <color name="macall_calling_anim_ripple2_rgb">#00aaaaaa</color>
+    <color name="macall_calling_anim_ripple3_rgb">#00bbbbbb</color>
+
+    <!-- self destruct -->
+    <color name="main_10_transparent">#1a333333</color>
+    <color name="card_bg_contact">#61507F</color>
+    <color name="card_bg_online">#4B477F</color>
+    <color name="card_bg_password">#FF5454</color>
+    <color name="card_bg_hide_chat">#7E67C3</color>
+    <color name="card_bg_random_msg_pre">#5E5E5E</color>
+
+    <color name="font_disable">#CFD0D1</color>
+    <color name="font_special_disable">#4DFF5454</color>
+    <color name="color_search_bg">#FFE000</color>
+    <color name="color_search_for">#2EB172</color>
+
+    <color name="emoji_select_color">#e6eaee</color>
+    <color name="emoji_tab_select_color">#0d000000</color>
+    <color name="emoji_recent_normal_color">#ffffff</color>
+    <color name="emoji_inner_tab_select_color">#dfe2e9</color>
+    <color name="chat_ttl_view_bg_color">#80333333</color>
+    <!-- sync msg -->
+
+    <!-- float msg   -->
+    <color name="ms_inner_notice_bg">#FFFFFF</color>
+    <color name="mini_chat_window_bg">#50000000</color>
+
+    <color name="pin_list_gray_bg">#cccccc</color>
+
+    <color name="ait_all_yes">#333333</color>
+    <color name="ait_all_no">#CCCCCC</color>
+    <color name="ait_time_yes">#909399</color>
+    <color name="ait_time_no">#CCCCCC</color>
+
+    <color name="hash_tag_press_color">#ebebeb</color>
+    <color name="green_bg">#33A854</color>
+
+    <!-- float msg   -->
+    <color name="topbar_pin_green">#33A854</color>
+
+    <!--appearance-->
+    <color name="chat_bg">#f2f2f2</color>
+    <color name="tint_pattern">#121212</color>
+    <color name="divider">#b3cccccc</color>
+
+    <color name="exposure_color">#FFD60A</color>
+    <color name="color_10_909399">#1A909399</color>
+    <color name="color_40_909399">#66909399</color>
+    <color name="color_40_333333">#66333333</color>
 </resources>

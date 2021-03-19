@@ -80,7 +80,7 @@ public class TabIndicator extends HorizontalScrollView {
     }
 
     private void addTab(final int position, MenuData menuData) {
-        ViewGroup tabView = (ViewGroup) mLayoutInflater.inflate(R.layout.indicatior_item, this, false);
+        ViewGroup tabView = (ViewGroup) mLayoutInflater.inflate(R.layout.tab_indicatior_item, this, false);
         tabView.setOnClickListener(v -> mPager.setCurrentItem(position, false));
         MenuHolder holder = new MenuHolder(tabView).bindData(menuData);
         tabsContainer.addView(tabView, position);

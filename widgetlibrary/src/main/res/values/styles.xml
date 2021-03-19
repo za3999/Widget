@@ -1,0 +1,159 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ThemeTranslucent" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="title_main_15">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+     <style name="white_12">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="white_final_12">
+        <item name="android:textColor">@color/white_final</item>
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="white_13">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="white_final_13">
+        <item name="android:textColor">@color/white_final</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="white_16">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+    <style name="white_15">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="white_32">
+        <item name="android:textColor">@color/white_final</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="brand_16">
+        <item name="android:textColor">@color/brand</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+    <style name="brand_15">
+        <item name="android:textColor">@color/brand</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="brand_13">
+        <item name="android:textColor">@color/brand</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="auxiliary_12">
+        <item name="android:textColor">@color/auxiliary</item>
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="title_main_19">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_19</item>
+    </style>
+
+    <style name="title_main_18">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_18</item>
+    </style>
+
+    <style name="title_main_17">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_17</item>
+    </style>
+
+    <style name="title_main_16">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+
+    <style name="title_main_14">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="title_main_13">
+        <item name="android:textColor">@color/title_font_main</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="negative_15">
+        <item name="android:textColor">@color/negative</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="title_font_secondary_15">
+        <item name="android:textColor">@color/title_font_secondary</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="title_font_secondary_16">
+        <item name="android:textColor">@color/title_font_secondary</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+    <style name="title_font_secondary_final_13">
+        <item name="android:textColor">#ff606266</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="title_font_secondary_13">
+        <item name="android:textColor">@color/title_font_secondary</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="title_font_secondary_14">
+        <item name="android:textColor">@color/title_font_secondary</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="title_font_prompt_13">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_13</item>
+    </style>
+
+    <style name="title_font_prompt_14">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="title_font_prompt_12">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="title_font_prompt_15">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="title_font_prompt_17">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_17</item>
+    </style>
+
+    <style name="title_font_prompt_19">
+        <item name="android:textColor">@color/prompt_text</item>
+        <item name="android:textSize">@dimen/text_size_19</item>
+    </style>
+</resources>

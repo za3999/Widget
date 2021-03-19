@@ -44,6 +44,10 @@ public class ApplicationUtil {
         return (int) getResources().getDimension(resId);
     }
 
+    public static float getDimension(int resId) {
+        return getResources().getDimension(resId);
+    }
+
     public static int getColor(int resId) {
         return ContextCompat.getColor(getApplication(), resId);
     }
