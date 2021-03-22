@@ -1,4 +1,4 @@
-package widget.cf.com.widgetlibrary.indicator;
+package com.im.common.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,6 +21,7 @@ import widget.cf.com.widgetlibrary.LinearCallbackSmoothScroller;
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
+import widget.cf.com.widgetlibrary.indicator.IndicatorLayoutManager;
 import widget.cf.com.widgetlibrary.tintview.TintColorManager;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
@@ -36,6 +37,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     private T select;
     int selectPosition = 0;
     private LinearCallbackSmoothScroller mSmoothScroller;
+    private IScroll iScroll = new ScrollV1();
 
     public BaseIndicator(Context context) {
         this(context, null);
@@ -88,6 +90,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             private boolean isDragging;
+            private int draggingDirection;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -116,7 +119,9 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             public void onPageScrollStateChanged(int state) {
                 isDragging = state == ViewPager.SCROLL_STATE_DRAGGING;
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    oldPageOffset = 0;
                     setIndicatorScroll(false);
+                    mSmoothScroller.startScroll(mPager.getCurrentItem(), layoutManager, null);
                 } else {
                     setIndicatorScroll(true);
                 }
@@ -124,13 +129,21 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
             private int draggingDirection(int position) {
                 if (!isDragging) {
-                    return 0;
+                    if (iScroll instanceof BaseIndicator.ScrollV1) {
+                        return draggingDirection;
+                    } else {
+                        return 0;
+                    }
                 }
                 if (position == mPager.getCurrentItem()) {
-                    return 1;
+                    draggingDirection = 1;
                 } else {
-                    return -1;
+                    if (oldPageOffset == 0) {
+                        oldPageOffset = 1;
+                    }
+                    draggingDirection = -1;
                 }
+                return draggingDirection;
             }
         });
     }
@@ -146,6 +159,8 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         layoutManager.scrollToPositionWithOffset(selectPosition, 0);
         mPager.setCurrentItem(selectPosition, false);
     }
+
+    float oldPageOffset = 0;
 
     private void updateIndicatorRect(int position, float pageOffset, int draggingDirection) {
         if (adapter.getData().size() == 0) {
@@ -179,31 +194,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
         int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
         updateRect(left, right);
-        if (!mSmoothScroller.isScrolling()) {
-            int needScroll = needScroll(position, pageOffset, draggingDirection);
-            if (needScroll != 0) {
-                mSmoothScroller.startScroll(needScroll == 1 ? position + 2 : position - 1, layoutManager, null);
-            }
-        }
-    }
-
-    protected int needScroll(int position, float pageOffset, int draggingDirection) {
-        int scroll = 0;
-        if (pageOffset == 0f || draggingDirection == 0) {
-            return 0;
-        }
-        int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-        if (draggingDirection == 1) {
-            if (position + 1 >= lastPosition && position + 1 < adapter.getData().size() - 1) {
-                scroll = 1;
-            }
-        } else {
-            if (position <= firstPosition && position > 0) {
-                scroll = -1;
-            }
-        }
-        return scroll;
+        iScroll.scroll(position, pageOffset, draggingDirection, menuView, nextView);
     }
 
     private void updateRect(int left, int right) {
@@ -351,4 +342,76 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
         abstract void updateSelect();
     }
+
+    interface IScroll {
+        void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView);
+    }
+
+    public class ScrollV1 implements IScroll {
+
+        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+            int needScroll = needScroll(position, pageOffset, draggingDirection);
+            if (needScroll != 0) {
+                int offset;
+                if (needScroll == 1) {
+                    offset = (int) (nextView.getWidth() * (pageOffset - oldPageOffset));
+                } else {
+                    offset = (int) (menuView.getWidth() * (pageOffset - oldPageOffset));
+                }
+                scrollBy(offset, 0);
+                oldPageOffset = pageOffset;
+            }
+        }
+
+        protected int needScroll(int position, float pageOffset, int draggingDirection) {
+            int scroll = 0;
+            if (pageOffset == 0f || draggingDirection == 0) {
+                return 0;
+            }
+            int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+            int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+            if (draggingDirection == 1) {
+                if (position + 1 >= lastPosition && position < adapter.getData().size() - 1) {
+                    scroll = 1;
+                }
+            } else {
+                if (position <= firstPosition && position >= 0) {
+                    scroll = -1;
+                }
+            }
+            return scroll;
+        }
+    }
+
+    public class ScrollV2 implements IScroll {
+
+        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+            if (!mSmoothScroller.isScrolling()) {
+                int needScroll = needScroll(position, pageOffset, draggingDirection);
+                if (needScroll != 0) {
+                    mSmoothScroller.startScroll(needScroll == 1 ? position + 2 : position - 1, layoutManager, null);
+                }
+            }
+        }
+
+        protected int needScroll(int position, float pageOffset, int draggingDirection) {
+            int scroll = 0;
+            if (pageOffset == 0f || draggingDirection == 0) {
+                return 0;
+            }
+            int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+            int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+            if (draggingDirection == 1) {
+                if (position + 1 >= lastPosition && position + 1 < adapter.getData().size() - 1) {
+                    scroll = 1;
+                }
+            } else {
+                if (position <= firstPosition && position > 0) {
+                    scroll = -1;
+                }
+            }
+            return scroll;
+        }
+    }
+
 }
