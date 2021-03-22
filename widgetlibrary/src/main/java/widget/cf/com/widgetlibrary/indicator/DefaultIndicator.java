@@ -14,7 +14,7 @@ import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 
 
-public class DefaultIndicator extends BaseIndicator<Pair<Integer, String>> {
+public class DefaultIndicator extends BaseIndicator1<Pair<Integer, String>> {
 
     public DefaultIndicator(Context context) {
         super(context);
