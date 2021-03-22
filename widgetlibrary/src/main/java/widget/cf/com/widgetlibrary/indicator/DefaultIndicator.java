@@ -12,9 +12,12 @@ import androidx.annotation.NonNull;
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
+import widget.cf.com.widgetlibrary.tintview.TintColorManager;
+import widget.cf.com.widgetlibrary.util.ApplicationUtil;
+import widget.cf.com.widgetlibrary.util.ColorUtils;
 
 
-public class DefaultIndicator extends BaseIndicator1<Pair<Integer, String>> {
+public class DefaultIndicator extends BaseIndicator<Pair<Integer, String>> {
 
     public DefaultIndicator(Context context) {
         super(context);
@@ -60,10 +63,18 @@ public class DefaultIndicator extends BaseIndicator1<Pair<Integer, String>> {
 
                     @Override
                     public void updateSelect() {
-                        boolean isSelect = getSelect().first == itemData.first;
+                        boolean isSelect = getSelect() == itemData;
                         nameTv.setSelected(isSelect);
                         boolean lineVisible = isSelect && !isIndicatorScroll();
                         lineView.setVisibility(lineVisible ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override
+                    public void updateIndicatorColor(float offset) {
+                        int selectColor = TintColorManager.getColor();
+                        int unSelectColor = ApplicationUtil.getColor(R.color.prompt_text);
+                        int color = ColorUtils.blend(selectColor, unSelectColor, offset);
+                        nameTv.setTextColor(color);
                     }
                 };
             }

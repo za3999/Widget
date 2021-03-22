@@ -1,4 +1,4 @@
-package com.im.common.view;
+package widget.cf.com.widgetlibrary.indicator;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,7 +21,6 @@ import widget.cf.com.widgetlibrary.LinearCallbackSmoothScroller;
 import widget.cf.com.widgetlibrary.R;
 import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
-import widget.cf.com.widgetlibrary.indicator.IndicatorLayoutManager;
 import widget.cf.com.widgetlibrary.tintview.TintColorManager;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
@@ -119,7 +118,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             public void onPageScrollStateChanged(int state) {
                 isDragging = state == ViewPager.SCROLL_STATE_DRAGGING;
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    oldPageOffset = 0;
+                    iScroll.checkAndUpdateOffset(0);
                     setIndicatorScroll(false);
                     mSmoothScroller.startScroll(mPager.getCurrentItem(), layoutManager, null);
                 } else {
@@ -138,9 +137,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 if (position == mPager.getCurrentItem()) {
                     draggingDirection = 1;
                 } else {
-                    if (oldPageOffset == 0) {
-                        oldPageOffset = 1;
-                    }
+                    iScroll.checkAndUpdateOffset(1);
                     draggingDirection = -1;
                 }
                 return draggingDirection;
@@ -160,13 +157,13 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         mPager.setCurrentItem(selectPosition, false);
     }
 
-    float oldPageOffset = 0;
-
     private void updateIndicatorRect(int position, float pageOffset, int draggingDirection) {
         if (adapter.getData().size() == 0) {
             return;
         }
-
+        if (pageOffset == 0f) {
+            return;
+        }
         IndicatorHolder holder = (IndicatorHolder) findViewHolderForAdapterPosition(position);
         if (holder == null) {
             scrollToPosition(position);
@@ -174,10 +171,6 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         }
         holder.updateIndicatorColor(pageOffset);
         View menuView = holder.itemView;
-        if (pageOffset == 0f) {
-            invalidate();
-            return;
-        }
         holder = (IndicatorHolder) findViewHolderForAdapterPosition(position + 1);
         if (holder == null) {
             if (position + 1 < adapter.getItemCount()) {
@@ -186,15 +179,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             return;
         }
         holder.updateIndicatorColor(1 - pageOffset);
-        View nextView = holder.itemView;
-        int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
-        int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
-        int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
-        int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
-        int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
-        int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
-        updateRect(left, right);
-        iScroll.scroll(position, pageOffset, draggingDirection, menuView, nextView);
+        iScroll.scroll(position, pageOffset, draggingDirection, menuView, holder.itemView);
     }
 
     private void updateRect(int left, int right) {
@@ -337,7 +322,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             clickPosition(getChildAdapterPosition(itemView));
         }
 
-        void updateIndicatorColor(float offset) {
+        public void updateIndicatorColor(float offset) {
         }
 
         abstract void updateSelect();
@@ -345,11 +330,32 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
     interface IScroll {
         void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView);
+
+        default void checkAndUpdateOffset(int offset) {
+        }
     }
 
     public class ScrollV1 implements IScroll {
 
+        float oldPageOffset = 0;
+
+        @Override
+        public void checkAndUpdateOffset(int offset) {
+            if (offset == 0) {
+                oldPageOffset = 0;
+            } else if (oldPageOffset == 0) {
+                oldPageOffset = offset;
+            }
+        }
+
         public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+            int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
+            int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
+            int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
+            int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
+            int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
+            int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
+            updateRect(left, right);
             int needScroll = needScroll(position, pageOffset, draggingDirection);
             if (needScroll != 0) {
                 int offset;
@@ -371,11 +377,11 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
             int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
             if (draggingDirection == 1) {
-                if (position + 1 >= lastPosition && position < adapter.getData().size() - 1) {
+                if (position + 1 >= lastPosition) {
                     scroll = 1;
                 }
             } else {
-                if (position <= firstPosition && position >= 0) {
+                if (position <= firstPosition) {
                     scroll = -1;
                 }
             }
@@ -386,6 +392,13 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     public class ScrollV2 implements IScroll {
 
         public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+            int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
+            int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
+            int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
+            int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
+            int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
+            int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
+            updateRect(left, right);
             if (!mSmoothScroller.isScrolling()) {
                 int needScroll = needScroll(position, pageOffset, draggingDirection);
                 if (needScroll != 0) {
@@ -411,6 +424,30 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 }
             }
             return scroll;
+        }
+    }
+
+    public class ScrollV3 implements IScroll {
+
+        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+            int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
+            int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
+            int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
+            int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
+            int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
+            int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
+            updateRect(left, right);
+            scroll2Center(left, right);
+        }
+
+        private void scroll2Center(int left, int right) {
+            int offset = left + ((right - left) / 2) - getWidth() / 2;
+            if (offset < 0 && !canScrollHorizontally(-1)
+                    || offset > 0 && !canScrollHorizontally(1)) {
+                invalidate();
+                return;
+            }
+            scrollBy(offset, 0);
         }
     }
 
