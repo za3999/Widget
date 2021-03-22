@@ -89,11 +89,11 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             private boolean isDragging;
-            private int draggingDirection;
+            private int dragDirection;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                updateIndicatorRect(position, positionOffset, draggingDirection(position));
+                updateIndicatorRect(position, positionOffset, getDragDirection(position));
                 if (positionOffset != 0f || selectPosition == position || adapter.getData().size() <= position) {
                     return;
                 }
@@ -118,29 +118,24 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             public void onPageScrollStateChanged(int state) {
                 isDragging = state == ViewPager.SCROLL_STATE_DRAGGING;
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    iScroll.checkAndUpdateOffset(0);
                     setIndicatorScroll(false);
+                    iScroll.resetScroll();
                     mSmoothScroller.startScroll(mPager.getCurrentItem(), layoutManager, null);
                 } else {
                     setIndicatorScroll(true);
                 }
             }
 
-            private int draggingDirection(int position) {
+            private int getDragDirection(int position) {
                 if (!isDragging) {
-                    if (iScroll instanceof BaseIndicator.ScrollV1) {
-                        return draggingDirection;
-                    } else {
-                        return 0;
-                    }
+                    return dragDirection;
                 }
                 if (position == mPager.getCurrentItem()) {
-                    draggingDirection = 1;
+                    dragDirection = 1;
                 } else {
-                    iScroll.checkAndUpdateOffset(1);
-                    draggingDirection = -1;
+                    dragDirection = -1;
                 }
-                return draggingDirection;
+                return dragDirection;
             }
         });
     }
@@ -157,7 +152,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         mPager.setCurrentItem(selectPosition, false);
     }
 
-    private void updateIndicatorRect(int position, float pageOffset, int draggingDirection) {
+    private void updateIndicatorRect(int position, float pageOffset, int dragDirection) {
         if (adapter.getData().size() == 0) {
             return;
         }
@@ -179,7 +174,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             return;
         }
         holder.updateIndicatorColor(1 - pageOffset);
-        iScroll.scroll(position, pageOffset, draggingDirection, menuView, holder.itemView);
+        iScroll.scroll(position, pageOffset, dragDirection, menuView, holder.itemView);
     }
 
     private void updateRect(int left, int right) {
@@ -329,26 +324,28 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     }
 
     interface IScroll {
-        void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView);
+        void scroll(int position, float pageOffset, int dragDirection, View menuView, View nextView);
 
-        default void checkAndUpdateOffset(int offset) {
+        default void resetScroll() {
         }
     }
 
     public class ScrollV1 implements IScroll {
 
-        float oldPageOffset = 0;
+        private float lastPageOffset = 0;
+        private View scrollView;
 
         @Override
-        public void checkAndUpdateOffset(int offset) {
-            if (offset == 0) {
-                oldPageOffset = 0;
-            } else if (oldPageOffset == 0) {
-                oldPageOffset = offset;
-            }
+        public void resetScroll() {
+            lastPageOffset = 0f;
+            scrollView = null;
         }
 
-        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+        public void scroll(int position, float pageOffset, int dragDirection, View menuView, View nextView) {
+            if (scrollView != menuView) {
+                lastPageOffset = dragDirection == 1 ? 0 : 1;
+                this.scrollView = menuView;
+            }
             int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
             int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
             int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
@@ -356,16 +353,12 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
             int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
             updateRect(left, right);
-            int needScroll = needScroll(position, pageOffset, draggingDirection);
+            int needScroll = needScroll(position, pageOffset, dragDirection);
             if (needScroll != 0) {
-                int offset;
-                if (needScroll == 1) {
-                    offset = (int) (nextView.getWidth() * (pageOffset - oldPageOffset));
-                } else {
-                    offset = (int) (menuView.getWidth() * (pageOffset - oldPageOffset));
-                }
+                int width = needScroll == 1 ? nextView.getWidth() : menuView.getWidth();
+                int offset = (int) (width * (pageOffset - lastPageOffset));
                 scrollBy(offset, 0);
-                oldPageOffset = pageOffset;
+                lastPageOffset = pageOffset;
             }
         }
 
@@ -391,7 +384,9 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
     public class ScrollV2 implements IScroll {
 
-        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+        private View scrollView;
+
+        public void scroll(int position, float pageOffset, int dragDirection, View menuView, View nextView) {
             int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
             int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
             int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
@@ -399,8 +394,12 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
             int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
             updateRect(left, right);
+            if (scrollView == menuView) {
+                return;
+            }
+            scrollView = menuView;
             if (!mSmoothScroller.isScrolling()) {
-                int needScroll = needScroll(position, pageOffset, draggingDirection);
+                int needScroll = needScroll(position, pageOffset, dragDirection);
                 if (needScroll != 0) {
                     mSmoothScroller.startScroll(needScroll == 1 ? position + 2 : position - 1, layoutManager, null);
                 }
@@ -429,7 +428,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
     public class ScrollV3 implements IScroll {
 
-        public void scroll(int position, float pageOffset, int draggingDirection, View menuView, View nextView) {
+        public void scroll(int position, float pageOffset, int dragDirection, View menuView, View nextView) {
             int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
             int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
             int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
