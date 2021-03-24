@@ -15,18 +15,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
-public class ExecutorsManager {
+public class ThreadPoolManager {
     private static final String TAG = "TaskRunner";
     public static final int defaultMaxThreadCount = 1;
-    private static ExecutorsManager mInstance = new ExecutorsManager();
+    private static ThreadPoolManager mInstance = new ThreadPoolManager();
     private volatile ThreadPoolExecutor defaultExecutorService;
     private Map<String, ThreadPoolExecutor> executorServiceMap = new ConcurrentHashMap<>();
 
-    private static ExecutorsManager getInstance() {
+    private static ThreadPoolManager getInstance() {
         return mInstance.checkDefault();
     }
 
-    private ExecutorsManager checkDefault() {
+    private ThreadPoolManager checkDefault() {
         if (defaultExecutorService == null) {
             synchronized (this) {
                 if (defaultExecutorService == null) {

@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import androidx.core.content.ContextCompat;
 
 import widget.cf.com.widgetlibrary.R;
-import widget.cf.com.widgetlibrary.executor.TaskRunner;
+import widget.cf.com.widgetlibrary.executor.PoolThread;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.BitmapUtil;
 
@@ -50,17 +50,17 @@ public class BlurDialog extends BaseAlertDialog {
     }
 
     private void loadBackgroundDrawable() {
-        new TaskRunner.RunnerOnlyOutput<Drawable>() {
+        new PoolThread<Void, Drawable>(null) {
             @Override
-            public Drawable runWrapper() {
+            public Drawable run(Void data) {
                 Bitmap blurBitmap = BitmapUtil.blurWallpaper(BitmapUtil.getBitmap(mTouchView.getRootView()), 20);
                 blurBitmap = BitmapUtil.getCoverBitmap(blurBitmap, ContextCompat.getColor(getContext(), R.color.color_20_transparent));
                 return new BitmapDrawable(ApplicationUtil.getResources(), blurBitmap);
             }
 
             @Override
-            public void onResultWrapper(Drawable drawable) {
-                getWindow().setBackgroundDrawable(drawable);
+            public void onResult(Drawable result) {
+                getWindow().setBackgroundDrawable(result);
             }
         }.setMainResult(true).start();
     }
