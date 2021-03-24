@@ -1,9 +1,13 @@
 package widget.cf.com.widgetlibrary.executor;
 
 
-public class Thread0 extends PoolThread<Void, Void> {
+public class Thread0 extends PoolThread<Void, Void> implements Runnable {
 
     private Runnable runnable;
+
+    public Thread0() {
+        super(null);
+    }
 
     public Thread0(Runnable runnable) {
         super(null);
@@ -11,8 +15,17 @@ public class Thread0 extends PoolThread<Void, Void> {
     }
 
     @Override
-    public Void run(Void data) {
-        runnable.run();
+    public final Void run(Void data) {
+        if (runnable != null) {
+            runnable.run();
+        } else {
+            run();
+        }
         return null;
+    }
+
+    @Override
+    public void run() {
+
     }
 }
