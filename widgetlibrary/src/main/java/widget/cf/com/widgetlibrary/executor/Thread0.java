@@ -18,9 +18,8 @@ public class Thread0 extends PoolThread<Void, Void> implements Runnable {
     public final Void run(Void data) {
         if (runnable != null) {
             runnable.run();
-        } else {
-            run();
         }
+        run();
         return null;
     }
 
