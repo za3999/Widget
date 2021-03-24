@@ -9,7 +9,6 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public abstract class PoolThread<I, R> {
 
-    private static final String TAG = "PoolThread";
     private I inputData;
     private R result;
     private Future mFuture;

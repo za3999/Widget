@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import widget.cf.com.widgetlibrary.util.LogUtils;
 
 public class ThreadPoolManager {
-    private static final String TAG = "TaskRunner";
+    private static final String TAG = "ThreadPoolManager";
     public static final int defaultMaxThreadCount = 1;
     private static ThreadPoolManager mInstance = new ThreadPoolManager();
     private volatile ThreadPoolExecutor defaultExecutorService;
