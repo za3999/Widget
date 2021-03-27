@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import widget.cf.com.widgetlibrary.R;
-import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.tintview.TintColorManager;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 import widget.cf.com.widgetlibrary.util.ColorUtils;
@@ -42,7 +41,7 @@ public class DefaultIndicator extends BaseIndicator<Pair<Integer, String>> {
 
             @NonNull
             @Override
-            public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public IndicatorHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
                 return new IndicatorHolder<Pair<Integer, String>>(createView(R.layout.tab_indicatior_item, parent)) {
                     TextView nameTv;

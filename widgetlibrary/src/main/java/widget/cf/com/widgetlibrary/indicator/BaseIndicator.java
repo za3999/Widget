@@ -10,7 +10,9 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -343,6 +345,9 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             }
             clickPosition(position);
         }
+
+        @NonNull
+        abstract public IndicatorHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
     }
 
     public abstract class IndicatorHolder<H> extends DefaultViewHolder<H> {
