@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -189,7 +190,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         if (position <= firstPosition && position != 0) {
             result--;
-        } else if (position > lastPosition && position < adapter.getData().size() - 1) {
+        } else if (position >= lastPosition && position < adapter.getData().size() - 1) {
             result++;
         }
         return result;
@@ -212,27 +213,37 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
     private void clickPosition(int position) {
         select = adapter.getItem(position);
-        setIndicatorScroll(true);
-        updateItemStatus();
         int scrollPosition = getScrollPosition(position);
         if (scrollPosition == position) {
+            setIndicatorScroll(true);
             Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
-            Point endPosition = getIndicatorLocation(position);
-            startClickAnimator(startPoint, endPosition, () -> {
+            Point endPoint = getIndicatorLocation(position);
+            startClickAnimator(startPoint, endPoint, () -> {
                 setIndicatorScroll(false);
-                mSmoothScroller.startScroll(position, layoutManager, null);
+                mPager.setCurrentItem(position, false);
+                if (!isPositionCompletelyVisible(position)) {
+                    mSmoothScroller.startScroll(position, layoutManager, null);
+                }
             });
-            mPager.setCurrentItem(position, false);
         } else {
             mSmoothScroller.startScroll(scrollPosition, layoutManager, () -> {
+                setIndicatorScroll(true);
                 Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
-                Point endPosition = getIndicatorLocation(position, scrollPosition);
-                if (endPosition != null) {
-                    startClickAnimator(startPoint, endPosition, () -> setIndicatorScroll(false));
+                Point endPoint = getIndicatorLocation(position, scrollPosition);
+                if (endPoint != null) {
+                    startClickAnimator(startPoint, endPoint, () -> {
+                        setIndicatorScroll(false);
+                        mPager.setCurrentItem(position, false);
+                    });
                 }
-                mPager.setCurrentItem(position, false);
             });
         }
+    }
+
+    private boolean isPositionCompletelyVisible(int position) {
+        int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        return position >= firstPosition && position <= lastPosition;
     }
 
     private void startClickAnimator(Point startPoint, Point endPosition, BaseCallBack.CallBack onAnimatorEnd) {
@@ -261,8 +272,8 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 BaseCallBack.onCallBack(onAnimatorEnd);
             }
         });
-
-        valueAnimator.setDuration(300);
+        valueAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        valueAnimator.setDuration(500);
         valueAnimator.start();
     }
 
@@ -276,11 +287,11 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             point.x = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
             point.y = point.x + menuView.findViewById(getIndicatorTarget()).getWidth();
         } else if (position < firstPosition) {
-            point.x = 0;
             point.y = 0;
+            point.x = (int) -indicatorRect.width();
         } else {
             point.x = getWidth();
-            point.y = getWidth();
+            point.y = getWidth() + (int) indicatorRect.width();
         }
         return point;
     }
