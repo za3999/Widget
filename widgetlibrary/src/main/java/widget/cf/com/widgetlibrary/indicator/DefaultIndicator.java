@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import widget.cf.com.widgetlibrary.R;
-import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.tintview.TintColorManager;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
@@ -37,9 +36,9 @@ public class DefaultIndicator extends BaseIndicator<Pair<Integer, String>> {
     }
 
     @Override
-    public BaseCommonAdapter<Pair<Integer, String>> getDataAdapter() {
+    public IndicatorAdapter<Pair<Integer, String>> getDataAdapter() {
 
-        return new BaseCommonAdapter<Pair<Integer, String>>() {
+        return new IndicatorAdapter<Pair<Integer, String>>() {
 
             @NonNull
             @Override

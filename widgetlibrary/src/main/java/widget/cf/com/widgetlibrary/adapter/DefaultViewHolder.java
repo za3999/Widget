@@ -12,6 +12,10 @@ public class DefaultViewHolder<T> extends BaseViewHolder<T> {
         super(view, itemClickEnable);
     }
 
+    public DefaultViewHolder(View view, boolean itemClickEnable, boolean itemLongClickEnable) {
+        super(view, itemClickEnable, itemLongClickEnable);
+    }
+
     @Override
     public void bindData(int position,T t) {
 
