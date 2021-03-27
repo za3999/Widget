@@ -27,17 +27,19 @@ import widget.cf.com.widgetlibrary.tintview.TintColorManager;
 import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public abstract class BaseIndicator<T> extends RecyclerView {
-
     private static float indicatorHigh = ApplicationUtil.getDimension(R.dimen.dp_2);
     protected ViewPager mPager;
-    private BaseCommonAdapter<T> adapter;
-    private LinearLayoutManager layoutManager;
+    protected BaseCommonAdapter<T> adapter;
+    protected LinearLayoutManager layoutManager;
+    protected LinearCallbackSmoothScroller mSmoothScroller;
+    protected T select;
+
     private RectF indicatorRect = new RectF();
     private Paint indicatorPaint;
     private boolean indicatorScroll = false;
-    private T select;
-    private LinearCallbackSmoothScroller mSmoothScroller;
     private IScroll iScroll = new ScrollV1();
+    private ValueAnimator mClickAnimator;
+    private int mAnimatorPosition = -1;
 
     public BaseIndicator(Context context) {
         this(context, null);
@@ -71,6 +73,11 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             }
         });
         mSmoothScroller = new LinearCallbackSmoothScroller(getContext());
+    }
+
+    public void setIndicatorColor(int color) {
+        indicatorPaint.setColor(color);
+        invalidate();
     }
 
     public boolean isIndicatorScroll() {
@@ -212,6 +219,10 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     }
 
     private void clickPosition(int position) {
+        if (position == mAnimatorPosition) {
+            return;
+        }
+        mAnimatorPosition = position;
         select = adapter.getItem(position);
         int scrollPosition = getScrollPosition(position);
         if (scrollPosition == position) {
@@ -219,8 +230,7 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
             Point endPoint = getIndicatorLocation(position);
             startClickAnimator(startPoint, endPoint, () -> {
-                setIndicatorScroll(false);
-                mPager.setCurrentItem(position, false);
+                endAnimator(position);
                 if (!isPositionCompletelyVisible(position)) {
                     mSmoothScroller.startScroll(position, layoutManager, null);
                 }
@@ -231,13 +241,17 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
                 Point endPoint = getIndicatorLocation(position, scrollPosition);
                 if (endPoint != null) {
-                    startClickAnimator(startPoint, endPoint, () -> {
-                        setIndicatorScroll(false);
-                        mPager.setCurrentItem(position, false);
-                    });
+                    startClickAnimator(startPoint, endPoint, () -> endAnimator(position));
                 }
             });
         }
+    }
+
+    private void endAnimator(int position) {
+        mClickAnimator = null;
+        mAnimatorPosition = -1;
+        setIndicatorScroll(false);
+        mPager.setCurrentItem(position, false);
     }
 
     private boolean isPositionCompletelyVisible(int position) {
@@ -246,22 +260,26 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         return position >= firstPosition && position <= lastPosition;
     }
 
-    private void startClickAnimator(Point startPoint, Point endPosition, BaseCallBack.CallBack onAnimatorEnd) {
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1f);
-        valueAnimator.addUpdateListener(animation -> {
+
+    private void startClickAnimator(Point startPoint, Point endPoint, BaseCallBack.CallBack onAnimatorEnd) {
+        if (mClickAnimator != null) {
+            mClickAnimator.cancel();
+        }
+        mClickAnimator = ValueAnimator.ofFloat(0, 1f);
+        mClickAnimator.addUpdateListener(animation -> {
             float value = (float) animation.getAnimatedValue();
             int left;
             int right;
-            if (endPosition.x > startPoint.x) {
-                left = startPoint.x + (int) ((endPosition.x - startPoint.x) * value);
-                right = startPoint.y + (int) ((endPosition.y - startPoint.y) * value);
+            if (endPoint.x > startPoint.x) {
+                left = startPoint.x + (int) ((endPoint.x - startPoint.x) * value);
+                right = startPoint.y + (int) ((endPoint.y - startPoint.y) * value);
             } else {
-                left = endPosition.x + (int) ((startPoint.x - endPosition.x) * (1 - value));
-                right = endPosition.y + (int) ((startPoint.y - endPosition.y) * (1 - value));
+                left = endPoint.x + (int) ((startPoint.x - endPoint.x) * (1 - value));
+                right = endPoint.y + (int) ((startPoint.y - endPoint.y) * (1 - value));
             }
             updateRect(left, right);
         });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
+        mClickAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationCancel(Animator animation) {
                 BaseCallBack.onCallBack(onAnimatorEnd);
@@ -272,9 +290,9 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 BaseCallBack.onCallBack(onAnimatorEnd);
             }
         });
-        valueAnimator.setInterpolator(new FastOutSlowInInterpolator());
-        valueAnimator.setDuration(500);
-        valueAnimator.start();
+        mClickAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        mClickAnimator.setDuration(500);
+        mClickAnimator.start();
     }
 
     private Point getIndicatorLocation(int position) {
