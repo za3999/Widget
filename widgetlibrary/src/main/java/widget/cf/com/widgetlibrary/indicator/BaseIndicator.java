@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -193,16 +194,17 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         invalidate();
     }
 
-    private int getScrollPosition(int position) {
+    private Pair<Integer, Boolean> getScrollPosition(int position) {
         int result = position;
         int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        boolean needScroll = position < firstPosition || position > lastPosition;
         if (position <= firstPosition && position != 0) {
             result--;
         } else if (position >= lastPosition && position < adapter.getData().size() - 1) {
             result++;
         }
-        return result;
+        return new Pair<>(result, needScroll);
     }
 
     void setIndicatorScroll(boolean scroll) {
@@ -226,8 +228,8 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         }
         mAnimatorPosition = position;
         select = adapter.getItem(position);
-        int scrollPosition = getScrollPosition(position);
-        if (scrollPosition == position) {
+        Pair<Integer, Boolean> scrollPair = getScrollPosition(position);
+        if (!scrollPair.second) {
             setIndicatorScroll(true);
             Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
             Point endPoint = getIndicatorLocation(position);
@@ -238,10 +240,10 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 }
             });
         } else {
-            mSmoothScroller.startScroll(scrollPosition, layoutManager, () -> {
+            mSmoothScroller.startScroll(scrollPair.first, layoutManager, () -> {
                 setIndicatorScroll(true);
                 Point startPoint = getIndicatorLocation(mPager.getCurrentItem());
-                Point endPoint = getIndicatorLocation(position, scrollPosition);
+                Point endPoint = getIndicatorLocation(position, scrollPair.first);
                 if (endPoint != null) {
                     startClickAnimator(startPoint, endPoint, () -> endAnimator(position));
                 }
@@ -317,9 +319,6 @@ public abstract class BaseIndicator<T> extends RecyclerView {
     }
 
     private Point getIndicatorLocation(int position, int scrollPosition) {
-        if (position == scrollPosition) {
-            return getIndicatorLocation(position);
-        }
         View view = ((IndicatorHolder) findViewHolderForAdapterPosition(position)).itemView;
         IndicatorHolder scrollHolder = ((IndicatorHolder) findViewHolderForAdapterPosition(scrollPosition));
         if (scrollHolder == null) {
@@ -330,6 +329,13 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         Point point = new Point();
         if (position < scrollPosition) {
             point.x = getWidth() - scrollView.getWidth() - view.getWidth() + offset;
+        } else if (position == scrollPosition) {
+            int firstPosition = layoutManager.findFirstVisibleItemPosition();
+            if (position <= firstPosition) {
+                point.x = offset;
+            } else {
+                point.x = getWidth() - view.getWidth() + offset;
+            }
         } else {
             point.x = scrollView.getWidth() + offset;
         }
