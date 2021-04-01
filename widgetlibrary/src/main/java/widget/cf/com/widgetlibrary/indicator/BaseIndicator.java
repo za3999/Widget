@@ -198,10 +198,11 @@ public abstract class BaseIndicator<T> extends RecyclerView {
         int result = position;
         int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-        boolean needScroll = position < firstPosition || position > lastPosition;
+        boolean needScroll = (position < firstPosition || position == firstPosition && position != 0)
+                || (position > lastPosition || position == lastPosition && position != adapter.getData().size() - 1);
         if (position <= firstPosition && position != 0) {
             result--;
-        } else if (position >= lastPosition && position < adapter.getData().size() - 1) {
+        } else if (position >= lastPosition && position != adapter.getData().size() - 1) {
             result++;
         }
         return new Pair<>(result, needScroll);
