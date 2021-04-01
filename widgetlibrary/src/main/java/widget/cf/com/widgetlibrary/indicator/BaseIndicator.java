@@ -417,6 +417,10 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             if (pageOffset == 0f || draggingDirection == 0) {
                 return 0;
             }
+            if (draggingDirection == -1 && !canScrollHorizontally(-1)
+                    || draggingDirection == 1 && !canScrollHorizontally(1)) {
+                return 0;
+            }
             int firstPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
             int lastPosition = layoutManager.findLastCompletelyVisibleItemPosition();
             if (draggingDirection == 1) {
