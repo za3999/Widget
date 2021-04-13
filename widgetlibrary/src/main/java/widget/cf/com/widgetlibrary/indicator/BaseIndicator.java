@@ -396,13 +396,6 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 lastPageOffset = dragDirection == 1 ? 0 : 1;
                 this.scrollView = menuView;
             }
-            int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
-            int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
-            int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
-            int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
-            int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
-            int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
-            updateRect(left, right);
             int needScroll = needScroll(position, pageOffset, dragDirection);
             if (needScroll != 0) {
                 int width = needScroll == 1 ? nextView.getWidth() : menuView.getWidth();
@@ -410,6 +403,13 @@ public abstract class BaseIndicator<T> extends RecyclerView {
                 scrollBy(offset, 0);
                 lastPageOffset = pageOffset;
             }
+            int leftStart = menuView.getLeft() + menuView.findViewById(getIndicatorTarget()).getLeft();
+            int rightStart = leftStart + menuView.findViewById(getIndicatorTarget()).getWidth();
+            int leftEnd = nextView.getLeft() + nextView.findViewById(getIndicatorTarget()).getLeft();
+            int rightEnd = leftEnd + nextView.findViewById(getIndicatorTarget()).getWidth();
+            int left = (int) (leftStart + (leftEnd - leftStart) * pageOffset);
+            int right = (int) (rightStart + (rightEnd - rightStart) * pageOffset);
+            updateRect(left, right);
         }
 
         protected int needScroll(int position, float pageOffset, int draggingDirection) {
