@@ -32,6 +32,10 @@ public abstract class PoolThread<I, R> {
         }
     }
 
+    public Future getFuture() {
+        return mFuture;
+    }
+
     public boolean isCanceling() {
         return isCancel;
     }
