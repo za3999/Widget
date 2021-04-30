@@ -109,4 +109,8 @@ public class MainActivity extends BaseActivity {
     public void onFaceClick(View view) {
         startActivity(new Intent(this, FaceActivity.class));
     }
+
+    public void onNestedClick(View view) {
+        startActivity(new Intent(this, NestedScrollViewActivity.class));
+    }
 }

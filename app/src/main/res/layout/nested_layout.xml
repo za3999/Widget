@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="sdfafsafaf" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="100dp"
+        app:layout_insetEdge="top"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="sdfafsafaf\n
+sdfasdf\n
+asdf\n
+asd\n
+fas\n
+fsa\n
+fas\n
+fasf\n
+das\n
+dfasd\n
+fdas\n
+f\n
+asfda\n
+ds\n
+af\n
+as\n
+fa\n
+fas\n
+fa\n
+sf\n
+af\n
+af\n
+asf\n
+af\n
+a\n
+sfa\n
+fs\n
+af\n
+af\n
+af\n
+sdfasdf\n
+asdf\n
+asd\n
+fas\n
+fsa\n
+fas\n
+fasf\n
+das\n
+dfasd\n
+fdas\n
+f\n
+asfda\n
+ds\n
+af\n
+as\n
+fa\n
+fas\n
+fa\n
+sf\n
+af\n
+af\n
+asf\n
+af\n
+a\n
+sfa\n
+fs\n
+af\n
+af\n
+af\n
+asfd\n
+a\n
+fs" />
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

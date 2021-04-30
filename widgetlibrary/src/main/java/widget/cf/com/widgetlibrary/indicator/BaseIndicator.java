@@ -384,6 +384,9 @@ public abstract class BaseIndicator<T> extends RecyclerView {
 
         private float lastPageOffset = 0;
         private View scrollView;
+        private int needScroll;
+        private int width;
+
 
         @Override
         public void resetScroll() {
@@ -395,10 +398,27 @@ public abstract class BaseIndicator<T> extends RecyclerView {
             if (scrollView != menuView) {
                 lastPageOffset = dragDirection == 1 ? 0 : 1;
                 this.scrollView = menuView;
+                needScroll = needScroll(position, pageOffset, dragDirection);
+                if (needScroll != 0) {
+                    int minLeft = (int) (getWidth() * 0.15);
+                    if (needScroll == 1 && nextView.getWidth() > nextView.getLeft()) {
+                        if (nextView.getLeft() < minLeft) {
+                            width = 0;
+                        } else {
+                            width = nextView.getLeft() - minLeft;
+                        }
+                    } else if (needScroll == -1 && menuView.getWidth() > getWidth() - menuView.getRight()) {
+                        width = Math.min(menuView.getWidth(), nextView.getWidth());
+                        if (menuView.getLeft() < 0) {
+                            width = Math.max(width, -menuView.getLeft() + minLeft);
+                        }
+                    } else {
+                        width = needScroll == 1 ? nextView.getWidth() : menuView.getWidth();
+                    }
+                }
             }
-            int needScroll = needScroll(position, pageOffset, dragDirection);
+
             if (needScroll != 0) {
-                int width = needScroll == 1 ? nextView.getWidth() : menuView.getWidth();
                 int offset = (int) (width * (pageOffset - lastPageOffset) * 1.1f);
                 scrollBy(offset, 0);
                 lastPageOffset = pageOffset;
