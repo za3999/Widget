@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
@@ -251,6 +252,25 @@ public class BitmapUtil {
         }
         return outBitmap;
     }
+
+    public static Bitmap scaleBitmap(Bitmap bitmap, float rate, boolean recyclerOrigbitmap) {
+        if (bitmap == null || rate <= 0 || rate >= 1) {
+            return bitmap;
+        }
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(rate, rate, bitmap.getWidth()/2, bitmap.getHeight()/2);
+
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        if (recyclerOrigbitmap && bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+        }
+
+        return scaledBitmap;
+    }
+
 
     /**
      * 获取主题色

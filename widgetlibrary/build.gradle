@@ -52,6 +52,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.core:core-ktx:1.3.0"
+
+    implementation 'com.google.firebase:firebase-ml-vision:+'
 }
 
 repositories {
