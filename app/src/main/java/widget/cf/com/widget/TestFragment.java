@@ -9,24 +9,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import widget.cf.com.widget.databinding.TestFragmentBinding;
 import widget.cf.com.widgetlibrary.adapter.BaseCommonAdapter;
 import widget.cf.com.widgetlibrary.adapter.BaseViewHolder;
 import widget.cf.com.widgetlibrary.adapter.DefaultViewHolder;
 
 public class TestFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private String name;
     private BaseCommonAdapter<String> adapter;
+    private TestFragmentBinding binding;
+    private String name;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.test_fragment, null);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setItemAnimator(null);
+        binding = TestFragmentBinding.inflate(inflater, container, false);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerView.setItemAnimator(null);
         adapter = new BaseCommonAdapter<String>() {
             @NonNull
             @Override
@@ -40,8 +39,8 @@ public class TestFragment extends Fragment {
             }
         };
         name = getArguments().getString("name");
-        recyclerView.setAdapter(adapter);
-        return view;
+        binding.recyclerView.setAdapter(adapter);
+        return binding.getRoot();
     }
 
     @Override

@@ -4,17 +4,18 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.NestedScrollView;
+
+import widget.cf.com.widget.databinding.NestedLayoutBinding;
 
 public class NestedScrollViewActivity extends AppCompatActivity {
 
-    NestedScrollView mNestedScrollView;
+    private NestedLayoutBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.nested_layout);
-        mNestedScrollView = findViewById(R.id.nestedScrollView);
+        binding = NestedLayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 
 }

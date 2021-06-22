@@ -15,22 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import widget.cf.com.widget.databinding.ActivitySwipelayoutBinding;
 import widget.cf.com.widgetlibrary.SwipeLayout;
 import widget.cf.com.widgetlibrary.SwipeLayoutManager;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 
 public class SwipeLayoutActivity extends BaseActivity {
 
-    RecyclerView recyclerView;
+    private ActivitySwipelayoutBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_swipelayout);
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(new ListAdapter(this, new SwipeLayoutManager()));
+        binding = ActivitySwipelayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        binding.recyclerView.setAdapter(new ListAdapter(this, new SwipeLayoutManager()));
     }
 
     private static class ListAdapter extends RecyclerView.Adapter<DataHolder> implements HolderClickListener {

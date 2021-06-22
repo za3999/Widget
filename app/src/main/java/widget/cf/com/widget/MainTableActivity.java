@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import widget.cf.com.widget.databinding.MainTableLayoutBinding;
 import widget.cf.com.widgetlibrary.appearance.AppearanceUtil;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 import widget.cf.com.widgetlibrary.tabbar.MainTabLayout;
@@ -16,24 +17,22 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 
 public class MainTableActivity extends BaseActivity {
 
-    private ViewPager mPager;
-    private MainTabLayout mTabLayout;
     private int mCurrentFragmentIndex = -1;
+    private MainTableLayoutBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppearanceUtil.setDelegate(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_table_layout);
-        mPager = findViewById(R.id.view_pager);
-        mTabLayout = findViewById(R.id.tab_layout);
-        mTabLayout.removeAllViews();
-        mTabLayout.setMaxShowCount(999);
-        mTabLayout.setMaxShowText("999+");
-        mTabLayout.addItemView(R.id.nv_menu_session, R.drawable.menu_session_selecter, ApplicationUtil.getResources().getString(R.string.chat));
-        mTabLayout.addItemView(R.id.nv_menu_contacts, R.drawable.menu_contact_selecter, ApplicationUtil.getResources().getString(R.string.contact));
-        mTabLayout.addItemView(R.id.nv_menu_settings, R.drawable.menu_user_selecter, ApplicationUtil.getResources().getString(R.string.setting));
-        mTabLayout.setTableClickListener(new MainTabLayout.OnTableClickListener() {
+        binding = MainTableLayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.tabLayout.removeAllViews();
+        binding.tabLayout.setMaxShowCount(999);
+        binding.tabLayout.setMaxShowText("999+");
+        binding.tabLayout.addItemView(R.id.nv_menu_session, R.drawable.menu_session_selecter, ApplicationUtil.getResources().getString(R.string.chat));
+        binding.tabLayout.addItemView(R.id.nv_menu_contacts, R.drawable.menu_contact_selecter, ApplicationUtil.getResources().getString(R.string.contact));
+        binding.tabLayout.addItemView(R.id.nv_menu_settings, R.drawable.menu_user_selecter, ApplicationUtil.getResources().getString(R.string.setting));
+        binding.tabLayout.setTableClickListener(new MainTabLayout.OnTableClickListener() {
             @Override
             public void onClick(MainTabLayout.MenuItem menuItem) {
                 onItemClick(menuItem);
@@ -45,8 +44,8 @@ public class MainTableActivity extends BaseActivity {
             }
         });
 
-        mPager.setAdapter(new MainFragmentStatePagerAdapter(getSupportFragmentManager()));
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        binding.viewPager.setAdapter(new MainFragmentStatePagerAdapter(getSupportFragmentManager()));
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -55,7 +54,7 @@ public class MainTableActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
                 mCurrentFragmentIndex = position;
-                mTabLayout.setItemSelected(position);
+                binding.tabLayout.setItemSelected(position);
             }
 
             @Override
@@ -63,9 +62,9 @@ public class MainTableActivity extends BaseActivity {
 
             }
         });
-        mTabLayout.setPopCount(0, 5);
-        mTabLayout.setPopCount(1, 1000);
-        mTabLayout.setPopCount(2, -1);
+        binding.tabLayout.setPopCount(0, 5);
+        binding.tabLayout.setPopCount(1, 1000);
+        binding.tabLayout.setPopCount(2, -1);
         switchFragment(0, true);
     }
 
@@ -92,9 +91,9 @@ public class MainTableActivity extends BaseActivity {
         if (mCurrentFragmentIndex != index) {
             if (isInit) {
                 mCurrentFragmentIndex = index;
-                mTabLayout.setItemSelected(index);
+                binding.tabLayout.setItemSelected(index);
             }
-            mPager.setCurrentItem(index, false);
+            binding.viewPager.setCurrentItem(index, false);
         }
     }
 

@@ -24,7 +24,6 @@ import java.util.Map;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
 
 public class DeviceInfoActivity extends BaseActivity {
-    private TextView tvAdapter;
     private ListView lvDeviceModel;
     private TableLayout tlDeviceInfo;
 
@@ -36,7 +35,6 @@ public class DeviceInfoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.devices_info);
-        tvAdapter = (TextView) findViewById(R.id.tv_adaptor);
         lvDeviceModel = (ListView) findViewById(R.id.lv_model_list);
 
         stringArrays = getResources().getStringArray(R.array.lenovo_model);
