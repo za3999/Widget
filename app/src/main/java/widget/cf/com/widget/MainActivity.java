@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.caifu.test.KotlinTestKt;
 
+import widget.cf.com.widget.databinding.ActivityMainBinding;
 import widget.cf.com.widget.view.SpeedMenu;
 import widget.cf.com.widgetlibrary.HeadTextDrawable;
 import widget.cf.com.widgetlibrary.base.BaseActivity;
@@ -24,19 +23,13 @@ import widget.cf.com.widgetlibrary.util.ApplicationUtil;
 @SuppressLint("NewApi")
 public class MainActivity extends BaseActivity {
 
-    private LinearLayout llLayout;
-    private TextView mEmojiTv;
-    private ImageView mDrawableIv;
-    private TouchMenuHelper mTouch3DHelper;
-    private TextView mPopView;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        llLayout = findViewById(R.id.ll_layout);
-        mEmojiTv = findViewById(R.id.emoji_test_tv);
-        mDrawableIv = findViewById(R.id.emoji_drawable_iv);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         KotlinTestKt.test();
         initPopMenu();
     }
@@ -49,7 +42,7 @@ public class MainActivity extends BaseActivity {
         params.gravity = Gravity.CENTER;
         textView.setLayoutParams(params);
         textView.setBackgroundResource(R.color.color_01dfa6);
-        llLayout.addView(textView);
+        binding.llLayout.addView(textView);
     }
 
     public void onEmojiClick(View view) {
@@ -60,9 +53,9 @@ public class MainActivity extends BaseActivity {
             int two = (int) (Math.random() * emojis[one].length);
             content.append(emojis[one][two]);
         }
-        mEmojiTv.setText(content.toString());
+        binding.emojiTestTv.setText(content.toString());
         int id = (int) ((Math.random() * 100) % 100);
-        mDrawableIv.setImageDrawable(new HeadTextDrawable(content.toString(), id));
+        binding.emojiDrawableIv.setImageDrawable(new HeadTextDrawable(content.toString(), id));
     }
 
     public void onMainTableClick(View view) {
@@ -90,18 +83,17 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initPopMenu() {
-        mPopView = findViewById(R.id.pop_view);
-        mTouch3DHelper = new TouchMenuHelper().registerView(mPopView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
+         new TouchMenuHelper().registerView(binding.popView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
             @Override
             public void onSelect(Float speed) {
-                mPopView.setSelected(true);
-                mPopView.setText(speed + "");
+                binding.popView.setSelected(true);
+                binding.popView.setText(speed + "");
             }
 
             @Override
             public void onTouchChange(Float speed) {
-                mPopView.setSelected(true);
-                mPopView.setText(speed + "");
+                binding.popView.setSelected(true);
+                binding.popView.setText(speed + "");
             }
         }).setYOffset(ApplicationUtil.getIntDimension(R.dimen.dp_12)));
     }
