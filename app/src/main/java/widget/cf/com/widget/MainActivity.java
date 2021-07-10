@@ -82,8 +82,12 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, DeviceInfoActivity.class));
     }
 
+    public void onTestClick(View view) {
+        startActivity(new Intent(this, TestActivity.class));
+    }
+
     private void initPopMenu() {
-         new TouchMenuHelper().registerView(binding.popView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
+        new TouchMenuHelper().registerView(binding.popView, new SpeedMenu(this, 1f).setTouchListener(new TouchItemListener<Float>() {
             @Override
             public void onSelect(Float speed) {
                 binding.popView.setSelected(true);

@@ -80,7 +80,11 @@
         android:layout_height="wrap_content"
         android:onClick="onDevicesInfoClick"
         android:text="Devices Info" />
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onTestClick"
+        android:text="Test" />
 
     <Button
         android:layout_width="wrap_content"

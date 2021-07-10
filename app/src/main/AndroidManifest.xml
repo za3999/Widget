@@ -26,6 +26,7 @@
         <activity android:name=".MainIndicatorActivity"></activity>
         <activity android:name=".FaceActivity"></activity>
         <activity android:name=".NestedScrollViewActivity" />
+        <activity android:name=".TestActivity"></activity>
     </application>
 
 </manifest>
